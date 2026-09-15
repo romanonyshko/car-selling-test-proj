@@ -58,7 +58,8 @@ There are no tests in the project yet — no test runner is set up.
 - **One contract.** Routes and request/response types live in
   `packages/shared`. Both APIs implement every route in it identically —
   otherwise the backend switcher breaks. A route is added to `shared` first,
-  then to Express, then to Nest.
+  then implemented in both APIs (in either order, each in its own branch).
+  `docs/architecture.md` → "Current routes" tracks which API has what.
 - **Domain entity types** — in `packages/shared/src/models.ts`.
 - **`shared` stays browser-safe.** Node-only code (crypto, JWT) goes to
   `packages/auth`.
@@ -69,6 +70,16 @@ There are no tests in the project yet — no test runner is set up.
 - Apps do not import each other.
 - Relative imports inside Node packages/apps use the `.js` extension
   (`nodenext` resolution).
+
+### apps/api-nest
+- One module per feature: `src/<feature>/<feature>.{module,controller,service}.ts`,
+  kebab-case file names.
+- Controllers handle HTTP only; services contain the logic and return
+  `null` instead of throwing HTTP errors.
+- Protected routes use `@UseGuards(AuthGuard)` + `@CurrentSession()`.
+- DI classes → value `import`; types in decorated parameters →
+  `import type` (TS1272). Set `@HttpCode` on POST routes to match the
+  contract. Details in `docs/architecture.md` → APIs.
 
 ### apps/web
 - **Feature-based structure.** `src/features/<feature>/{api,hooks,model,ui}`.

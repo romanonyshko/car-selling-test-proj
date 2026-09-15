@@ -19,35 +19,36 @@
 - [x] Both APIs: skeleton with `GET /api/health`
 - [x] Web: `apiClient`, backend switcher, Vite dev proxy, auth hooks on
       `/auth/me`
+- [x] Auth in Nest — `/auth/login`, `/auth/me`, `/auth/logout`:
+      `AuthModule`, `AuthService`, `AuthGuard`, `@CurrentSession()`
 
 ## Next, in order
 
-1. **Auth in Express** — `/auth/login`, `/auth/me`, `/auth/logout`, the
-   `requireAuth` middleware, the error handler.
-2. **Auth in Nest** — the same contract: `AuthModule`, `AuthGuard`,
-   `UnauthorizedException`. After this the switcher works end to end.
-3. **Catalogue contract** — endpoints for categories, carmakers, models
+1. **Auth in Express** — the same contract: the `requireAuth` middleware,
+   the error handler, `toAuthUser`. After this the switcher works end to
+   end. Decide the shared error body format here (open question 7).
+2. **Catalogue contract** — endpoints for categories, carmakers, models
    (by carmaker), engines (by model) and parts (with filters) in
    `packages/shared`; demo data in the seed.
-4. **Catalogue endpoints in both APIs.**
-5. **Grid of 12 categories** on `CataloguePage` instead of the placeholder,
+3. **Catalogue endpoints in both APIs.**
+4. **Grid of 12 categories** on `CataloguePage` instead of the placeholder,
    plus the grid/list toggle.
-6. **Cascading Carmaker → Model → Engine filters** — state as a single
+5. **Cascading Carmaker → Model → Engine filters** — state as a single
    `{ make, model, engine }` object, descendants reset, disabled until the
    parent has a value; query keys include the parent id.
-7. **Filtering parts** at any selection depth via compatible engines.
-8. **Loading / error / empty states** on every screen (the components exist).
-9. **Pagination** — cursor-based in the API, `useInfiniteQuery` on the web.
-10. **CRUD for categories and parts** — forms, `useMutation`, cache
-    invalidation, request validation in both APIs.
-11. **Roles** — enforce `admin` / `manager` / `client` in both APIs
+6. **Filtering parts** at any selection depth via compatible engines.
+7. **Loading / error / empty states** on every screen (the components exist).
+8. **Pagination** — cursor-based in the API, `useInfiniteQuery` on the web.
+9. **CRUD for categories and parts** — forms, `useMutation`, cache
+   invalidation, request validation in both APIs.
+10. **Roles** — enforce `admin` / `manager` / `client` in both APIs
     (middleware / guards) and hide actions in the UI.
-12. **Orders** — list and statuses.
-13. **In stock, Price list, Documents, Warranty claims** — the sidebar
+11. **Orders** — list and statuses.
+12. **In stock, Price list, Documents, Warranty claims** — the sidebar
     sections.
-14. **Dashboard with real metrics** — replacing the mocks.
-15. **Responsive** — sidebar as a drawer on mobile.
-16. **Bundle optimisation** — currently ~680 kB (recharts is the largest
+13. **Dashboard with real metrics** — replacing the mocks.
+14. **Responsive** — sidebar as a drawer on mobile.
+15. **Bundle optimisation** — currently ~680 kB (recharts is the largest
     part); route-level code splitting via `React.lazy`.
 
 ## Not a priority right now
