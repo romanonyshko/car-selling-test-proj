@@ -15,7 +15,8 @@ Catalogue page specification. Read before any work on
 
 ## Data model
 
-Normalized: flat lists linked by parent ids, no nesting.
+Normalized: flat lists linked by parent ids, no nesting. These are the
+contract types in `packages/shared/src/models.ts`:
 
 ```ts
 interface Category { id: string; title: string; image: string; order: number }
@@ -27,19 +28,24 @@ interface Part {
   categoryId: string;
   title: string;
   compatibleEngineIds: string[];
+  // + commercial fields: articleNumber, brand, price, currency, inStock, image
 }
 ```
 
-The same shapes are used for static JSON now and Firestore later —
-component logic must not change when we switch the data source.
+In PostgreSQL (`packages/db/prisma/schema.prisma`) these are the tables
+`categories`, `carmakers`, `car_models`, `engines`, `parts`.
+`compatibleEngineIds` is a many-to-many relation between `parts` and
+`engines`; the APIs flatten it into an id array in the response.
+
+Component logic must not depend on which backend serves the data.
 
 ## Cascading filter logic
 
-1. Child options are derived by filtering on the selected parent:
+1. Child options come from the selected parent:
 
    ```ts
-   modelOptions  = models.filter(m => m.carmakerId === selectedMake)
-   engineOptions = engines.filter(e => e.modelId === selectedModel)
+   modelOptions  = models  where carmakerId === selectedMake
+   engineOptions = engines where modelId    === selectedModel
    ```
 
 2. Changing a parent resets all descendants:
@@ -50,21 +56,25 @@ component logic must not change when we switch the data source.
 ## How filters affect parts
 
 - Engine is the most precise level; part compatibility is stored
-  as `compatibleEngineIds`.
+  per engine.
 - Filtering works at any selection depth:
-  - **only make selected:** collect all engine ids under that make,
-    show parts whose `compatibleEngineIds` intersect that set;
-  - **make + model:** same, but only that model's engines;
-  - **engine selected:** exact match on the engine id.
+  - **only make selected:** parts compatible with any engine of any model
+    of that make;
+  - **make + model:** parts compatible with any engine of that model;
+  - **engine selected:** parts compatible with that engine.
+- This is a single relational query in the API (a join through
+  `engines → car_models`), so there is no limit on how many engines a make
+  has.
 
 ## Data source
 
-- **Phase 1 (demo):** static JSON with the interfaces above.
-- **Phase 2:** Firestore collections `carmakers` / `models` / `engines` /
-  `parts`, fetched via TanStack Query with
-  `where('carmakerId', '==', selectedMake)`.
-  Query keys must include the parent id, e.g. `['models', selectedMake]`,
-  so each branch is cached separately.
+- Both APIs serve the data from PostgreSQL through endpoints described in
+  `packages/shared` (to be added — roadmap step 3). Demo data comes from
+  the seed.
+- The web app fetches it with TanStack Query. Query keys must include the
+  parent id, e.g. `catalogueKeys.models(selectedMake)`, so each branch is
+  cached separately.
+- Selected filters are planned in the URL (`useSearchParams`).
 
 ## Naming note
 

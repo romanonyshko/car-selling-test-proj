@@ -14,34 +14,41 @@ app has a switcher to choose which backend it talks to.
   react-router-dom v7 · Tailwind v4
 - **api-express:** Express 5 · tsx (dev)
 - **api-nest:** NestJS 12 (ESM) · @nestjs/cli
-- **db:** PostgreSQL (docker compose) · Prisma 7 with `@prisma/adapter-pg`
-- **auth (planned):** JWT in an httpOnly cookie, same secret in both APIs
+- **db:** PostgreSQL 17 (docker compose) · Prisma 7 with `@prisma/adapter-pg`
+- **auth:** JWT (`jose`, HS256) in an httpOnly cookie, passwords hashed with
+  scrypt (`node:crypto`). Same `JWT_SECRET` in both APIs.
 - Tooling: npm workspaces · TypeScript 6 · oxlint. Everything is ESM.
 
 ## Structure
 
 ```
-apps/web            Vite SPA (feature-based, see below)
+apps/web            Vite SPA (feature-based, see below), port 5173
 apps/api-express    Express API, port 3001
 apps/api-nest       NestJS API, port 3002
-packages/shared     REST contract (routes, DTOs) + domain types
-packages/db         Prisma schema, generated client, createPrismaClient()
+packages/shared     REST contract (routes, DTOs) + domain types — browser-safe
+packages/auth       password hashing + JWT sessions — Node only
+packages/db         Prisma schema, migrations, seed, createPrismaClient()
 ```
 
-`packages/*` are built to `dist/` and consumed by the apps. After changing
-them, run `npm run build:packages` (runs automatically before `npm run dev`).
+Build order: `shared → auth → db → apps`. `packages/*` are built to `dist/`
+and consumed by the apps. After changing them, run `npm run build:packages`
+(runs automatically before `npm run dev`).
 
 ## Commands (from the repo root)
 
 | Command | What it does |
 | --- | --- |
-| `npm run dev` | builds packages, then web (5173) + both APIs |
+| `npm run dev` | builds packages, then web + both APIs |
 | `npm run build` | builds every workspace |
 | `npm run lint` | oxlint over the whole repo |
 | `npm run db:up` / `db:down` | start / stop Postgres in Docker |
 | `npm run db:migrate` | `prisma migrate dev` |
 | `npm run db:generate` | regenerate the Prisma client |
+| `npm run db:seed` | create the admin user from `SEED_ADMIN_*` |
 | `npm run dev -w @auto-lincoln/<name>` | run one workspace |
+| `npm install <pkg> -w @auto-lincoln/<name>` | add a dependency to one workspace |
+
+Internal dependencies are declared as `"@auto-lincoln/<name>": "*"`.
 
 There are no tests in the project yet — no test runner is set up.
 
@@ -50,11 +57,18 @@ There are no tests in the project yet — no test runner is set up.
 ### Whole repo
 - **One contract.** Routes and request/response types live in
   `packages/shared`. Both APIs implement every route in it identically —
-  otherwise the backend switcher breaks. A route is added to `shared` first.
+  otherwise the backend switcher breaks. A route is added to `shared` first,
+  then to Express, then to Nest.
 - **Domain entity types** — in `packages/shared/src/models.ts`.
+- **`shared` stays browser-safe.** Node-only code (crypto, JWT) goes to
+  `packages/auth`.
 - **Database access** only through `packages/db`. Apps do not import
   `@prisma/*` directly.
+- **DB models never leave an API as-is.** Map them to contract types
+  (e.g. `toAuthUser`) so fields like `passwordHash` are never sent.
 - Apps do not import each other.
+- Relative imports inside Node packages/apps use the `.js` extension
+  (`nodenext` resolution).
 
 ### apps/web
 - **Feature-based structure.** `src/features/<feature>/{api,hooks,model,ui}`.
@@ -88,13 +102,8 @@ There are no tests in the project yet — no test runner is set up.
 
 ## Documentation — read before working
 
-> **Outdated after the monorepo migration:** `docs/architecture.md`,
-> `docs/product.md`, `docs/roadmap.md` and `docs/open-questions.md` still
-> describe the Firebase setup and `src/` at the repo root. Trust the code and
-> this file until they are rewritten.
-
-- `docs/architecture.md` — before changing the structure, routes or working
-  with data
+- `docs/architecture.md` — before changing the structure, routes, the API
+  contract or working with data
 - `docs/catalogue-page.md` — before any work on `/parts/catalogue`
   (spec: layout, data models, cascading filters)
 - `docs/dashboard-page.md` — before any work on the dashboard
