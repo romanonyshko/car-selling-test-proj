@@ -1,11 +1,11 @@
 # Dashboard page (Home)
 
 Specification for the admin panel's home page. Read before any work on `/`
-(`pages/dashboard/`) and the `features/dashboard/` feature.
+(`apps/web/src/pages/dashboard/`) and the `features/dashboard/` feature.
 
-The implementation runs on mock data. Moving to Firestore is not part of
-this specification: only `api/dashboardApi.ts` changes, the rest of the code
-does not.
+The implementation runs on mock data. Moving to real API endpoints is not
+part of this specification: only `api/dashboardApi.ts` changes, the rest of
+the code does not.
 
 ## 1. Dependency
 
@@ -60,7 +60,8 @@ The mock values come from the design mockup:
   queryFn: fetchDashboard })`.
 
 The types live in `mock-data.ts` for now and are not to be moved into
-`types/models.ts` — they will become domain types when we move to Firestore.
+`packages/shared` — they will become contract types when the dashboard gets
+real API endpoints.
 
 ## 3. Feature UI (`features/dashboard/ui/`)
 

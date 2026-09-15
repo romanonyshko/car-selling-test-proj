@@ -6,7 +6,7 @@ target one.
 
 ## Tokens
 
-From `@theme` in `src/index.css` — Tailwind v4 generates utilities out of
+From `@theme` in `apps/web/src/index.css` — Tailwind v4 generates utilities out of
 them (`bg-brand-500`, `border-line`, …):
 
 | Token | Value | Where it is used |
@@ -40,7 +40,7 @@ the system font is rendered for now.
 - Control (button, input, select): `h-10` tall, `rounded-lg`.
 - Focus: `focus:border-brand-500 focus:ring-2 focus:ring-brand-100`.
 - Spacing is a multiple of 4 — Tailwind utilities only, no arbitrary values.
-- Classes are joined with `cn()` from `src/lib/cn.ts`.
+- Classes are joined with `cn()` from `apps/web/src/lib/cn.ts`.
 - Component variants are an object map `Record<Variant, string>`
   (see `components/ui/Button.tsx`), not chained ternaries.
 
