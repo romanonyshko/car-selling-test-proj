@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+*.tsbuildinfo
+
+# Prisma generated client
+packages/db/src/generated
 
 # Editor directories and files
 .vscode/*

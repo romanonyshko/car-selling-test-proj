@@ -2,6 +2,7 @@ import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useLogout } from '@/features/auth/hooks/useLogin'
 import { cn } from '@/lib/cn'
 import { useEffect, useRef, useState } from 'react'
+import { BackendSwitcher } from './BackendSwitcher'
 
 function CartIcon() {
   return (
@@ -75,6 +76,7 @@ export function Topbar() {
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-end gap-4 border-b border-line bg-white px-6">
+      <BackendSwitcher />
       <CartIcon />
 
       <div ref={menuRef} className="relative">

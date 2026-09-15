@@ -1,10 +1,13 @@
-import { useContext } from 'react'
-import { AuthContext } from '../model/authContext'
+import { useQuery } from '@tanstack/react-query'
+import { fetchCurrentUser } from '../api/authApi'
+import { authKeys } from '../api/authKeys'
 
 export function useAuth() {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth має викликатись усередині <AuthProvider>')
-  }
-  return context
+  const { data, isLoading } = useQuery({
+    queryKey: authKeys.me(),
+    queryFn: fetchCurrentUser,
+    retry: false,
+  })
+
+  return { user: data ?? null, isLoading }
 }

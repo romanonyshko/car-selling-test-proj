@@ -4,41 +4,79 @@ Admin panel for the "Auto Lincoln" auto parts catalogue: managing categories,
 parts, stock and orders. A learning project (internship), built from a mockup
 provided by the mentor.
 
+The repo is an npm-workspaces monorepo: one web app and **two interchangeable
+backends** (Express and NestJS) implementing the same REST contract. The web
+app has a switcher to choose which backend it talks to.
+
 ## Stack
 
-React 19 · TypeScript · Vite 8 · TanStack Query v5 · react-router-dom v7 ·
-Tailwind v4 · Firebase 12 (Auth + Firestore + Storage) · oxlint
+- **web:** React 19 · TypeScript · Vite 8 · TanStack Query v5 ·
+  react-router-dom v7 · Tailwind v4
+- **api-express:** Express 5 · tsx (dev)
+- **api-nest:** NestJS 12 (ESM) · @nestjs/cli
+- **db:** PostgreSQL (docker compose) · Prisma 7 with `@prisma/adapter-pg`
+- **auth (planned):** JWT in an httpOnly cookie, same secret in both APIs
+- Tooling: npm workspaces · TypeScript 6 · oxlint. Everything is ESM.
 
-## Commands
+## Structure
+
+```
+apps/web            Vite SPA (feature-based, see below)
+apps/api-express    Express API, port 3001
+apps/api-nest       NestJS API, port 3002
+packages/shared     REST contract (routes, DTOs) + domain types
+packages/db         Prisma schema, generated client, createPrismaClient()
+```
+
+`packages/*` are built to `dist/` and consumed by the apps. After changing
+them, run `npm run build:packages` (runs automatically before `npm run dev`).
+
+## Commands (from the repo root)
 
 | Command | What it does |
 | --- | --- |
-| `npm run dev` | dev server at http://localhost:5173 |
-| `npm run build` | `tsc -b` + production build |
-| `npm run lint` | oxlint |
-| `npm run preview` | preview the build |
+| `npm run dev` | builds packages, then web (5173) + both APIs |
+| `npm run build` | builds every workspace |
+| `npm run lint` | oxlint over the whole repo |
+| `npm run db:up` / `db:down` | start / stop Postgres in Docker |
+| `npm run db:migrate` | `prisma migrate dev` |
+| `npm run db:generate` | regenerate the Prisma client |
+| `npm run dev -w @auto-lincoln/<name>` | run one workspace |
 
 There are no tests in the project yet — no test runner is set up.
 
 ## Architecture rules
 
+### Whole repo
+- **One contract.** Routes and request/response types live in
+  `packages/shared`. Both APIs implement every route in it identically —
+  otherwise the backend switcher breaks. A route is added to `shared` first.
+- **Domain entity types** — in `packages/shared/src/models.ts`.
+- **Database access** only through `packages/db`. Apps do not import
+  `@prisma/*` directly.
+- Apps do not import each other.
+
+### apps/web
 - **Feature-based structure.** `src/features/<feature>/{api,hooks,model,ui}`.
   A feature does not import another feature — shared code moves up into
   `components/` or `lib/`.
 - **Dependency direction:** `pages → features → components/ui → lib`.
-- **Data access layer.** Only files in `features/*/api/` import `firebase/*`.
-  A component calls a hook, the hook calls `api/`. Components know nothing
-  about Firebase.
-- **Server state — TanStack Query only.** No `useState` + `useEffect` for
-  fetching data. Local UI state — plain `useState`.
+- **Data access layer.** Only files in `features/*/api/` call
+  `lib/apiClient`. A component calls a hook, the hook calls `api/`.
+  Components know nothing about HTTP or which backend is selected.
+- **Backend selection** — `lib/backend.ts` (store) +
+  `components/layout/BackendSwitcher.tsx`. Requests go to
+  `/api/<backend>/...`, the Vite dev proxy forwards them to the right API.
+- **Server state — TanStack Query only** (including the current user,
+  `authKeys.me()`). No `useState` + `useEffect` for fetching data. Local UI
+  state — plain `useState`.
 - **Query keys are factories** (`partsKeys.list(filters)`) in
   `features/*/api/`, not strings scattered across files — otherwise
   invalidation misses.
 - **Pages in `pages/` — composition only.** They contain no logic.
 - **Protected routes** — via `ProtectedRoute`, not via checks inside
   components.
-- **Domain entity types** — in `src/types/models.ts`.
-- **Alias `@/` = `src/`.** We do not write relative `../../`.
+- **Alias `@/` = `apps/web/src/`.** We do not write relative `../../`.
 
 ## How to work with me
 
@@ -50,10 +88,16 @@ There are no tests in the project yet — no test runner is set up.
 
 ## Documentation — read before working
 
+> **Outdated after the monorepo migration:** `docs/architecture.md`,
+> `docs/product.md`, `docs/roadmap.md` and `docs/open-questions.md` still
+> describe the Firebase setup and `src/` at the repo root. Trust the code and
+> this file until they are rewritten.
+
 - `docs/architecture.md` — before changing the structure, routes or working
   with data
 - `docs/catalogue-page.md` — before any work on `/parts/catalogue`
   (spec: layout, data models, cascading filters)
+- `docs/dashboard-page.md` — before any work on the dashboard
 - `docs/ui-guidelines.md` — before writing markup (tokens, component
   conventions)
 - `docs/roadmap.md` — current state of the project and the next step
