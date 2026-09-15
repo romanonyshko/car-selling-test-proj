@@ -4,13 +4,14 @@
   "type": "module",
   "workspaces": [
     "packages/shared",
+    "packages/auth",
     "packages/db",
     "apps/api-express",
     "apps/api-nest",
     "apps/web"
   ],
   "scripts": {
-    "build:packages": "npm run build -w @auto-lincoln/shared -w @auto-lincoln/db",
+    "build:packages": "npm run build -w @auto-lincoln/shared -w @auto-lincoln/auth -w @auto-lincoln/db",
     "predev": "npm run build:packages",
     "dev": "concurrently -n web,express,nest -c blue,green,red \"npm run dev -w @auto-lincoln/web\" \"npm run dev -w @auto-lincoln/api-express\" \"npm run dev -w @auto-lincoln/api-nest\"",
     "build": "npm run build --workspaces --if-present",
