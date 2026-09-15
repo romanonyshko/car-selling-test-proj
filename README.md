@@ -1,33 +1,34 @@
-# Auto Lincoln — адмін-панель каталогу автозапчастин
+# Auto Lincoln — auto parts catalogue admin panel
 
-React 19 + TypeScript + Vite, TanStack Query для серверного стану,
-Firebase (Auth + Firestore + Storage) як бекенд.
+React 19 + TypeScript + Vite, TanStack Query for server state,
+Firebase (Auth + Firestore + Storage) as the backend.
 
-## Запуск
+## Getting started
 
 ```bash
 npm install
-cp .env.example .env.local   # заповнити ключами з Firebase Console
+cp .env.example .env.local   # fill in the keys from the Firebase Console
 npm run dev                  # http://localhost:5173
 ```
 
-Щоб увійти, у Firebase Console має бути ввімкнений
-**Authentication → Sign-in method → Email/Password** і створений користувач.
+To sign in, the Firebase Console must have
+**Authentication → Sign-in method → Email/Password** enabled and a user
+created.
 
-## Скрипти
+## Scripts
 
-| Команда | Що робить |
+| Command | What it does |
 | --- | --- |
-| `npm run dev` | дев-сервер |
-| `npm run build` | перевірка типів + продакшн-збірка |
+| `npm run dev` | dev server |
+| `npm run build` | type check + production build |
 | `npm run lint` | oxlint |
-| `npm run preview` | локальний перегляд зібраного |
+| `npm run preview` | preview the build locally |
 
-## Документація
+## Documentation
 
-- [`docs/product.md`](docs/product.md) — що за продукт і які розділи
-- [`docs/architecture.md`](docs/architecture.md) — структура `src/`, шари, auth flow
-- [`docs/catalogue-page.md`](docs/catalogue-page.md) — специфікація сторінки каталогу
-- [`docs/roadmap.md`](docs/roadmap.md) — порядок робіт і технічний борг
-- [`docs/ui-guidelines.md`](docs/ui-guidelines.md) — токени та конвенції UI
-- [`CLAUDE.md`](CLAUDE.md) — правила для роботи з Claude Code
+- [`docs/product.md`](docs/product.md) — what the product is and its sections
+- [`docs/architecture.md`](docs/architecture.md) — `src/` structure, layers, auth flow
+- [`docs/catalogue-page.md`](docs/catalogue-page.md) — catalogue page spec
+- [`docs/roadmap.md`](docs/roadmap.md) — order of work and technical debt
+- [`docs/ui-guidelines.md`](docs/ui-guidelines.md) — tokens and UI conventions
+- [`CLAUDE.md`](CLAUDE.md) — rules for working with Claude Code
