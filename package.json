@@ -19,7 +19,8 @@
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:generate": "npm run generate -w @auto-lincoln/db",
-    "db:migrate": "npm run migrate -w @auto-lincoln/db"
+    "db:migrate": "npm run migrate -w @auto-lincoln/db",
+    "db:seed": "npm run seed -w @auto-lincoln/db"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",

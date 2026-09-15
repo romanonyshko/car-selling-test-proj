@@ -11,15 +11,18 @@
   },
   "scripts": {
     "generate": "prisma generate",
-    "build": "prisma generate && tsc -p tsconfig.json",
+    "build": "prisma generate && tsc -p tsconfig.build.json",
     "migrate": "prisma migrate dev",
-    "studio": "prisma studio"
+    "studio": "prisma studio",
+    "seed": "prisma db seed"
   },
   "dependencies": {
+    "@auto-lincoln/auth": "*",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0"
   },
   "devDependencies": {
-    "prisma": "^7.10.0"
+    "prisma": "^7.10.0",
+    "tsx": "^4.23.13"
   }
 }
