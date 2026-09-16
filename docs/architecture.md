@@ -96,7 +96,7 @@ returns `{ statusCode, message }`), Express always includes it.
 
 ### Flow
 
-Implemented in Nest; Express is next.
+Implemented identically in both APIs.
 
 1. `POST /auth/login` checks the password and sets the JWT in the
    `al_session` cookie (`httpOnly`, `sameSite: 'lax'`, `path: '/'`,
@@ -154,15 +154,35 @@ component → hook → features/*/api → lib/apiClient → fetch('/api/<backend
 
 ```
 src/
-├── main.ts            # imports config/env first, then listens
-├── app.ts             # createApp(): json parser, routers under /api
-├── config/env.ts      # loads .env, validates PORT / DATABASE_URL / JWT_SECRET
-├── lib/prisma.ts      # a single PrismaClient
-└── routes/health.ts
+├── main.ts                     # imports config/env first, then listens
+├── app.ts                      # createApp(): middleware order, routers under /api
+├── config/env.ts               # loads .env, validates PORT / DATABASE_URL / JWT_SECRET
+├── lib/prisma.ts               # a single PrismaClient
+├── lib/apiError.ts             # ApiError class + buildErrorBody()
+├── middleware/requireAuth.ts   # verifies the cookie JWT → res.locals.session
+├── middleware/notFound.ts      # unknown route → ApiError(404)
+├── middleware/errorHandler.ts  # the only place that sends an error body
+├── types/express.d.ts          # session in Express.Locals
+├── routes/health.ts
+└── modules/auth/
+    ├── auth.router.ts          # login / me / logout
+    └── toAuthUser.ts           # User (DB) → AuthUser
 ```
 
-Express 5 forwards errors from async handlers to the error middleware on its
-own — no `try/catch` wrappers are needed.
+Middleware order in `createApp()` matters: `express.json()` and
+`cookieParser()` first, then the routers under `API_PREFIX`, then `notFound`,
+and `errorHandler` last (mounted without a prefix).
+
+Conventions and pitfalls:
+
+- Express 5 forwards errors from async handlers to the error middleware on
+  its own — no `try/catch` wrappers are needed.
+- Handlers throw `ApiError(status, message)`; only `errorHandler` builds the
+  response body, so the format stays in one place.
+- The error middleware is recognised by its **four** parameters; unused ones
+  keep a `_` prefix so `noUnusedParameters` stays happy.
+- `res.locals.session` is typed through `Express.Locals` and is optional —
+  protected handlers narrow it before use.
 
 ### `apps/api-nest`
 
