@@ -58,13 +58,14 @@ Express, then in Nest, with identical paths, status codes and bodies.
 | Method | Path | Express | Nest |
 | --- | --- | --- | --- |
 | GET | `/api/health` | ✅ | ✅ |
-| POST | `/api/auth/login` | planned | ✅ |
-| GET | `/api/auth/me` | planned | ✅ |
-| POST | `/api/auth/logout` | planned | ✅ |
+| POST | `/api/auth/login` | ✅ | ✅ |
+| GET | `/api/auth/me` | ✅ | ✅ |
+| POST | `/api/auth/logout` | ✅ | ✅ |
 
-**Error bodies differ for now:** Nest returns
-`{ message, error, statusCode }`, the contract only guarantees `message`
-(see `open-questions.md`).
+**Error body** is `ApiErrorBody`: `{ message, statusCode, error? }`. Both APIs
+return it for 400, 401 and 404, including unknown routes. The one remaining
+difference: on an unhandled 500 Nest omits `error` (its base exception filter
+returns `{ statusCode, message }`), Express always includes it.
 
 ## Database (`packages/db`)
 
