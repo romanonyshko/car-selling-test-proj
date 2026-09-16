@@ -58,9 +58,13 @@ Express, then in Nest, with identical paths, status codes and bodies.
 | Method | Path | Express | Nest |
 | --- | --- | --- | --- |
 | GET | `/api/health` | ✅ | ✅ |
-| POST | `/api/auth/login` | planned | planned |
-| GET | `/api/auth/me` | planned | planned |
-| POST | `/api/auth/logout` | planned | planned |
+| POST | `/api/auth/login` | planned | ✅ |
+| GET | `/api/auth/me` | planned | ✅ |
+| POST | `/api/auth/logout` | planned | ✅ |
+
+**Error bodies differ for now:** Nest returns
+`{ message, error, statusCode }`, the contract only guarantees `message`
+(see `open-questions.md`).
 
 ## Database (`packages/db`)
 
@@ -89,14 +93,22 @@ Express, then in Nest, with identical paths, status codes and bodies.
 - `signSession` / `verifySession` — HS256 JWT via `jose`, payload
   `{ sub: userId, role }`, 7 days (`SESSION_MAX_AGE_MS`).
 
-### Flow (target)
+### Flow
+
+Implemented in Nest; Express is next.
 
 1. `POST /auth/login` checks the password and sets the JWT in the
    `al_session` cookie (`httpOnly`, `sameSite: 'lax'`, `path: '/'`,
-   `secure` in production). The body is the `AuthUser`.
+   `secure` in production). The body is the `AuthUser` — the token is
+   **never** in the body. Missing fields → 400, wrong email or password →
+   401 with the same message.
 2. `GET /auth/me` verifies the cookie and loads the user from the DB → 200
    `AuthUser` or 401.
 3. `POST /auth/logout` clears the cookie → 204.
+
+The token is not readable from JavaScript (`document.cookie`); the browser
+attaches it to every same-origin request, so `apiClient` has no token
+handling. To inspect it: DevTools → Application → Cookies.
 
 Both APIs use the same `JWT_SECRET`, and cookies are scoped to the host, not
 the port — so a session created through one backend is valid on the other.
@@ -155,15 +167,38 @@ own — no `try/catch` wrappers are needed.
 
 ```
 src/
-├── main.ts                     # env first, reflect-metadata, global prefix /api
-├── app.module.ts
+├── main.ts                     # env first, reflect-metadata, cookie-parser, prefix /api
+├── app.module.ts               # imports PrismaModule, AuthModule
 ├── config/env.ts
 ├── prisma/prisma.module.ts     # @Global, provides PrismaClient
-└── health/health.controller.ts
+├── health/health.controller.ts
+└── auth/
+    ├── auth.module.ts              # AuthController + AuthService + AuthGuard
+    ├── auth.controller.ts          # login / me / logout
+    ├── auth.service.ts             # validateCredentials, findById (no HTTP here)
+    ├── auth.guard.ts               # verifies the cookie JWT → request.authSession
+    ├── current-session.decorator.ts  # @CurrentSession() → { userId, role }
+    ├── auth.types.ts               # Session, AuthenticatedRequest
+    └── to-auth-user.ts             # User (DB) → AuthUser
 ```
 
 Nest runs as native ESM (`"type": "module"`, top-level `await` in `main.ts`).
-Inject the database with `constructor(private readonly prisma: PrismaClient)`.
+
+Conventions and pitfalls:
+
+- File names are kebab-case (`auth.service.ts`); one module per feature.
+- Inject the database with `constructor(private readonly prisma: PrismaClient)`.
+  Classes used for DI are imported with a **value** import — with
+  `import type` the class disappears at runtime and DI fails.
+- Types used in decorated parameters (`@Body() body: LoginRequest`,
+  `@Res() res: Response`) must be imported with **`import type`**, otherwise
+  `emitDecoratorMetadata` + `verbatimModuleSyntax` fail with TS1272.
+- POST returns 201 by default — set `@HttpCode(...)` to match the contract.
+- `@Res({ passthrough: true })` to set cookies and still `return` the body.
+- Errors are thrown as Nest exceptions (`UnauthorizedException`,
+  `BadRequestException`); services return `null`, controllers decide the
+  HTTP status.
+- `@CurrentSession()` only works on routes with `@UseGuards(AuthGuard)`.
 
 ## Web app (`apps/web/src`)
 

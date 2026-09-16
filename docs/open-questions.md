@@ -46,11 +46,27 @@ must live in the APIs, not only in the UI.
 `pages → features → components` direction. Either accept it as an exception
 for the app shell, or move the layout under `app/`.
 
+### 7. Error body format
+
+Nest's built-in exceptions return `{ message, error, statusCode }`; the
+contract (`ApiErrorBody`) only defines `{ message }`, and the web app reads
+only `message`. Options: a global Nest `ExceptionFilter` that returns
+`{ message }`, or extend `ApiErrorBody` and make Express return the same
+three fields. To be decided together with auth in Express.
+
+### 8. Refresh tokens
+
+Right now there is a single JWT valid for 7 days, stored only in the cookie.
+It cannot be revoked before it expires (logout only deletes the cookie in
+this browser). An access + refresh token pair with a sessions table would
+allow short-lived tokens and "sign out everywhere" — at the cost of a new
+table, a `/auth/refresh` route in both APIs and refresh logic on the web.
+
 ## Technical debt
 
 - No tests — no runner is set up.
-- **Login does not work yet** — the web app calls `/auth/*`, which neither
-  API implements (roadmap steps 1–2).
+- **Login works only with the Nest backend** — with Express selected,
+  `/auth/*` returns 404 and the user lands on `/login` (roadmap step 1).
 - **Sidebar sections without routes** — the links lead to a 404:
   In stock, Orders, Price list, Documents, Warranty claims, Support,
   and also Updates, Posts, Media under Dashboard. This is deliberate: the
