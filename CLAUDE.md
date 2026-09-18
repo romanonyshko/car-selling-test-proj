@@ -71,6 +71,16 @@ There are no tests in the project yet — no test runner is set up.
 - Relative imports inside Node packages/apps use the `.js` extension
   (`nodenext` resolution).
 
+### apps/api-express
+- `modules/<feature>/` holds routers and mappers; cross-cutting middleware
+  lives in `middleware/`, shared helpers in `lib/`.
+- Handlers `throw new ApiError(status, message)`; only `errorHandler` sends
+  an error body. Do not call `res.status(...).json(...)` for errors.
+- Middleware order in `app.ts`: parsers → routers → `notFound` →
+  `errorHandler` (last, no prefix).
+- No `try/catch` around async handlers — Express 5 forwards rejections.
+  Details in `docs/architecture.md` → APIs.
+
 ### apps/api-nest
 - One module per feature: `src/<feature>/<feature>.{module,controller,service}.ts`,
   kebab-case file names.

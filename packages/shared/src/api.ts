@@ -37,4 +37,6 @@ export type AuthUser = AppUser
 
 export interface ApiErrorBody {
   message: string
+  statusCode: number
+  error?: string
 }
