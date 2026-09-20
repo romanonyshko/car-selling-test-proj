@@ -32,3 +32,6 @@ packages/db/src/generated
 .env.local
 
 PROJECT-CONTEXT.md
+
+# Claude Code
+.claude/
