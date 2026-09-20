@@ -14,7 +14,7 @@ function CartIcon() {
       strokeWidth={1.5}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="size-5 text-slate-500"
+      className="size-6 text-ink-muted"
     >
       <path d="M3 4h1.8l2.3 10.2a1.5 1.5 0 0 0 1.5 1.2h7.9a1.5 1.5 0 0 0 1.4-1.1L20 7H5.6" />
       <circle cx="9.5" cy="19" r="1.4" />
@@ -33,10 +33,7 @@ function ChevronDownIcon({ isOpen }: { isOpen: boolean }) {
       strokeWidth={1.5}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={cn(
-        'size-4 text-slate-500 transition-transform',
-        isOpen && 'rotate-180',
-      )}
+      className={cn('size-[25px] transition-transform', isOpen && 'rotate-180')}
     >
       <path d="m6 9.5 6 6 6-6" />
     </svg>
@@ -75,7 +72,7 @@ export function Topbar() {
   const greetingName = user?.displayName ?? user?.email ?? 'guest'
 
   return (
-    <header className="flex h-16 shrink-0 items-center justify-end gap-4 border-b border-line bg-white px-6">
+    <header className="flex h-header shrink-0 items-center justify-end gap-[15px] border-b border-line bg-surface pr-[40px]">
       <BackendSwitcher />
       <CartIcon />
 
@@ -85,7 +82,7 @@ export function Topbar() {
           aria-haspopup="menu"
           aria-expanded={isMenuOpen}
           onClick={() => setIsMenuOpen((isOpen) => !isOpen)}
-          className="flex h-10 items-center gap-2 rounded-lg px-3 text-sm font-medium text-brand-600 transition-colors hover:bg-slate-100"
+          className="flex items-center gap-[5px] text-greeting font-medium text-accent transition-opacity hover:opacity-80"
         >
           Hello, {greetingName}
           <ChevronDownIcon isOpen={isMenuOpen} />
@@ -94,9 +91,9 @@ export function Topbar() {
         {isMenuOpen && (
           <div
             role="menu"
-            className="absolute top-full right-0 z-10 mt-2 w-48 rounded-lg border border-line bg-white shadow-sm"
+            className="absolute top-full right-0 z-10 mt-3 w-[220px] border border-line bg-surface shadow-card-1"
           >
-            <p className="border-b border-line px-3 py-2 text-xs break-words text-slate-500">
+            <p className="border-b border-line px-5 py-3 text-crumb break-words text-ink-muted">
               {user?.email ?? 'guest'}
             </p>
 
@@ -105,7 +102,7 @@ export function Topbar() {
               role="menuitem"
               disabled={logout.isPending}
               onClick={() => logout.mutate()}
-              className="flex w-full items-center gap-2 rounded-b-lg px-3 py-2 text-left text-sm text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-center gap-2 px-5 py-3 text-left text-crumb text-ink transition-colors hover:bg-field disabled:cursor-not-allowed disabled:opacity-60"
             >
               {logout.isPending && (
                 <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />

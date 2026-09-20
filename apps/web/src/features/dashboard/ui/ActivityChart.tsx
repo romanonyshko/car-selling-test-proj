@@ -13,21 +13,24 @@ function formatThousands(value: number) {
   return value >= 1000 ? `${value / 1000}k` : String(value)
 }
 
-const tickStyle = { className: 'fill-slate-400 text-xs' }
+/** The mockup draws a fixed 0…50k scale, one gridline every 10k. */
+const Y_TICKS = [0, 10000, 20000, 30000, 40000, 50000]
+
+const tickStyle = { className: 'fill-ink text-crumb' }
 
 export function ActivityChart({ activity }: { activity: ActivityPoint[] }) {
   return (
-    <section className="rounded-2xl border border-line bg-white p-6">
-      <div className="mb-4 flex items-center justify-between gap-4">
-        <h2 className="text-base font-semibold text-slate-800">Activity</h2>
+    <section className="bg-surface p-5 shadow-card-1">
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="text-section font-medium text-ink">Activity</h2>
 
-        <span className="flex items-center gap-2 text-xs text-slate-500">
-          <span aria-hidden className="size-2 rounded-full bg-brand-500" />
+        <span className="flex items-center gap-[14px] text-crumb text-ink">
+          <span aria-hidden className="size-2 rounded-full bg-accent" />
           New visitors
         </span>
       </div>
 
-      <div className="h-64">
+      <div className="mt-[21px] h-[477px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={activity} margin={{ top: 4, right: 8, bottom: 0, left: -8 }}>
             <CartesianGrid vertical={false} stroke="var(--color-line)" />
@@ -40,14 +43,16 @@ export function ActivityChart({ activity }: { activity: ActivityPoint[] }) {
             <YAxis
               axisLine={false}
               tickLine={false}
+              domain={[0, 50000]}
+              ticks={Y_TICKS}
               tickFormatter={formatThousands}
               tick={tickStyle}
             />
             <Line
               type="monotone"
               dataKey="visitors"
-              stroke="var(--color-brand-500)"
-              strokeWidth={2}
+              stroke="var(--color-accent)"
+              strokeWidth={3}
               dot={false}
             />
           </LineChart>

@@ -51,50 +51,42 @@ export function UpdatesCard({
   ]
 
   return (
-    <section className="rounded-2xl border border-line bg-white p-6">
-      <h2 className="mb-4 text-base font-semibold text-brand-600">Updates</h2>
+    <section className="bg-surface p-5 text-section shadow-card-1">
+      <h2 className="mb-8 text-section font-medium text-accent">Updates</h2>
 
       <div className="border-b border-line pb-4">
-        <h3 className="mb-2 text-sm font-semibold text-slate-800">
-          Recently published news
-        </h3>
-        <p className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm">
-          <span className="text-slate-500">
-            {formatPublishedAt(latestNews.publishedAt)}
-          </span>
-          <a href="#" className="font-medium text-brand-600 hover:underline">
+        <h3 className="mb-3 font-bold text-ink">Recently published news</h3>
+        <p className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
+          <span className="text-ink">{formatPublishedAt(latestNews.publishedAt)}</span>
+          <a href="#" className="text-accent hover:underline">
             {latestNews.title}
           </a>
         </p>
       </div>
 
       <div className="border-b border-line py-4">
-        <h3 className="mb-2 text-sm font-semibold text-slate-800">
-          Recent reviews
-        </h3>
-        <p className="text-sm text-slate-500">
+        <h3 className="mb-3 font-bold text-ink">Recent reviews</h3>
+        <p className="text-ink">
           From{' '}
-          <a href="#" className="text-brand-600 hover:underline">
+          <a href="#" className="text-accent hover:underline">
             {latestReview.author}
           </a>{' '}
           on{' '}
-          <a href="#" className="text-brand-600 hover:underline">
+          <a href="#" className="text-accent hover:underline">
             {latestReview.postTitle}
           </a>
         </p>
-        <p className="mt-3 text-sm text-slate-500">Text:</p>
-        <p className="mt-1 text-sm leading-relaxed text-slate-600">
-          {latestReview.text}
-        </p>
+        <p className="mt-4 text-ink">Text:</p>
+        <p className="mt-1 leading-relaxed text-ink">{latestReview.text}</p>
       </div>
 
       <div className="pt-4">
-        <h3 className="mb-2 text-sm font-semibold text-slate-800">Requests</h3>
-        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-slate-600">
+        <h3 className="mb-3 font-bold text-ink">Requests</h3>
+        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-ink">
           {requestItems.map((item, index) => (
             <Fragment key={item.label}>
               {index > 0 && (
-                <span aria-hidden className="text-slate-300">
+                <span aria-hidden className="text-line">
                   |
                 </span>
               )}

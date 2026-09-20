@@ -1,15 +1,68 @@
 @import 'tailwindcss';
 
+/*
+ * Design tokens from the mockup: Figma file qVzu3KVGXpgPrWF254NRSo
+ * ("Auto Lincoln analysis copy"), node 2:24. See docs/ui-guidelines.md.
+ * Declared in Figma: --color-black-50 and --shadow-card-1. The rest is
+ * observed off the layers.
+ */
 @theme {
-  --color-brand-50: #eef6ff;
-  --color-brand-100: #d9ebff;
-  --color-brand-500: #2f80ed;
-  --color-brand-600: #1f6fd8;
-  --color-brand-700: #1a5cb4;
-
+  /* Colours */
+  --color-accent: #177cca;
+  --color-accent-soft: rgba(23, 124, 202, 0.1);
+  --color-ink: #353535;
+  --color-ink-muted: rgba(53, 53, 53, 0.5);
+  --color-ink-subtle: #979797;
+  --color-positive: #45b73b;
   --color-surface: #ffffff;
-  --color-canvas: #f5f6f8;
-  --color-line: #e6e8ec;
+  --color-canvas: #f8fbfd;
+  --color-field: #f8f8f8;
+  --color-line: rgba(31, 31, 31, 0.1);
+  --color-black-50: #1f1f1f;
+  /* Not in the mockup — the error state is ours. */
+  --color-danger: #d14343;
+
+  /* Typography */
+  --font-sans: 'Karla', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'DM Sans', 'Karla', system-ui, sans-serif;
+
+  --text-crumb: 14px;
+  --text-crumb--line-height: 24px;
+  --text-nav: 19px;
+  --text-nav--line-height: 30px;
+  --text-greeting: 18px;
+  --text-greeting--line-height: 24px;
+  --text-title: 32px;
+  --text-title--line-height: 37px;
+  --text-panel-title: 22px;
+  --text-panel-title--line-height: 28px;
+  --text-field: 18px;
+  --text-field--line-height: 24px;
+  --text-field-label: 16px;
+  --text-field-label--line-height: 21px;
+  --text-card-title: 18px;
+  --text-card-title--line-height: 20px;
+  --text-section: 18px;
+  --text-section--line-height: 24px;
+  --text-stat-label: 20px;
+  --text-stat-label--line-height: 24px;
+  --text-stat-value: 40px;
+  --text-stat-value--line-height: 46px;
+  --text-stat-delta: 22px;
+  --text-stat-delta--line-height: 26px;
+
+  /* Shell metrics */
+  --spacing-sidebar: 316px;
+  --spacing-header: 80px;
+  --spacing-panel: 391px;
+  --spacing-nav-item: 72px;
+  --spacing-nav-sub: 62px;
+  --spacing-nav-group: 305px;
+  --spacing-field: 60px;
+  --spacing-stat-card: 295px;
+
+  /* Declared in Figma as the effect "card 1" */
+  --shadow-card-1: 0 4px 40px -4px rgba(31, 31, 31, 0.04);
 }
 
 html,
@@ -20,8 +73,28 @@ body,
 
 body {
   background-color: var(--color-canvas);
-  color: #1f2430;
-  font-family:
-    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+/* The mockup draws a 9px accent scrollbar inside the content area. */
+* {
+  scrollbar-color: var(--color-accent) rgba(31, 31, 31, 0.06);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgba(31, 31, 31, 0.06);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-accent);
+  border-radius: 9999px;
 }
