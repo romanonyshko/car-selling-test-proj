@@ -46,13 +46,14 @@ must live in the APIs, not only in the UI.
 `pages → features → components` direction. Either accept it as an exception
 for the app shell, or move the layout under `app/`.
 
-### 7. Error body format
+### 7. Error body on 500
 
-Nest's built-in exceptions return `{ message, error, statusCode }`; the
-contract (`ApiErrorBody`) only defines `{ message }`, and the web app reads
-only `message`. Options: a global Nest `ExceptionFilter` that returns
-`{ message }`, or extend `ApiErrorBody` and make Express return the same
-three fields. To be decided together with auth in Express.
+Resolved for 400/401/404: `ApiErrorBody` is `{ message, statusCode, error? }`
+and both APIs return it, unknown routes included.
+
+Still open: on an unhandled 500 Nest returns `{ statusCode, message }` without
+`error`, Express always sends `error`. Either accept it (`error` is optional
+in the contract) or add a global Nest `ExceptionFilter`.
 
 ### 8. Refresh tokens
 
@@ -65,8 +66,9 @@ table, a `/auth/refresh` route in both APIs and refresh logic on the web.
 ## Technical debt
 
 - No tests — no runner is set up.
-- **Login works only with the Nest backend** — with Express selected,
-  `/auth/*` returns 404 and the user lands on `/login` (roadmap step 1).
+- **No registration, password change or reset** — the only user comes from
+  the seed.
+- **No rate limiting on `/auth/login`** — password guessing is unthrottled.
 - **Sidebar sections without routes** — the links lead to a 404:
   In stock, Orders, Price list, Documents, Warranty claims, Support,
   and also Updates, Posts, Media under Dashboard. This is deliberate: the
