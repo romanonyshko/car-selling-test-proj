@@ -106,9 +106,11 @@ that owns them — see Q1.
 - Dashboard: two columns `527px` + rest, gap 68; stat cards 3-up with gap 20;
   chart panel padding 20, body 477 tall, fixed 0…50k scale.
 - Scrollbars are 9px with an accent thumb (`index.css`), as in the mockup.
-- Breakpoints: the mockup has a single desktop width, so the only responsive
-  rules in the code are the ones that already existed (`sm:` / `lg:` / `xl:`
-  on the dashboard grids).
+- Breakpoints: the mockup has a single desktop width. The dashboard grids use
+  container queries (`@container` + `@min-[…]:`), not viewport breakpoints,
+  because the content width also depends on the sidebar: two columns from a
+  1520px container (527 + 68 + three 295px stat cards + gaps), otherwise
+  stacked; stat cards 3-up from 925px, 2-up from 610px, else 1-up.
 
 ## Component conventions
 
@@ -144,8 +146,12 @@ Not implemented, because the data and the logic for it do not exist yet:
   validation).
 - **Sidebar badge** — the mockup shows a blue `3` pill next to "Updates".
 - **Collapsed states** — the sidebar and the filter panel each have a
-  collapse toggle; the collapsed frame itself is not in the mockup, and the
-  toggle in the code is a button with no handler.
+  collapse toggle; the collapsed frame itself is not in the mockup.
+  Sidebar (our own decision): collapsed = icons only, width
+  `--spacing-sidebar-collapsed` (80px); the logo, chevrons and sub-items are
+  hidden, labels stay as `sr-only` + `title`. The state is local
+  (`useState`) and is not persisted. The filter panel collapse is not
+  implemented yet.
 - **Logo** — in Figma it is a raster image 98x48 reading "Auto Detail"
   (node `2:111`). The code renders an "Auto Lincoln" wordmark in the same
   98x48 slot. Needs a decision: export the asset, or keep a wordmark.

@@ -1,4 +1,5 @@
 import { Fragment } from 'react'
+import { cn } from '@/lib/cn'
 import type { NewsItem, RequestCounts, ReviewItem } from '../api/mock-data'
 
 const MONTHS = [
@@ -35,12 +36,14 @@ interface UpdatesCardProps {
   latestNews: NewsItem
   latestReview: ReviewItem
   requests: RequestCounts
+  className?: string
 }
 
 export function UpdatesCard({
   latestNews,
   latestReview,
   requests,
+  className,
 }: UpdatesCardProps) {
   const requestItems = [
     { label: 'All', count: requests.all },
@@ -51,7 +54,12 @@ export function UpdatesCard({
   ]
 
   return (
-    <section className="bg-surface p-5 text-section shadow-card-1">
+    <section
+      className={cn(
+        'flex flex-col bg-surface p-5 text-section shadow-card-1',
+        className,
+      )}
+    >
       <h2 className="mb-8 text-section font-medium text-accent">Updates</h2>
 
       <div className="border-b border-line pb-4">
@@ -80,7 +88,7 @@ export function UpdatesCard({
         <p className="mt-1 leading-relaxed text-ink">{latestReview.text}</p>
       </div>
 
-      <div className="pt-4">
+      <div className="mt-auto pt-4">
         <h3 className="mb-3 font-bold text-ink">Requests</h3>
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-ink">
           {requestItems.map((item, index) => (

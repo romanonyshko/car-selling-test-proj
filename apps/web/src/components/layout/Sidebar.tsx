@@ -1,5 +1,5 @@
 import { cn } from '@/lib/cn'
-import type { ComponentType } from 'react'
+import { useState, type ComponentType } from 'react'
 import { NavLink } from 'react-router-dom'
 
 /* Icons are drawn to the mockup's 21px nav slot (material-symbols style). */
@@ -113,27 +113,41 @@ const navigation: NavItem[] = [
   { to: '/warranty-claims', label: 'Warranty claims', icon: WarrantyIcon },
 ]
 
-const itemClass = 'relative flex w-nav-group items-center text-nav transition-colors'
+const itemClass = 'relative flex items-center text-nav transition-colors'
 
 export function Sidebar() {
+  const [collapsed, setCollapsed] = useState(false)
+
   return (
-    <aside className="flex w-sidebar shrink-0 flex-col border-r border-line bg-surface">
+    <aside
+      className={cn(
+        'flex shrink-0 flex-col overflow-hidden border-r border-line bg-surface transition-[width]',
+        collapsed ? 'w-sidebar-collapsed' : 'w-sidebar',
+      )}
+    >
       <div className="relative h-[118px] shrink-0">
-        <span className="absolute top-[26px] left-[38px] flex h-[48px] w-[98px] flex-col justify-center">
-          <span className="font-display text-[19px] leading-none font-medium text-accent">
-            Auto
+        {!collapsed && (
+          <span className="absolute top-[26px] left-[38px] flex h-[48px] w-[98px] flex-col justify-center">
+            <span className="font-display text-[19px] leading-none font-medium text-accent">
+              Auto
+            </span>
+            <span className="font-display text-[14px] leading-tight tracking-[0.18em] text-ink-muted">
+              LINCOLN
+            </span>
           </span>
-          <span className="font-display text-[14px] leading-tight tracking-[0.18em] text-ink-muted">
-            LINCOLN
-          </span>
-        </span>
+        )}
 
         <button
           type="button"
-          aria-label="Collapse menu"
-          className="absolute top-[36px] right-[19px] grid size-[28px] place-items-center rounded-full border border-line text-ink-muted transition-colors hover:text-ink"
+          onClick={() => setCollapsed((c) => !c)}
+          aria-label={collapsed ? 'Expand menu' : 'Collapse menu'}
+          aria-expanded={!collapsed}
+          className={cn(
+            'absolute top-[36px] grid size-[28px] place-items-center rounded-full border border-line text-ink-muted transition-colors hover:text-ink',
+            collapsed ? 'left-1/2 -translate-x-1/2' : 'right-[19px]',
+          )}
         >
-          <span className="size-[12px]">
+          <span className={cn('size-[12px] transition-transform', collapsed && 'rotate-180')}>
             <ChevronLeftIcon />
           </span>
         </button>
@@ -145,11 +159,12 @@ export function Sidebar() {
 
           return (
             <div key={item.to}>
-              <NavLink to={item.to} end={item.to === '/'}>
+              <NavLink to={item.to} end={item.to === '/'} title={item.label}>
                 {({ isActive }) => (
                   <span
                     className={cn(
                       itemClass,
+                      !collapsed && 'w-nav-group',
                       'h-nav-item pl-[21px] font-bold',
                       isActive
                         ? 'bg-accent-soft text-accent'
@@ -159,8 +174,10 @@ export function Sidebar() {
                     <span className="size-[21px] shrink-0">
                       <Icon />
                     </span>
-                    <span className="ml-[19px]">{item.label}</span>
-                    {item.children && (
+                    <span className={collapsed ? 'sr-only' : 'ml-[19px] whitespace-nowrap'}>
+                      {item.label}
+                    </span>
+                    {item.children && !collapsed && (
                       <span className="mr-[19px] ml-auto size-[24px] opacity-60">
                         <ChevronDownIcon />
                       </span>
@@ -175,24 +192,25 @@ export function Sidebar() {
                 )}
               </NavLink>
 
-              {item.children?.map((child) => (
-                <NavLink
-                  key={child.to}
-                  to={child.to}
-                  end={child.to === '/'}
-                  className={({ isActive }) =>
-                    cn(
-                      itemClass,
-                      'h-nav-sub rounded-l-[14px] pl-[80px]',
-                      isActive
-                        ? 'font-bold text-ink'
-                        : 'font-medium text-ink-muted hover:text-ink',
-                    )
-                  }
-                >
-                  {child.label}
-                </NavLink>
-              ))}
+              {!collapsed &&
+                item.children?.map((child) => (
+                  <NavLink
+                    key={child.to}
+                    to={child.to}
+                    end={child.to === '/'}
+                    className={({ isActive }) =>
+                      cn(
+                        itemClass,
+                        'h-nav-sub w-nav-group rounded-l-[14px] pl-[80px]',
+                        isActive
+                          ? 'font-bold text-ink'
+                          : 'font-medium text-ink-muted hover:text-ink',
+                      )
+                    }
+                  >
+                    {child.label}
+                  </NavLink>
+                ))}
             </div>
           )
         })}
@@ -200,10 +218,13 @@ export function Sidebar() {
 
       <NavLink
         to="/support"
+        title="Support"
         className={({ isActive }) =>
           cn(
             itemClass,
-            'mt-auto mb-[30px] ml-[9px] h-nav-item pl-[28px] font-bold',
+            // Collapsed: same 21px inset as the nav items, so all icons share one axis.
+            collapsed ? 'pl-[21px]' : 'w-nav-group pl-[28px]',
+            'mt-auto mb-[30px] ml-[9px] h-nav-item font-bold',
             isActive ? 'text-accent' : 'text-ink hover:text-accent',
           )
         }
@@ -211,7 +232,7 @@ export function Sidebar() {
         <span className="size-[21px] shrink-0">
           <SupportIcon />
         </span>
-        <span className="ml-[24px]">Support</span>
+        <span className={collapsed ? 'sr-only' : 'ml-[24px] whitespace-nowrap'}>Support</span>
       </NavLink>
     </aside>
   )

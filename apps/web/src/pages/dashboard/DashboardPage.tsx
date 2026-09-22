@@ -21,23 +21,30 @@ export function DashboardPage() {
       )}
 
       {!isLoading && data && (
-        <div className="grid gap-x-[68px] gap-y-5 xl:grid-cols-[527px_minmax(0,1fr)]">
-          <div className="flex flex-col gap-5">
-            <GlanceCard glance={data.glance} />
-            <UpdatesCard
-              latestNews={data.latestNews}
-              latestReview={data.latestReview}
-              requests={data.requests}
-            />
-          </div>
+        // Breakpoints are container queries: the available width depends on
+        // the sidebar, not only on the viewport.
+        // 1520 = 527 + 68 + 3 × stat-card (295) + 2 × 20 — two columns only
+        // when the stat cards still fit 3-up; 925 / 610 = 3-up / 2-up.
+        <div className="@container">
+          <div className="grid gap-x-[68px] gap-y-5 @min-[1520px]:grid-cols-[527px_minmax(0,1fr)]">
+            <div className="flex flex-col gap-5">
+              <GlanceCard glance={data.glance} />
+              <UpdatesCard
+                className="flex-1"
+                latestNews={data.latestNews}
+                latestReview={data.latestReview}
+                requests={data.requests}
+              />
+            </div>
 
-          <div className="flex flex-col gap-5">
-            <ActivityChart activity={data.activity} />
+            <div className="@container flex flex-col gap-5">
+              <ActivityChart activity={data.activity} />
 
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {data.stats.map((stat) => (
-                <StatCardItem key={stat.id} stat={stat} />
-              ))}
+              <div className="grid gap-5 @min-[610px]:grid-cols-2 @min-[925px]:grid-cols-3">
+                {data.stats.map((stat) => (
+                  <StatCardItem key={stat.id} stat={stat} />
+                ))}
+              </div>
             </div>
           </div>
         </div>
