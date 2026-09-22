@@ -38,11 +38,12 @@ and consumed by the apps. After changing them, run `npm run build:packages`
 
 | Command | What it does |
 | --- | --- |
-| `npm run dev` | builds packages, then web + both APIs |
+| `npm run dev` | `predev` (`db:up → build:packages → db:deploy → db:seed`), then web + both APIs |
 | `npm run build` | builds every workspace |
 | `npm run lint` | oxlint over the whole repo |
 | `npm run db:up` / `db:down` | start / stop Postgres in Docker |
 | `npm run db:migrate` | `prisma migrate dev` |
+| `npm run db:deploy` | `prisma migrate deploy` (applies committed migrations) |
 | `npm run db:generate` | regenerate the Prisma client |
 | `npm run db:seed` | create the admin user from `SEED_ADMIN_*` |
 | `npm run dev -w @auto-lincoln/<name>` | run one workspace |
