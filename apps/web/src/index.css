@@ -53,6 +53,7 @@
 
   /* Shell metrics */
   --spacing-sidebar: 316px;
+  --spacing-sidebar-collapsed: 80px;
   --spacing-header: 80px;
   --spacing-panel: 391px;
   --spacing-nav-item: 72px;
