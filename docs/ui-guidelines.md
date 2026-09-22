@@ -1,294 +1,213 @@
 # UI
 
-**[changed]** A mockup now exists, so this file no longer describes only the
-code. It holds two parallel sets of values:
+The mockup is now **implemented in the code**: `@theme` holds the mockup's
+tokens, and the shell, the base components and the dashboard are built from
+them. This file therefore describes one set of values again — what
+`apps/web/src` renders — and keeps a short list of what is still only in
+Figma.
 
-- **CODE** — what `apps/web/src` actually renders today.
-- **MOCKUP** — the target taken from Figma. Nothing marked MOCKUP is
-  implemented yet.
-
-Never read a MOCKUP value as the current state. Where the two differ, the
-difference is spelled out.
-
-Source of the MOCKUP column: Figma file `qVzu3KVGXpgPrWF254NRSo`
-("Auto Lincoln analysis copy"), node `2:24` — a section with two 1920x1206
-screens, `2:25` "Auto parts catalogue" and `2:206` "Dashboard".
-Read on 2026-09-20.
+Source of the mockup: Figma file `qVzu3KVGXpgPrWF254NRSo`
+("Auto Lincoln analysis copy"), node `2:24` — two 1920x1206 screens,
+`2:25` "Auto parts catalogue" and `2:206` "Dashboard".
+Read on 2026-09-20, re-verified against the file in the same revision.
 
 **Declared vs observed.** A token is *declared* when it exists in Figma as a
-variable or a style; it is *observed* when it was read off a layer's
-properties and has no variable behind it. Node `2:24` declares exactly two
-things (see below) — every other mockup value in this file is observed and
-may change when the design is tokenised.
+variable or a style; it is *observed* when it was read off a layer. Node
+`2:24` declares exactly two things; every other value below is observed and
+may change when the design is tokenised in Figma.
 
 ## Tokens
 
-### Declared in Figma **[new]**
+### Declared in Figma
 
-| Figma name | Value | Note |
+| Figma name | Value | In the code |
 | --- | --- | --- |
-| `black / 50` | `#1F1F1F` | the only declared colour variable |
-| `card 1` | drop shadow, `#1F1F1F0A`, offset `0 4`, blur `40`, spread `-4` | card elevation |
+| `black / 50` | `#1F1F1F` | `--color-black-50` |
+| `card 1` | drop shadow, `#1F1F1F0A`, offset `0 4`, blur `40`, spread `-4` | `--shadow-card-1` |
 
-CSS equivalent of `card 1`: `box-shadow: 0 4px 40px -4px rgba(31,31,31,0.04)`.
+### Colours — `@theme` in `apps/web/src/index.css`
 
-### In the code today **[unchanged]**
-
-From `@theme` in `apps/web/src/index.css` — Tailwind v4 generates utilities out of
-them (`bg-brand-500`, `border-line`, …):
-
-| Token | Value | Where it is used |
+| Token | Value | Used for |
 | --- | --- | --- |
-| `--color-brand-50` | `#eef6ff` | background of the active menu item |
-| `--color-brand-100` | `#d9ebff` | input focus ring |
-| `--color-brand-500` | `#2f80ed` | primary button, logo, active state |
-| `--color-brand-600` | `#1f6fd8` | primary button hover, links |
-| `--color-brand-700` | `#1a5cb4` | reserved |
-| `--color-surface` | `#ffffff` | cards, sidebar, topbar |
-| `--color-canvas` | `#f5f6f8` | page background (`body`) |
-| `--color-line` | `#e6e8ec` | all borders and dividers |
+| `--color-accent` | `#177cca` | active nav item, indicator bar, field label, header greeting, links, chart line |
+| `--color-accent-soft` | `rgba(23,124,202,0.1)` | active nav item background |
+| `--color-ink` | `#353535` | body text, page title, card title, current breadcrumb item |
+| `--color-ink-muted` | `rgba(53,53,53,0.5)` | placeholder, parent breadcrumb, inactive sub-nav item |
+| `--color-ink-subtle` | `#979797` | stat-card label |
+| `--color-positive` | `#45b73b` | positive delta |
+| `--color-surface` | `#ffffff` | header, sidebar, cards |
+| `--color-canvas` | `#f8fbfd` | content area background (`body`) |
+| `--color-field` | `#f8f8f8` | input / select background |
+| `--color-line` | `rgba(31,31,31,0.1)` | all borders and dividers |
+| `--color-black-50` | `#1f1f1f` | the declared Figma colour |
+| `--color-danger` | `#d14343` | **not in the mockup** — error text, negative delta |
 
-Text: `#1f2430` (`body`). For secondary text the components use
-`text-slate-500` / `text-slate-600`.
+The previous `--color-brand-*` scale and the `text-slate-*` secondary text
+are gone; nothing in `src/` references them any more.
 
-Font: `Inter`, then the system stack. The font file is not loaded —
-the system font is rendered for now.
+### Typography
 
-### Mockup colours — observed **[new]**
+Two families, loaded from Google Fonts in `apps/web/index.html`:
+`--font-sans` = Karla (400/500/700), `--font-display` = DM Sans (400/500).
+`Inter` is no longer declared.
 
-Not in `@theme` yet. No name in Figma; the names below are proposed, not
-declared.
+Each role from the mockup is a `--text-*` token with its line height, so the
+sizes are not typed into JSX:
 
-| Proposed token | Value | Used for |
+| Token | Size / line-height | Family | Used for |
+| --- | --- | --- | --- |
+| `text-crumb` | 14 / 24 | Karla | breadcrumb, small secondary text |
+| `text-nav` | 19 / 30 | Karla Bold / Medium | sidebar nav and sub-nav labels |
+| `text-greeting` | 18 / 24 | Karla Medium | header greeting |
+| `text-title` | 32 / 37 | Karla Medium | page title |
+| `text-section` | 18 / 24 | Karla | card headings and card body |
+| `text-field` | 18 / 24 | Karla | input / select value and placeholder |
+| `text-field-label` | 16 / 21 | DM Sans Medium | input / select label |
+| `text-stat-label` | 20 / 24 | Karla | stat-card label |
+| `text-stat-value` | 40 / 46 | Karla Bold | stat-card value |
+| `text-stat-delta` | 22 / 26 | Karla Bold | stat-card delta |
+| `text-panel-title` | 22 / 28 | Karla Medium | filter panel title — **declared, not used yet** |
+| `text-card-title` | 18 / 20 | DM Sans Medium | catalogue card title — **declared, not used yet** |
+
+`text-nav` is the mockup's 18.866px rounded to 19 — see Q2.
+
+### Shell metrics
+
+`--spacing-*` tokens, so `w-sidebar`, `h-header`, `h-field` … are real
+utilities:
+
+| Token | Value | Used for |
 | --- | --- | --- |
-| accent | `#177cca` | active nav item text, active-item indicator bar, dropdown field label, header greeting "Hello, Martin" |
-| accent 10% | `rgba(23,124,202,0.1)` | active nav item background (= accent at 10%) |
-| text primary | `#353535` | page title, card title, current breadcrumb item, active sub-nav item, stat value |
-| text secondary | `rgba(53,53,53,0.5)` | field placeholder, parent breadcrumb, inactive sub-nav items (= text primary at 50%) |
-| text muted | `#979797` | stat-card label |
-| positive | `#45b73b` | positive delta ("2%", "8%") |
-| canvas | `#f8fbfd` | content area background (node `2:123` "content") |
-| field bg | `#f8f8f8` | dropdown field background |
-| line | `rgba(31,31,31,0.1)` | 1px dropdown field border, dividers |
-| surface | `#ffffff` | header, sidebar, catalogue card, stat card |
+| `--spacing-sidebar` | 316px | sidebar width |
+| `--spacing-header` | 80px | header height |
+| `--spacing-nav-item` | 72px | nav item height (raw 71.925) |
+| `--spacing-nav-sub` | 62px | sub-item height (raw 62.493) |
+| `--spacing-nav-group` | 305px | inner nav group width (raw 305.388) |
+| `--spacing-field` | 60px | control height (input, select, button) |
+| `--spacing-stat-card` | 295px | stat-card minimum width |
+| `--spacing-panel` | 391px | filter panel — **declared, not used yet** |
 
-Deltas against the code, for whoever migrates `@theme`:
-
-- accent: CODE `#2f80ed` → MOCKUP `#177cca`.
-- canvas: CODE `#f5f6f8` → MOCKUP `#f8fbfd`.
-- body text: CODE `#1f2430` → MOCKUP `#353535`.
-- line: CODE `#e6e8ec` (opaque) → MOCKUP `rgba(31,31,31,0.1)` (alpha).
-- `--color-brand-50/100/700` and the `text-slate-*` secondary text have no
-  counterpart in the mockup; secondary text there is the primary colour at
-  50% alpha.
-- `positive` (`#45b73b`) and `text muted` (`#979797`) are new — no code token.
-
-### Typography — observed **[new]**
-
-The mockup uses **two** families, neither of which is loaded today.
-CODE: `'Inter'` + system stack, no font file. MOCKUP: Karla + DM Sans.
-
-Karla:
-
-| Weight / size / line-height | Used for |
-| --- | --- |
-| Bold 18.866px / normal | sidebar nav item and sub-item labels (see Q2 — possibly 16px) |
-| Medium 32px / normal | page title ("Auto parts catalogue", "Dashboard") |
-| Medium 18px / 24px | header greeting |
-| Regular 14px / 24px | breadcrumb |
-| Regular 18px / 24px | dropdown field value / placeholder |
-| Regular 20px / normal | stat-card label |
-| Bold 40px / normal | stat-card value |
-| Bold 22px / normal | stat-card delta |
-
-DM Sans:
-
-| Weight / size / line-height | Used for |
-| --- | --- |
-| Medium 18px / 20px | catalogue card title (`font-variation-settings: 'opsz' 14`) |
-| Medium 16px / normal | dropdown field label |
-
-No text style is declared in Figma for any of these — all observed.
+One-off numbers straight from the mockup (content padding 34, breadcrumb →
+title gap 24, title → content gap 37, dashboard column 527 + gap 68, card
+height 177, chart body 477) are written as arbitrary values in the component
+that owns them — see Q1.
 
 ## Layout
 
-### In the code today **[unchanged]**
-
 - `AppLayout` — full-height flex; `html, body, #root { height: 100% }`.
-- Sidebar: `w-60` wide (240px), light, fixed, scrolling inside the
-  navigation. Collapsing is not implemented.
-- Topbar: `h-16` tall, content aligned to the right.
-- Content: `p-6`, its own vertical scroll.
-
-### Mockup layout — observed **[new]**
-
-Screen frame 1920x1206. Breakpoints: the mockup shows a single desktop
-width, so no breakpoint set can be derived from it.
-
-Shell:
-
-| Region | CODE | MOCKUP |
-| --- | --- | --- |
-| Sidebar width | 240 (`w-60`) | 316, full height, white, 1px right divider |
-| Header height | 64 (`h-16`) | 80, white, 1px bottom divider |
-| Content padding | 24 (`p-6`) | 34 left (title at x=350, content frame at x=316) |
-| Content background | `--color-canvas` `#f5f6f8` | `#f8fbfd` |
-| Right filter panel | none | 391 wide, white, 1px left divider |
-
-Sidebar (`menu tablet`, node `2:26`) — raw Figma values; the "possibly"
-column is an **unconfirmed** inference, see Q2:
-
-| Item | Raw Figma | Possibly intended (unconfirmed) |
-| --- | --- | --- |
-| nav item height | 71.925 | 61 |
-| sub-item height | 62.493 | 53 |
-| inner nav group width | 305.388 | 259 |
-| active indicator bar width | 4.716 | 4 |
-| sub-item corner radius (left corners) | 14.149 | 12 |
-| nav icon (square) | 21.224 | 18 |
-| trailing chevron frame (square) | 29.478 | 25 |
-| nav label font size | 18.866 | 16 |
-
-Other sidebar facts (not affected by the scaling question): logo 98x48 at
-(38,26); collapse toggle 28.3x28.3 top-right; "Support" row pinned near the
-bottom at y=1105; nav icon at x=21; sub-item label x-offset 80.18; active
-item background `rgba(23,124,202,0.1)` with the indicator bar at the item's
-right edge, full item height.
-
-Header (node `2:162`): content right-aligned, right offset 40, top 27; cart
-icon 24 square; avatar / chevron 25.
-
-Content (node `2:123`): breadcrumb at y=100 — flex, gap 8, 8x8 dot
-separators; page title at y=148.
-
-Catalogue grid: 3 columns, card 352x209, column gap 32, row gap 30.
-
-Right filter panel (node `2:172`): panel title "Find your car parts" at
-(80,40); collapse toggle 32x32 at (32,39); dropdown blocks at y=111, 244,
-377.
-
-Dashboard: stat card 295x177, grid pitch 315 horizontal / 194 vertical;
-chart panel (node `2:324`) 925x562, padding 20, gridlines every 80px,
-y-axis labels 0..50k.
+- Sidebar: `w-sidebar` (316), white, 1px right divider, logo slot 98x48 at
+  (38,26), collapse toggle 28x28 top-right, nav group inset 9px from the
+  left, "Support" pinned to the bottom (`mt-auto`).
+- Header: `h-header` (80), white, 1px bottom divider, content right-aligned
+  with a 40px right offset, gap 15.
+- Content: `bg-canvas`, `px-[34px] pt-5 pb-[34px]`, its own vertical scroll.
+- Page header (`components/ui/PageHeader`): breadcrumb → 24 → title → 37 →
+  content, matching y=100 / y=148 / y=222 in the mockup.
+- Dashboard: two columns `527px` + rest, gap 68; stat cards 3-up with gap 20;
+  chart panel padding 20, body 477 tall, fixed 0…50k scale.
+- Scrollbars are 9px with an accent thumb (`index.css`), as in the mockup.
+- Breakpoints: the mockup has a single desktop width, so the only responsive
+  rules in the code are the ones that already existed (`sm:` / `lg:` / `xl:`
+  on the dashboard grids).
 
 ## Component conventions
 
-### In the code today **[unchanged]**
-
-- Card: `rounded-2xl border border-line bg-white`.
-- Control (button, input, select): `h-10` tall, `rounded-lg`.
-- Focus: `focus:border-brand-500 focus:ring-2 focus:ring-brand-100`.
+- **Card** — `bg-surface shadow-card-1`, **no border, no radius**, padding 20.
+- **Control** (button, input, select) — `h-field` (60), no radius,
+  background `--color-field`, 1px `--color-line` border.
+- **Field label** — DM Sans Medium 16 in the accent colour, 12px above the
+  field.
+- **Focus** — `focus:border-accent` (the mockup draws no focus state; this is
+  the code's own decision).
 - Classes are joined with `cn()` from `apps/web/src/lib/cn.ts`.
 - Component variants are an object map `Record<Variant, string>`
   (see `components/ui/Button.tsx`), not chained ternaries.
+- Nav item states: default / active (accent background at 10% + accent label
+  + 5px indicator bar at the item's right edge). Hover is the code's own
+  addition — the mockup draws no hover, focus, disabled or loading state.
 
-**[changed]** "Spacing is a multiple of 4 — Tailwind utilities only, no
-arbitrary values" used to live in this list. It is still the rule in force
-for the code, but the mockup contradicts it — the rule is parked in Q1 below
-until the project owner decides. Do not silently break it and do not
-silently drop it.
+## Still only in the mockup
 
-### Mockup components — observed **[new]**
+Not implemented, because the data and the logic for it do not exist yet:
 
-Every component below is described as it appears in the mockup; none of it is
-implemented.
-
-**Catalogue card** (node `2:150`) — white, **no border**, **no
-border-radius**, `overflow: hidden`, shadow = declared effect `card 1`.
-Structure: image band 147 tall → 1px full-width divider → body with padding
-20 horizontal / 21 vertical → title (DM Sans Medium 18/20, `#353535`), inner
-text width 312. Differs from the CODE card (`rounded-2xl border border-line`,
-no shadow) on all three of radius, border and elevation.
-
-**Dropdown field** (block node `2:175`) — label → 12px gap → field; blocks
-stacked with gap 4; a hidden "Error text" node (18 tall) sits below each
-field, so an error slot must be reserved. Field: 327x60, padding 20
-horizontal / 18 vertical, background `#f8f8f8`, 1px border
-`rgba(31,31,31,0.1)`, **no radius**, trailing chevron 24 square. Label is DM
-Sans Medium 16 in the accent colour `#177cca`; value / placeholder is Karla
-Regular 18/24, placeholder at `rgba(53,53,53,0.5)`.
-CODE control is `h-10` + `rounded-lg` — both differ.
-
-**Stat card** (node `2:361`) — 295x177, white, padding 20, flex column, gap
-32. Label row → value row (value + gap 15 + arrow + delta).
-
-**Variants and states seen in the mockup:**
-
-- Nav item: default / active (accent background at 10% + accent label +
-  indicator bar). No hover, focus or disabled state is drawn.
-- Sub-nav item: active (`#353535`) / inactive (`rgba(53,53,53,0.5)`).
-- Breadcrumb item: parent (`rgba(53,53,53,0.5)`) / current (`#353535`).
-- Dropdown field: placeholder / filled; error is present as a hidden node
-  only, so its styling is unknown.
-- Stat delta: positive (`#45b73b`) only — no negative variant drawn.
-- Sidebar and filter panel each have a collapse toggle, but the collapsed
-  state itself is not in this frame.
-
-No focus, hover, disabled or loading state exists anywhere in the mockup.
-Those stay the code's own decision.
+- **Catalogue grid** — 3 columns, card 352x209, column gap 32, row gap 30;
+  card = image band 147 → 1px divider → body padding 20/21 → title
+  (`text-card-title`).
+- **Right filter panel** (node `2:172`) — 391 wide, 1px left divider, title
+  at (80,40), collapse toggle 32x32 at (32,39), dropdown blocks at y=111 /
+  244 / 377, each 327 wide.
+- **Grid / list toggle** (node `2:128`) — two 24px icons, gap 16, aligned
+  with the page title at its right edge. `PageHeader` already takes an
+  `actions` slot for it.
+- **Dropdown error slot** — each dropdown block has a hidden "Error text"
+  node 18 tall; the slot is not reserved in `Select` yet (belongs with form
+  validation).
+- **Sidebar badge** — the mockup shows a blue `3` pill next to "Updates".
+- **Collapsed states** — the sidebar and the filter panel each have a
+  collapse toggle; the collapsed frame itself is not in the mockup, and the
+  toggle in the code is a button with no handler.
+- **Logo** — in Figma it is a raster image 98x48 reading "Auto Detail"
+  (node `2:111`). The code renders an "Auto Lincoln" wordmark in the same
+  98x48 slot. Needs a decision: export the asset, or keep a wordmark.
+- **Nav icons** — the mockup uses `material-symbols`; the code draws its own
+  inline SVGs of the same 21px size.
 
 ## Rules
 
-- **[unchanged]** New colours go into `@theme`, they are not hardcoded in JSX.
-  This applies to the mockup colours too: when they land, they land as tokens.
-- **[unchanged]** Shared visual elements live in `components/ui/`, they are not
-  duplicated across features.
-- **[new]** Do not mix CODE and MOCKUP values in one component. Migrate a
-  component to the mockup wholesale, or leave it on the current tokens.
-- **[new]** When you write a mockup value into the code, move its row from the
-  MOCKUP table into the code table in this file in the same change.
-- **[new]** Observed values are provisional. If a token later shows up as a
-  Figma variable, the declared value wins.
-- **[new]** Sidebar numbers must not be typed straight from the raw Figma
-  values until Q2 is answered.
+- New colours go into `@theme`, they are not hardcoded in JSX.
+- Type sizes go into `@theme` as `--text-*` roles with a line height; JSX
+  uses the role, not a px value.
+- Shared visual elements live in `components/ui/`, they are not duplicated
+  across features.
+- Observed values are provisional. If a token later shows up as a Figma
+  variable, the declared value wins.
+- When a value that is listed under "Still only in the mockup" lands in the
+  code, move it into the sections above in the same change.
 
 ## Open questions
 
-Recorded verbatim, unanswered. Do not resolve them in code without the
+**Q1 — the 4px spacing grid.** The old rule "spacing is a multiple of 4,
+Tailwind utilities only, no arbitrary values" is incompatible with the mockup
+(py-21, py-18, row gap 30, item height 71.925). **What was done:** the rule
+was dropped. Repeated values became `--spacing-*` / `--text-*` tokens;
+genuinely one-off numbers are arbitrary values in the component that owns
+them. Needs the owner's confirmation.
+
+**Q2 — the ~1.1791 sidebar scale.** Every sidebar dimension divides by
+~1.1791 into a round number (18.866→16, 71.925→61, 305.388→259; 8 of 8),
+which suggests the group was scaled up in Figma. **What was done:** the
+mockup is reproduced as it renders — the raw values rounded to whole pixels
+(19 / 72 / 62 / 305 / 21 / 5), not the divided ones, so the result matches
+the Figma screenshot. If the owner confirms the scaling was accidental, four
+tokens change: `--text-nav`, `--spacing-nav-item`, `--spacing-nav-sub`,
+`--spacing-nav-group`.
+
+Both answers are written into the code by the implementer, not by the
 project owner. Related: `docs/open-questions.md`.
-
-**Q1.** The existing rule "Spacing is a multiple of 4 — Tailwind utilities
-only, no arbitrary values" is incompatible with the mockup, which uses py-21,
-py-18, row gap 30, nav item height 71.925, sub-item height 62.493. Drop the
-4px rule, or round the mockup values to the grid?
-
-**Q2.** Every sidebar dimension divides by ~1.1791 into a round number
-(18.866→16, 21.224→18, 29.478→25, 4.716→4, 14.149→12, 62.493→53,
-71.925→61, 305.388→259; 8 of 8 match). This suggests the sidebar group was
-scaled up in Figma and the intended values are the divided ones. This is an
-arithmetic inference by the main agent, NOT a fact reported by Figma. Should
-the divided values be used?
 
 ## Changed in this revision
 
-Revision date 2026-09-20. Source: Figma `qVzu3KVGXpgPrWF254NRSo`, node `2:24`.
+Revision date 2026-09-20 (second pass). The mockup was implemented.
 
-- **[changed]** Intro: the "no mockup exists, code only" premise is gone.
-  The file now carries CODE and MOCKUP values side by side, with the source
-  cited and a declared/observed convention defined.
-- **[new]** "Tokens → Declared in Figma": the two declared items on node
-  `2:24` — colour `black / 50` `#1F1F1F` and effect `card 1`.
-- **[new]** "Tokens → Mockup colours — observed": 10 proposed colour tokens
-  plus an explicit delta list against `@theme`.
-- **[new]** "Tokens → Typography — observed": Karla (8 roles) and DM Sans
-  (2 roles). The code still declares only `Inter` and loads no font file.
-- **[new]** "Layout → Mockup layout — observed": shell comparison table,
-  sidebar dimensions with raw and unconfirmed-intended values, header,
-  content, catalogue grid, filter panel, dashboard.
-- **[new]** "Component conventions → Mockup components — observed":
-  catalogue card, dropdown field, stat card, plus the variants and states
-  that actually appear in the frame.
-- **[changed]** The "spacing is a multiple of 4" bullet moved out of the
-  conventions list into a note pointing at Q1; it is still in force for the
-  code but is no longer stated as compatible with the mockup.
-- **[new]** "Rules": four rules about migrating mockup values.
-- **[new]** "Open questions": Q1 (4px spacing grid) and Q2 (~1.1791 sidebar
-  scaling), both unresolved.
-- **[unchanged]** Every pre-existing statement about the code — `@theme`
-  table, `Inter`, `AppLayout` / `w-60` / `h-16` / `p-6`, card and control
-  classes, focus ring, `cn()`, `Record<Variant, string>`, and the two
-  original rules — is kept verbatim.
-- Not covered by the mockup and therefore still undefined: breakpoints
-  (one desktop width only), hover / focus / disabled / loading states,
-  collapsed sidebar and collapsed filter panel, error-state styling,
-  negative stat delta.
+- **[changed]** The file no longer carries parallel CODE and MOCKUP columns —
+  the code *is* the mockup now, except for the list under "Still only in the
+  mockup".
+- **[new]** `@theme` rewritten: 12 colours, 2 font families, 12 `--text-*`
+  roles, 8 `--spacing-*` shell metrics, `--shadow-card-1`.
+- **[removed]** `--color-brand-50/100/500/600/700`, `--color-line` `#e6e8ec`,
+  `--color-canvas` `#f5f6f8`, body colour `#1f2430`, the `Inter` stack, and
+  every `text-slate-*` in `src/`.
+- **[new]** Karla and DM Sans are actually loaded (Google Fonts,
+  `apps/web/index.html`).
+- **[new]** `components/ui/PageHeader.tsx` — breadcrumb + title + `actions`
+  slot, shared by the dashboard and the catalogue.
+- **[changed]** Sidebar, Topbar, AppLayout, Button, Input, Select, Spinner,
+  ErrorState, BackendSwitcher, the four dashboard components and all four
+  pages are rebuilt on the new tokens.
+- **[new]** 9px accent scrollbar, as drawn in the mockup.
+- **[new]** Findings that the previous revision of this file missed: the
+  grid/list toggle (`2:128`), the content scrollbar (`2:124`), the logo being
+  a raster "Auto Detail" image, the `material-symbols` nav icons, and the
+  dashboard's "At a glance" / "Updates" cards and "Updates 3" badge.
+- **[changed]** Q1 and Q2 are now answered *in the code* and still flagged
+  for the owner.

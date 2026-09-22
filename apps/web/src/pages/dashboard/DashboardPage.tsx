@@ -1,4 +1,5 @@
 import { ErrorState } from '@/components/ui/ErrorState'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { Spinner } from '@/components/ui/Spinner'
 import { ActivityChart } from '@/features/dashboard/ui/ActivityChart'
 import { GlanceCard } from '@/features/dashboard/ui/GlanceCard'
@@ -11,10 +12,7 @@ export function DashboardPage() {
 
   return (
     <div>
-      <p className="text-xs text-slate-400">Dashboard &rsaquo; Home</p>
-      <h1 className="mt-1 mb-6 text-2xl font-semibold text-slate-900">
-        Dashboard
-      </h1>
+      <PageHeader crumbs={['Dashboard', 'Home']} title="Dashboard" />
 
       {isLoading && <Spinner />}
 
@@ -23,8 +21,8 @@ export function DashboardPage() {
       )}
 
       {!isLoading && data && (
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="space-y-6 lg:col-span-1">
+        <div className="grid gap-x-[68px] gap-y-5 xl:grid-cols-[527px_minmax(0,1fr)]">
+          <div className="flex flex-col gap-5">
             <GlanceCard glance={data.glance} />
             <UpdatesCard
               latestNews={data.latestNews}
@@ -33,10 +31,10 @@ export function DashboardPage() {
             />
           </div>
 
-          <div className="space-y-6 lg:col-span-2">
+          <div className="flex flex-col gap-5">
             <ActivityChart activity={data.activity} />
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {data.stats.map((stat) => (
                 <StatCardItem key={stat.id} stat={stat} />
               ))}

@@ -22,7 +22,7 @@ export function BackendSwitcher() {
     <div
       role="radiogroup"
       aria-label="Backend"
-      className="flex h-10 items-center gap-1 rounded-lg border border-line bg-canvas p-1"
+      className="flex h-[44px] items-center border border-line bg-field p-1"
     >
       {BACKENDS.map((option) => (
         <button
@@ -32,10 +32,10 @@ export function BackendSwitcher() {
           aria-checked={option === backend}
           onClick={() => handleSelect(option)}
           className={cn(
-            'h-full rounded-md px-3 text-sm font-medium transition-colors',
+            'h-full px-4 text-crumb font-medium transition-colors',
             option === backend
-              ? 'bg-white text-brand-600 shadow-sm'
-              : 'text-slate-500 hover:text-slate-700',
+              ? 'bg-surface text-accent shadow-card-1'
+              : 'text-ink-muted hover:text-ink',
           )}
         >
           {labels[option]}

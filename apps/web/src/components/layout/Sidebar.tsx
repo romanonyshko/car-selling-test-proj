@@ -1,16 +1,95 @@
 import { cn } from '@/lib/cn'
+import type { ComponentType } from 'react'
 import { NavLink } from 'react-router-dom'
+
+/* Icons are drawn to the mockup's 21px nav slot (material-symbols style). */
+
+function DashboardIcon() {
+  return (
+    <svg aria-hidden viewBox="0 0 24 24" fill="currentColor" className="size-full">
+      <path d="M3 3h8v8H3V3Zm2 2v4h4V5H5Zm8-2h8v5h-8V3Zm2 2v1h4V5h-4ZM3 13h8v8H3v-8Zm2 2v4h4v-4H5Zm8-5h8v11h-8V10Zm2 2v7h4v-7h-4Z" />
+    </svg>
+  )
+}
+
+function PartsIcon() {
+  return (
+    <svg aria-hidden viewBox="0 0 24 24" fill="currentColor" className="size-full">
+      <path d="M9.5 2a4.5 4.5 0 0 1 4.39 5.5l7.11 7.11-2.39 2.39-7.11-7.11A4.5 4.5 0 1 1 6.7 3.3l2.4 2.4-1.4 1.4-2.4-2.4A4.5 4.5 0 0 1 9.5 2Zm-4 15a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Zm0 1.8a.7.7 0 1 0 0 1.4.7.7 0 0 0 0-1.4Z" />
+    </svg>
+  )
+}
+
+function DocumentsIcon() {
+  return (
+    <svg aria-hidden viewBox="0 0 24 24" fill="currentColor" className="size-full">
+      <path d="M6 2h8l4 4v16H6V2Zm2 2v16h8V8h-4V4H8Zm2 8h6v2h-6v-2Zm0 4h6v2h-6v-2Z" />
+    </svg>
+  )
+}
+
+function WarrantyIcon() {
+  return (
+    <svg aria-hidden viewBox="0 0 24 24" fill="currentColor" className="size-full">
+      <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" />
+    </svg>
+  )
+}
+
+function SupportIcon() {
+  return (
+    <svg aria-hidden viewBox="0 0 24 24" fill="currentColor" className="size-full">
+      <path d="M4 3h16v18H4V3Zm2 2v14h12V5H6Zm2.6 2h6.8l-2.6 4.4V16h-1.6v-4.6L8.6 7Z" />
+    </svg>
+  )
+}
+
+function ChevronDownIcon() {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="size-full"
+    >
+      <path d="m7 10 5 5 5-5" />
+    </svg>
+  )
+}
+
+function ChevronLeftIcon() {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="size-full"
+    >
+      <path d="m14 6-6 6 6 6" />
+    </svg>
+  )
+}
 
 interface NavItem {
   to: string
   label: string
-  children?: NavItem[]
+  icon: ComponentType
+  children?: { to: string; label: string }[]
 }
 
 const navigation: NavItem[] = [
   {
     to: '/',
     label: 'Dashboard',
+    icon: DashboardIcon,
     //need check this 
     children: [
       { to: '/', label: 'Home' },
@@ -22,6 +101,7 @@ const navigation: NavItem[] = [
   {
     to: '/parts',
     label: 'Parts online',
+    icon: PartsIcon,
     children: [
       { to: '/parts/catalogue', label: 'Catalogue' },
       { to: '/parts/in-stock', label: 'In stock' },
@@ -29,57 +109,110 @@ const navigation: NavItem[] = [
       { to: '/parts/price-list', label: 'Price list' },
     ],
   },
-  { to: '/documents', label: 'Documents' },
-  { to: '/warranty-claims', label: 'Warranty claims' },
+  { to: '/documents', label: 'Documents', icon: DocumentsIcon },
+  { to: '/warranty-claims', label: 'Warranty claims', icon: WarrantyIcon },
 ]
 
-const linkClass = ({ isActive }: { isActive: boolean }) =>
-  cn(
-    'block rounded-lg px-3 py-2 text-sm transition-colors',
-    isActive
-      ? 'bg-brand-50 font-medium text-brand-600'
-      : 'text-slate-600 hover:bg-slate-50',
-  )
+const itemClass = 'relative flex w-nav-group items-center text-nav transition-colors'
 
 export function Sidebar() {
   return (
-    <aside className="flex w-60 shrink-0 flex-col border-r border-line bg-white">
-      <div className="flex h-16 items-center gap-2 border-b border-line px-5">
-        <span className="grid size-8 place-items-center rounded-md bg-brand-500 text-sm font-bold text-white">
-          A
+    <aside className="flex w-sidebar shrink-0 flex-col border-r border-line bg-surface">
+      <div className="relative h-[118px] shrink-0">
+        <span className="absolute top-[26px] left-[38px] flex h-[48px] w-[98px] flex-col justify-center">
+          <span className="font-display text-[19px] leading-none font-medium text-accent">
+            Auto
+          </span>
+          <span className="font-display text-[14px] leading-tight tracking-[0.18em] text-ink-muted">
+            LINCOLN
+          </span>
         </span>
-        <span className="text-sm font-semibold text-slate-800">Auto Lincoln</span>
+
+        <button
+          type="button"
+          aria-label="Collapse menu"
+          className="absolute top-[36px] right-[19px] grid size-[28px] place-items-center rounded-full border border-line text-ink-muted transition-colors hover:text-ink"
+        >
+          <span className="size-[12px]">
+            <ChevronLeftIcon />
+          </span>
+        </button>
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-        {navigation.map((item) => (
-          <div key={item.to}>
-            <NavLink to={item.to} end={item.to === '/'} className={linkClass}>
-              {item.label}
-            </NavLink>
-            {item.children && (
-              <div className="mt-1 ml-3 space-y-1 border-l border-line pl-3">
-                {item.children.map((child) => (
-                  <NavLink
-                    key={child.to}
-                    to={child.to}
-                    end={child.to === '/'}
-                    className={linkClass}
+      <nav className="flex-1 overflow-y-auto pl-[9px]">
+        {navigation.map((item) => {
+          const Icon = item.icon
+
+          return (
+            <div key={item.to}>
+              <NavLink to={item.to} end={item.to === '/'}>
+                {({ isActive }) => (
+                  <span
+                    className={cn(
+                      itemClass,
+                      'h-nav-item pl-[21px] font-bold',
+                      isActive
+                        ? 'bg-accent-soft text-accent'
+                        : 'text-ink hover:bg-accent-soft/40',
+                    )}
                   >
-                    {child.label}
-                  </NavLink>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+                    <span className="size-[21px] shrink-0">
+                      <Icon />
+                    </span>
+                    <span className="ml-[19px]">{item.label}</span>
+                    {item.children && (
+                      <span className="mr-[19px] ml-auto size-[24px] opacity-60">
+                        <ChevronDownIcon />
+                      </span>
+                    )}
+                    {isActive && (
+                      <span
+                        aria-hidden
+                        className="absolute inset-y-0 right-0 w-[5px] rounded-full bg-accent"
+                      />
+                    )}
+                  </span>
+                )}
+              </NavLink>
+
+              {item.children?.map((child) => (
+                <NavLink
+                  key={child.to}
+                  to={child.to}
+                  end={child.to === '/'}
+                  className={({ isActive }) =>
+                    cn(
+                      itemClass,
+                      'h-nav-sub rounded-l-[14px] pl-[80px]',
+                      isActive
+                        ? 'font-bold text-ink'
+                        : 'font-medium text-ink-muted hover:text-ink',
+                    )
+                  }
+                >
+                  {child.label}
+                </NavLink>
+              ))}
+            </div>
+          )
+        })}
       </nav>
 
-      <div className="border-t border-line p-3">
-        <NavLink to="/support" className={linkClass}>
-          Support
-        </NavLink>
-      </div>
+      <NavLink
+        to="/support"
+        className={({ isActive }) =>
+          cn(
+            itemClass,
+            'mt-auto mb-[30px] ml-[9px] h-nav-item pl-[28px] font-bold',
+            isActive ? 'text-accent' : 'text-ink hover:text-accent',
+          )
+        }
+      >
+        <span className="size-[21px] shrink-0">
+          <SupportIcon />
+        </span>
+        <span className="ml-[24px]">Support</span>
+      </NavLink>
     </aside>
   )
 }

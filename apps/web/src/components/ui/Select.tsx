@@ -22,25 +22,41 @@ export function Select({
   return (
     <label className="block">
       {label && (
-        <span className="mb-1.5 block text-xs font-medium text-slate-500">
+        <span className="mb-3 block font-display text-field-label font-medium text-accent">
           {label}
         </span>
       )}
-      <select
-        {...props}
-        className={cn(
-          'h-10 w-full rounded-lg border border-line bg-white px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100',
-          !props.value && 'text-slate-400',
-          className,
-        )}
-      >
-        <option value="">{placeholder}</option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value} className="text-slate-800">
-            {option.label}
-          </option>
-        ))}
-      </select>
+
+      <span className="relative block">
+        <select
+          {...props}
+          className={cn(
+            'h-field w-full appearance-none border border-line bg-field px-5 pr-[52px] text-field outline-none focus:border-accent',
+            props.value ? 'text-ink' : 'text-ink-muted',
+            className,
+          )}
+        >
+          <option value="">{placeholder}</option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value} className="text-ink">
+              {option.label}
+            </option>
+          ))}
+        </select>
+
+        <svg
+          aria-hidden
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="pointer-events-none absolute top-1/2 right-5 size-6 -translate-y-1/2 text-ink"
+        >
+          <path d="m6 9.5 6 6 6-6" />
+        </svg>
+      </span>
     </label>
   )
 }

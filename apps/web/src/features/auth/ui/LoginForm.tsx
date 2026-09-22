@@ -14,7 +14,7 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <Input
         label="Email"
         type="email"
@@ -35,7 +35,7 @@ export function LoginForm() {
       />
 
       {loginMutation.isError && (
-        <p className="text-sm text-red-600">
+        <p className="text-crumb text-danger">
           Не вдалося увійти. Перевірте email і пароль.
         </p>
       )}

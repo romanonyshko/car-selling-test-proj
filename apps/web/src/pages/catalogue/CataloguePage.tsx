@@ -1,12 +1,12 @@
+import { PageHeader } from '@/components/ui/PageHeader'
+
 export function CataloguePage() {
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold text-slate-900">
-        Auto parts catalogue
-      </h1>
-      <div className="rounded-2xl border border-line bg-white p-6 text-sm text-slate-500">
-        Тут буде сітка категорій із Firestore і панель фільтрів
-        Carmaker / Model / Engine.
+      <PageHeader crumbs={['Parts online', 'Catalogue']} title="Auto parts catalogue" />
+
+      <div className="bg-surface px-5 py-[21px] text-crumb text-ink-muted shadow-card-1">
+        Тут буде сітка категорій і панель фільтрів Carmaker / Model / Engine.
       </div>
     </div>
   )

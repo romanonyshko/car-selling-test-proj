@@ -8,17 +8,17 @@ export function GlanceCard({ glance }: { glance: GlanceStats }) {
   ]
 
   return (
-    <section className="rounded-2xl border border-line bg-white p-6">
-      <h2 className="mb-4 text-base font-semibold text-brand-600">At a glance</h2>
+    <section className="bg-surface p-5 shadow-card-1">
+      <h2 className="mb-8 text-section font-medium text-accent">At a glance</h2>
 
       <dl>
         {rows.map((row) => (
           <div
             key={row.label}
-            className="flex items-baseline justify-between gap-4 border-b border-line py-3 first:pt-0 last:border-0 last:pb-0"
+            className="grid grid-cols-[105px_1fr] items-baseline border-b border-line py-3 text-section text-ink"
           >
-            <dt className="text-sm text-slate-500">{row.label}</dt>
-            <dd className="text-sm font-medium text-slate-800">{row.value}</dd>
+            <dt>{row.label}</dt>
+            <dd>{row.value}</dd>
           </div>
         ))}
       </dl>

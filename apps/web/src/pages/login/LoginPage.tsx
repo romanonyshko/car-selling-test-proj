@@ -11,12 +11,16 @@ export function LoginPage() {
 
   return (
     <div className="grid h-full place-items-center p-6">
-      <div className="w-full max-w-sm rounded-2xl border border-line bg-white p-8 shadow-sm">
-        <h1 className="mb-1 text-xl font-semibold text-slate-900">Auto Lincoln</h1>
-        <p className="mb-6 text-sm text-slate-500">Увійдіть у панель керування</p>
-        <div className="mb-6">
+      <div className="w-full max-w-[419px] bg-surface p-10 shadow-card-1">
+        <h1 className="text-title font-medium text-ink">Auto Lincoln</h1>
+        <p className="mt-2 mb-8 text-section text-ink-muted">
+          Увійдіть у панель керування
+        </p>
+
+        <div className="mb-8">
           <BackendSwitcher />
         </div>
+
         <LoginForm />
       </div>
     </div>
