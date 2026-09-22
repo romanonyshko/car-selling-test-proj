@@ -13,6 +13,7 @@
     "generate": "prisma generate",
     "build": "prisma generate && tsc -p tsconfig.build.json",
     "migrate": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
     "studio": "prisma studio",
     "seed": "prisma db seed"
   },

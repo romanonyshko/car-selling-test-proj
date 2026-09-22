@@ -12,14 +12,15 @@
   ],
   "scripts": {
     "build:packages": "npm run build -w @auto-lincoln/shared -w @auto-lincoln/auth -w @auto-lincoln/db",
-    "predev": "npm run build:packages",
+    "predev": "npm run db:up && npm run build:packages && npm run db:deploy && npm run db:seed",
     "dev": "concurrently -n web,express,nest -c blue,green,red \"npm run dev -w @auto-lincoln/web\" \"npm run dev -w @auto-lincoln/api-express\" \"npm run dev -w @auto-lincoln/api-nest\"",
     "build": "npm run build --workspaces --if-present",
     "lint": "oxlint",
-    "db:up": "docker compose up -d",
+    "db:up": "docker compose up -d --wait",
     "db:down": "docker compose down",
     "db:generate": "npm run generate -w @auto-lincoln/db",
     "db:migrate": "npm run migrate -w @auto-lincoln/db",
+    "db:deploy": "npm run migrate:deploy -w @auto-lincoln/db",
     "db:seed": "npm run seed -w @auto-lincoln/db"
   },
   "devDependencies": {

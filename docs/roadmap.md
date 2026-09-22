@@ -23,6 +23,11 @@
       `notFound`; error body format agreed (`{ message, statusCode, error? }`)
 - [x] Auth in Nest — `/auth/login`, `/auth/me`, `/auth/logout`:
       `AuthModule`, `AuthService`, `AuthGuard`, `@CurrentSession()`
+- [x] Web: redesign to the Figma mockup — `@theme` tokens (colours,
+      Karla / DM Sans, `--text-*` roles, shell metrics, `card 1` shadow),
+      shell, base components, dashboard. Not yet done from the mockup:
+      catalogue grid, filter panel, grid/list toggle — see
+      `docs/ui-guidelines.md` → "Still only in the mockup".
 
 ## Next, in order
 

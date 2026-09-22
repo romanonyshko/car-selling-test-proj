@@ -81,8 +81,9 @@ table, a `/auth/refresh` route in both APIs and refresh logic on the web.
 - **`npm audit`** reports high-severity issues in transitive dependencies of
   the Prisma CLI (`deepmerge-ts`, `mysql2`); the suggested fix upgrades to a
   Prisma 8 release candidate.
-- The `Inter` font is declared in CSS but the font file is not loaded —
-  the system font is rendered instead.
+- **Fonts come from the Google Fonts CDN** (`apps/web/index.html`, Karla +
+  DM Sans). Works, but it is an external request on every load; self-hosting
+  (`@fontsource`) is the next step if that matters.
 - Bundle ~680 kB, no route-level code splitting.
 - The dashboard runs on mock data
   (`apps/web/src/features/dashboard/api/mock-data.ts`), there are no real

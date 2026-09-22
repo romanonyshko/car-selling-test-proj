@@ -7,8 +7,8 @@ interface ErrorStateProps {
 
 export function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
-    <div className="flex flex-col items-center gap-3 py-12 text-center">
-      <p className="text-sm text-red-600">
+    <div className="flex flex-col items-center gap-4 py-12 text-center">
+      <p className="text-crumb text-danger">
         {message ?? 'Не вдалося завантажити дані.'}
       </p>
       {onRetry && (
