@@ -44,14 +44,16 @@ shared  ←  auth  ←  db
 - `BACKENDS` / `Backend` — `'express' | 'nest'`;
 - `AUTH_COOKIE_NAME` — the session cookie name;
 - request/response types: `HealthResponse`, `LoginRequest`, `AuthUser`,
-  `ApiErrorBody` (`{ message }` for every error).
+  `ApiErrorBody` (`{ message, statusCode, error? }` for every error).
 
 `src/models.ts` holds the domain types (`Category`, `Carmaker`, `CarModel`,
-`Engine`, `Part`, `PartsFilters`, `AppUser`, `UserRole`). Dates are ISO 8601
-strings.
+`Engine`, `Part`, `PartsFilters`, `Currency`, `AppUser`, `UserRole`). Dates are
+ISO 8601 strings. Only `AppUser` / `UserRole` are used by the apps today; the
+catalogue types have no routes yet (roadmap → Next).
 
 **Rule:** a new endpoint is added to `shared` first, then implemented in
-Express, then in Nest, with identical paths, status codes and bodies.
+both APIs (in either order, each in its own branch) with identical paths,
+status codes and bodies.
 
 ### Current routes
 
@@ -166,6 +168,7 @@ src/
 ├── routes/health.ts
 └── modules/auth/
     ├── auth.router.ts          # login / me / logout
+    ├── auth.types.ts           # Session type
     └── toAuthUser.ts           # User (DB) → AuthUser
 ```
 
@@ -241,9 +244,12 @@ src/
 │   └── dashboard/{api,hooks,ui}    # mock data, see dashboard-page.md
 ├── components/
 │   ├── layout/                     # AppLayout, Sidebar, Topbar, BackendSwitcher
-│   └── ui/                         # Button, Input, Select, Spinner, ErrorState
+│   └── ui/                         # Button, Input, Select, Spinner, ErrorState, PageHeader
 └── lib/                            # apiClient, backend, queryClient, cn
 ```
+
+Static files live in `apps/web/public/` (`favicon.svg`, `icons.svg`,
+`categories/*.jpg` — 12 category images, not referenced by the code yet).
 
 `features/catalogue/` does not exist yet — it is created with the first
 catalogue step.
@@ -254,7 +260,10 @@ catalogue step.
 pages  →  features  →  components/ui  →  lib
 ```
 
-A component never calls `apiClient` directly:
+A component never calls `apiClient` directly. The implemented chain is
+`DashboardPage → useDashboard() → fetchDashboard()` (mock, no `apiRequest`)
+and `LoginForm → useLogin() → login() → apiRequest()`. The catalogue will
+follow the same shape (planned, none of these names exist yet):
 
 ```
 CataloguePage → useCategories() → categoriesApi.fetchCategories() → apiRequest()
@@ -276,6 +285,15 @@ The remaining sidebar sections (`in-stock`, `orders`, `price-list`,
 `documents`, `warranty-claims`, dashboard sub-pages) have no routes yet —
 those links lead to a 404.
 
+Known deviations from the layer rules in the current code:
+
+- `components/layout/Topbar.tsx` imports `features/auth` hooks — see
+  `open-questions.md` #6.
+- `pages/login/LoginPage.tsx` calls `useAuth()` and redirects a logged-in
+  user, i.e. the page is not pure composition.
+- `ProtectedRoute` passes `state.from` to `/login`, but `useLogin` always
+  navigates to `/` — the original location is not restored.
+
 ### Application state
 
 | Kind of state | Where it lives |
@@ -284,7 +302,12 @@ those links lead to a 404.
 | current user | TanStack Query (`authKeys.me()`) |
 | selected backend | `lib/backend.ts` + `localStorage` |
 | local UI (forms, modals) | `useState` inside the component |
+| sidebar collapsed / user menu open | `useState` in `Sidebar` / `Topbar`, not persisted |
 | catalogue filters | planned in the URL (`useSearchParams`) so links are shareable |
+
+No Redux, Zustand or app-level React Context is used for state. `queryClient` is a
+module singleton (`lib/queryClient.ts`); `useLogin.ts` and
+`BackendSwitcher.tsx` import it directly rather than via `useQueryClient()`.
 
 `QueryClient` defaults (`lib/queryClient.ts`): `staleTime` 5 min,
 `refetchOnWindowFocus: false`, `retry: 1`.
@@ -299,6 +322,11 @@ Each workspace reads its own `.env` (not committed; copy from `.env.example`):
 | `apps/api-express/.env` | `PORT`, `DATABASE_URL`, `JWT_SECRET` |
 | `apps/api-nest/.env` | `PORT`, `DATABASE_URL`, `JWT_SECRET` |
 | `apps/web/.env.local` (optional) | `EXPRESS_API_URL`, `NEST_API_URL` |
+
+`PORT` falls back to 3001 / 3002 when unset. `NODE_ENV=production` turns on
+the `secure` flag of the session cookie. `docker-compose.yml` hardcodes the
+local Postgres credentials (`autolincoln` / `autolincoln`, port 5432) —
+local use only.
 
 `JWT_SECRET` must be identical in both APIs. The web app has no secrets —
 nothing is exposed through `VITE_*` variables.

@@ -9,27 +9,47 @@ The project is a learning one (internship), built from a mockup provided by
 the mentor. As a learning goal, the same REST API is implemented twice —
 in Express and in NestJS — and the web app can switch between them.
 
+## Current implementation status
+
+Checked against the code on 2026-09-22. Order of the remaining work:
+[`roadmap.md`](roadmap.md).
+
+| Area | Status | What exists |
+| --- | --- | --- |
+| Login / logout | Implemented | `/login`, JWT in an httpOnly cookie, works against either API |
+| Two APIs + backend switcher | Implemented | health + auth routes only |
+| Dashboard | Partially implemented | full UI on mock data, no API — [`dashboard-page.md`](dashboard-page.md) |
+| Parts online → Catalogue | Partially implemented | route + text placeholder — [`catalogue-page.md`](catalogue-page.md) |
+| In stock, Orders, Price list | Planned | sidebar links only, lead to a 404 |
+| Documents, Warranty claims, Support | Planned | sidebar links only, lead to a 404 |
+| Roles | Planned | declared in schema and types, not enforced (open question #5) |
+
 ## Sections
 
 The list is taken from the navigation in
 `apps/web/src/components/layout/Sidebar.tsx`.
 
-| Section | Purpose | State |
-| --- | --- | --- |
-| **Dashboard** | summary: number of items, orders, recent events | UI on mock data |
-| **Parts online → Catalogue** | grid of categories + vehicle lookup filters | placeholder |
-| **Parts online → In stock** | availability and stock levels | not started |
-| **Parts online → Orders** | customer orders and their statuses | not started |
-| **Parts online → Price list** | price list, export | not started |
-| **Documents** | documents attached to orders | not started |
-| **Warranty claims** | warranty requests | not started |
-| **Support** | link at the bottom of the sidebar | not started |
+| Section | Purpose |
+| --- | --- |
+| **Dashboard** | summary: number of items, orders, recent events |
+| **Parts online → Catalogue** | grid of categories + vehicle lookup filters |
+| **Parts online → In stock** | availability and stock levels |
+| **Parts online → Orders** | customer orders and their statuses |
+| **Parts online → Price list** | price list, export |
+| **Documents** | documents attached to orders |
+| **Warranty claims** | warranty requests |
+| **Support** | link at the bottom of the sidebar |
+
+The Dashboard item also has Home, Updates, Posts and Media sub-items in the
+sidebar; only Home has a route.
 
 ## User roles
 
 Three roles are declared in the Prisma schema and in the shared types
 (`UserRole` in `packages/shared/src/models.ts`): `admin`, `manager`,
-`client`. The seeded user is an `admin`.
+`client`. The seeded user is an `admin`; a new user defaults to `manager`
+(Prisma schema). The only user comes from the seed — there is no
+registration.
 
 Permission separation is not implemented yet — right now any authenticated
 user sees the whole panel. The real access rules will have to be enforced
@@ -38,4 +58,5 @@ in both APIs, not only in the UI.
 ## Deliberately out of MVP scope
 
 Payments, delivery, localisation, analytics, promo codes, reviews,
-a mobile app.
+a mobile app. Full list: [`roadmap.md`](roadmap.md) → "Not a priority
+right now".
