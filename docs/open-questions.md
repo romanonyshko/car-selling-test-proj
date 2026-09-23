@@ -14,15 +14,15 @@ committed).
 | # | Topic | Status |
 | --- | --- | --- |
 | 1 | Contract parity between the APIs | Open |
-| 2 | Request validation | Open |
-| 3 | Production routing to two backends | Dev: resolved with direct calls + CORS (2026-09-23); production: open |
-| 4 | `Part.price` type | Open (no parts endpoints yet) |
-| 5 | Roles are not enforced | Open |
+| 2 | Request validation | Decided 2026-09-23 — own parsers in the contracts, not implemented yet |
+| 3 | Production routing to two backends | Dev: direct calls + CORS; production: decided (Vercel rewrites → Render), not deployed yet |
+| 4 | `Part.price` type | Decided 2026-09-23 — `number` via `toNumber()` |
+| 5 | Roles are not enforced | Decided 2026-09-23 — minimal: stock changes admin-only (403), not implemented yet |
 | 6 | `components/layout` imports `features/auth` | Open |
-| 7 | Error bodies are not byte-identical | Partially resolved (same fields and statuses for 400/401/404) |
+| 7 | Error bodies are not byte-identical | Decided 2026-09-23 — global `ExceptionFilter` in Nest, not implemented yet |
 | 8 | Refresh tokens | Open |
-| 9 | Keeping the contracts version in sync | Open (new, after the split) |
-| 10 | Git dependency on the contracts needs a build step | Open (new, after the split) |
+| 9 | Keeping the contracts version in sync | Decided 2026-09-23 — git tags `vX.Y.Z`, all consumers on one tag |
+| 10 | Git dependency on the contracts needs a build step | Decided 2026-09-23 — `prepare` script (fallback: committed `dist/`) |
 | 11 | Dependency versions drift without a shared lockfile | Open (new, after the split) |
 
 ## Open questions
@@ -40,7 +40,12 @@ from / checked against `auto-lincoln-contracts` (`src/shared`).
 
 ### 2. Request validation
 
-Neither API validates request bodies beyond manual `typeof` checks
+**Decision (2026-09-23):** no library. Everything from the client is
+`unknown`; own parsers / type guards live in `auto-lincoln-contracts/src/shared`
+and are called the same way in both APIs, so 400 bodies are identical. zod
+may be discussed later.
+
+Before the decision: neither API validates request bodies beyond manual `typeof` checks
 (`/auth/login` is the only route with a body today). Nest
 usually uses `class-validator` DTOs, Express has no built-in option. To keep
 the contract single-sourced, a schema library shared through
@@ -59,8 +64,12 @@ removed: the browser calls `http://localhost:3001` / `:3002` directly
 APIs send CORS headers for `CORS_ORIGIN` (Express: `middleware/cors.ts`,
 Nest: `app.enableCors`). Locally the shared session keeps working.
 
-Still open for production — the web and the two APIs are separate projects
-deployed separately. Two ways forward:
+**Production decision (2026-09-23):** web on Vercel, both APIs + PostgreSQL
+on Render. `vercel.json` rewrites `/api/express/:path*` and `/api/nest/:path*`
+to the two Render services; on Vercel `VITE_EXPRESS_API_URL=/api/express`,
+`VITE_NEST_API_URL=/api/nest`. For the browser everything is one site →
+first-party cookie, `SameSite=Lax`, shared session, no code change. Not
+deployed yet. Options that were considered:
 
 - **Reverse proxy** in front of all three (same origin, `/api/express` and
   `/api/nest` rewritten like the Vite proxy does today). The cookie and the
@@ -73,11 +82,21 @@ deployed separately. Two ways forward:
 
 ### 4. `Part.price` type
 
+**Decision (2026-09-23):** keep `price: number`; mappers convert with
+`part.price.toNumber()` — a Prisma `Decimal` never leaves an API as an
+object. Revisit (string `"12.50"` or integer cents) when totals / orders
+appear.
+
 In the database the price is `Decimal(10, 2)`, in the contract it is
 `number`. Prisma returns a `Decimal` object, so the mapping (number vs.
 string with fixed precision) has to be decided when parts endpoints appear.
 
 ### 5. Roles are not enforced
+
+**Decision (2026-09-23):** minimal enforcement — reading for every
+authenticated user; `PATCH /api/parts/:id/stock` for `admin` only, others →
+403. Express: `requireRole(...)` middleware; Nest: `@Roles(...)` +
+`RolesGuard`. The web hides the controls (UX only).
 
 `admin` / `manager` / `client` exist in the schema and the types, but
 nothing checks them — any authenticated user sees the whole panel. The role
@@ -103,6 +122,10 @@ differs. Express sends `{"message","statusCode","error"}`, Nest sends
 Harmless for the web (it reads fields), but a byte-level parity test (#1)
 would fail.
 
+**Decision (2026-09-23):** align — a global `ExceptionFilter` in Nest builds
+`{ message, statusCode, error }` in Express order for every status,
+including 500 (`error` from Node `STATUS_CODES`).
+
 Still open: on an unhandled 500 Nest returns `{ statusCode, message }` without
 `error`, Express always sends `error`. No global `ExceptionFilter` is
 registered in `auto-lincoln-api-nest/src/main.ts`. Either accept it (`error` is
@@ -127,6 +150,9 @@ versions** — exactly what breaks the backend switcher. Needs a rule: version
 tags on the contracts (`version` in its `package.json` is `0.0.0`), and
 bumping all three consumers together.
 
+**Decision (2026-09-23):** git tags `vX.Y.Z` on the contracts, `version`
+in its `package.json` in sync; the three consumers always on the same tag.
+
 ### 10. Git dependency on the contracts needs a build step
 
 `dist/` and the generated Prisma client (`src/db/generated`) are not
@@ -135,6 +161,11 @@ committed. A git dependency installs the repo as-is, so it would have no
 on install (needs the dev dependencies and `DATABASE_URL`-free generation),
 or committing/publishing built output. Deliberately postponed until the
 GitHub repos exist.
+
+**Decision (2026-09-23):** consumers use
+`github:romanonyshko/auto-lincoln-contracts#vX.Y.Z` and the contracts get a
+`prepare` script. Check that npm's `allowScripts` does not block it (locally
+and on Render). Fallback: commit `dist/` and `src/db/generated`.
 
 ### 11. Dependency versions drift without a shared lockfile
 
@@ -171,6 +202,10 @@ the four lockfiles evolve independently; shared tools (`typescript`,
   dependencies of the Prisma CLI (`deepmerge-ts`, `mysql2`, via
   `@prisma/config`); `npm audit fix --force` would install `prisma@6.19.3`,
   a breaking downgrade.
+- **Search is `ILIKE '%…%'`** over `title` / `articleNumber` / `brand`
+  (decision 2026-09-23) — fine for a few hundred parts, but a sequential
+  scan; PostgreSQL full-text search (`tsvector` + GIN index) when the data
+  grows.
 - **Fonts come from the Google Fonts CDN** (`index.html`, Karla +
   DM Sans). Works, but it is an external request on every load; self-hosting
   (`@fontsource`) is the next step if that matters.
