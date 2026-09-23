@@ -1,9 +1,9 @@
 # UI
 
 Tailwind CSS v4 (`@tailwindcss/vite`), configured CSS-first: all tokens are
-in the `@theme` block of `apps/web/src/index.css`, there is no
+in the `@theme` block of `src/index.css`, there is no
 `tailwind.config.*`. The shell, the base components and the dashboard are
-built from the mockup's tokens. This file describes what `apps/web/src`
+built from the mockup's tokens. This file describes what `src`
 renders and keeps a short list of what is still only in Figma.
 
 Source of the mockup: Figma file `qVzu3KVGXpgPrWF254NRSo`
@@ -25,7 +25,7 @@ may change when the design is tokenised in Figma.
 | `black / 50` | `#1F1F1F` | `--color-black-50` |
 | `card 1` | drop shadow, `#1F1F1F0A`, offset `0 4`, blur `40`, spread `-4` | `--shadow-card-1` |
 
-### Colours — `@theme` in `apps/web/src/index.css`
+### Colours — `@theme` in `src/index.css`
 
 | Token | Value | Used for |
 | --- | --- | --- |
@@ -44,7 +44,7 @@ may change when the design is tokenised in Figma.
 
 ### Typography
 
-Two families, loaded from Google Fonts in `apps/web/index.html`:
+Two families, loaded from Google Fonts in `index.html`:
 `--font-sans` = Karla (400/500/700), `--font-display` = DM Sans (400/500).
 
 Each role from the mockup is a `--text-*` token with its line height, so the
@@ -111,7 +111,7 @@ that owns them — see Q1.
 
 ## Components
 
-What exists in `apps/web/src/components/`:
+What exists in `src/components/`:
 
 | Component | API | Used by |
 | --- | --- | --- |
@@ -139,7 +139,7 @@ markup following the convention below.
   field.
 - **Focus** — `focus:border-accent` (the mockup draws no focus state; this is
   the code's own decision).
-- Classes are joined with `cn()` from `apps/web/src/lib/cn.ts`.
+- Classes are joined with `cn()` from `src/lib/cn.ts`.
 - Component variants are an object map `Record<Variant, string>`
   (see `components/ui/Button.tsx`), not chained ternaries.
 - Icons are inline SVG components inside the file that uses them; there is

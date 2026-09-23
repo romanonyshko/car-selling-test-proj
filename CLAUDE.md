@@ -4,95 +4,56 @@ Admin panel for the "Auto Lincoln" auto parts catalogue: managing categories,
 parts, stock and orders. A learning project (internship), built from a mockup
 provided by the mentor.
 
-The repo is an npm-workspaces monorepo: one web app and **two interchangeable
-backends** (Express and NestJS) implementing the same REST contract. The web
-app has a switcher to choose which backend it talks to.
+This repo is **the web app only** — a Vite SPA. It talks to **two
+interchangeable backends** (Express and NestJS) that implement the same REST
+contract; a switcher in the UI chooses which one.
+
+## The project is split into four folders
+
+```
+~/Documents/programing/auto-lincoln/
+  auto-lincoln-web/           ← this repo: web app, port 5173
+  auto-lincoln-contracts/     ← @auto-lincoln/contracts: REST contract, auth, Prisma/DB, docker-compose
+  auto-lincoln-api-express/   ← Express API, port 3001
+  auto-lincoln-api-nest/      ← NestJS API, port 3002
+```
+
+Each folder is an independent npm project with its own `CLAUDE.md`. Work on
+an API or on the database happens **in that folder**, not here. Until the
+GitHub repos exist, the contracts package is linked as
+`"@auto-lincoln/contracts": "file:../auto-lincoln-contracts"` (a symlink).
 
 ## Stack
 
-- **web:** React 19 · TypeScript · Vite 8 · TanStack Query v5 ·
-  react-router-dom v7 · Tailwind v4
-- **api-express:** Express 5 · tsx (dev)
-- **api-nest:** NestJS 12 (ESM) · @nestjs/cli
-- **db:** PostgreSQL 17 (docker compose) · Prisma 7 with `@prisma/adapter-pg`
-- **auth:** JWT (`jose`, HS256) in an httpOnly cookie, passwords hashed with
-  scrypt (`node:crypto`). Same `JWT_SECRET` in both APIs.
-- Tooling: npm workspaces · TypeScript 6 · oxlint. Everything is ESM.
+React 19 · TypeScript 6 · Vite 8 · TanStack Query v5 · react-router-dom v7 ·
+Tailwind v4 · Recharts · oxlint. Everything is ESM.
 
-## Structure
-
-```
-apps/web            Vite SPA (feature-based, see below), port 5173
-apps/api-express    Express API, port 3001
-apps/api-nest       NestJS API, port 3002
-packages/shared     REST contract (routes, DTOs) + domain types — browser-safe
-packages/auth       password hashing + JWT sessions — Node only
-packages/db         Prisma schema, migrations, seed, createPrismaClient()
-```
-
-Build order: `shared → auth → db → apps`. `packages/*` are built to `dist/`
-and consumed by the apps. After changing them, run `npm run build:packages`
-(runs automatically before `npm run dev`).
-
-## Commands (from the repo root)
+## Commands
 
 | Command | What it does |
 | --- | --- |
-| `npm run dev` | `predev` (`db:up → build:packages → db:deploy → db:seed`), then web + both APIs |
-| `npm run build` | builds every workspace |
-| `npm run lint` | oxlint over the whole repo |
-| `npm run db:up` / `db:down` | start / stop Postgres in Docker |
-| `npm run db:migrate` | `prisma migrate dev` |
-| `npm run db:deploy` | `prisma migrate deploy` (applies committed migrations) |
-| `npm run db:generate` | regenerate the Prisma client |
-| `npm run db:seed` | create the admin user from `SEED_ADMIN_*` |
-| `npm run dev -w @auto-lincoln/<name>` | run one workspace |
-| `npm install <pkg> -w @auto-lincoln/<name>` | add a dependency to one workspace |
-
-Internal dependencies are declared as `"@auto-lincoln/<name>": "*"`.
+| `npm run dev` | Vite dev server on 5173 (the APIs must be started separately) |
+| `npm run build` | `tsc -b && vite build` |
+| `npm run preview` | serve the production build (port 4173 — not in the APIs' `CORS_ORIGIN` by default) |
+| `npm run lint` | oxlint |
 
 There are no tests in the project yet — no test runner is set up.
 
+To run the whole system: `npm run db:up` in `auto-lincoln-contracts`, then
+`npm run dev` in each API folder and here.
+
+## The contract
+
+- The web app imports **only** the root export `@auto-lincoln/contracts`
+  (routes, DTOs, domain types — browser-safe). Never `/auth` or `/db`: those
+  are Node-only and must not end up in the bundle.
+- The contract is changed in `auto-lincoln-contracts`, rebuilt there
+  (`npm run build`), and only then used here. A new route is added to the
+  contract first, then implemented in both APIs.
+- The web never knows which backend answers — both must behave identically.
+
 ## Architecture rules
 
-### Whole repo
-- **One contract.** Routes and request/response types live in
-  `packages/shared`. Both APIs implement every route in it identically —
-  otherwise the backend switcher breaks. A route is added to `shared` first,
-  then implemented in both APIs (in either order, each in its own branch).
-  `docs/architecture.md` → "Current routes" tracks which API has what.
-- **Domain entity types** — in `packages/shared/src/models.ts`.
-- **`shared` stays browser-safe.** Node-only code (crypto, JWT) goes to
-  `packages/auth`.
-- **Database access** only through `packages/db`. Apps do not import
-  `@prisma/*` directly.
-- **DB models never leave an API as-is.** Map them to contract types
-  (e.g. `toAuthUser`) so fields like `passwordHash` are never sent.
-- Apps do not import each other.
-- Relative imports inside Node packages/apps use the `.js` extension
-  (`nodenext` resolution).
-
-### apps/api-express
-- `modules/<feature>/` holds routers and mappers; cross-cutting middleware
-  lives in `middleware/`, shared helpers in `lib/`.
-- Handlers `throw new ApiError(status, message)`; only `errorHandler` sends
-  an error body. Do not call `res.status(...).json(...)` for errors.
-- Middleware order in `app.ts`: parsers → routers → `notFound` →
-  `errorHandler` (last, no prefix).
-- No `try/catch` around async handlers — Express 5 forwards rejections.
-  Details in `docs/architecture.md` → APIs.
-
-### apps/api-nest
-- One module per feature: `src/<feature>/<feature>.{module,controller,service}.ts`,
-  kebab-case file names.
-- Controllers handle HTTP only; services contain the logic and return
-  `null` instead of throwing HTTP errors.
-- Protected routes use `@UseGuards(AuthGuard)` + `@CurrentSession()`.
-- DI classes → value `import`; types in decorated parameters →
-  `import type` (TS1272). Set `@HttpCode` on POST routes to match the
-  contract. Details in `docs/architecture.md` → APIs.
-
-### apps/web
 - **Feature-based structure.** `src/features/<feature>/{api,hooks,model,ui}`.
   A feature does not import another feature — shared code moves up into
   `components/` or `lib/`.
@@ -101,8 +62,11 @@ There are no tests in the project yet — no test runner is set up.
   `lib/apiClient`. A component calls a hook, the hook calls `api/`.
   Components know nothing about HTTP or which backend is selected.
 - **Backend selection** — `lib/backend.ts` (store) +
-  `components/layout/BackendSwitcher.tsx`. Requests go to
-  `/api/<backend>/...`, the Vite dev proxy forwards them to the right API.
+  `components/layout/BackendSwitcher.tsx`. The browser calls the selected
+  API **directly**: `BACKEND_URLS` in `lib/apiClient.ts`
+  (`VITE_EXPRESS_API_URL` → :3001, `VITE_NEST_API_URL` → :3002), always with
+  `credentials: 'include'`. There is no Vite proxy. The APIs allow the web
+  origin through CORS (`CORS_ORIGIN`, default `http://localhost:5173`).
 - **Server state — TanStack Query only** (including the current user,
   `authKeys.me()`). No `useState` + `useEffect` for fetching data. Local UI
   state — plain `useState`.
@@ -112,7 +76,10 @@ There are no tests in the project yet — no test runner is set up.
 - **Pages in `pages/` — composition only.** They contain no logic.
 - **Protected routes** — via `ProtectedRoute`, not via checks inside
   components.
-- **Alias `@/` = `apps/web/src/`.** We do not write relative `../../`.
+- **Alias `@/` = `src/`.** We do not write relative `../../`.
+- The session is an httpOnly cookie (`al_session`) — the web has no token
+  handling and no secrets. `VITE_*` variables end up in the bundle: only
+  public values (API URLs) go there.
 
 ## How to work with me
 
@@ -124,19 +91,18 @@ There are no tests in the project yet — no test runner is set up.
 
 ## Documentation — read before working
 
-- `docs/architecture.md` — before changing the structure, routes, the API
-  contract or working with data
+- `docs/architecture.md` — before changing the structure, layers, the API
+  client or auth handling in the web app
 - `docs/catalogue-page.md` — before any work on `/parts/catalogue`
   (spec: layout, data models, cascading filters)
 - `docs/dashboard-page.md` — before any work on the dashboard
 - `docs/ui-guidelines.md` — before writing markup (tokens, component
   conventions)
-- `docs/roadmap.md` — current state of the project and the next step
-- `docs/open-questions.md` — known problems and technical debt;
-  do not resolve them silently, ask me first
+- `docs/product.md` — what the product is, its sections and their status
+- `docs/roadmap.md` — current state of the whole project and the next step
+- `docs/open-questions.md` — known problems and technical debt for all four
+  folders; do not resolve them silently, ask me first
+- `docs/migration/` — record of the split from the monorepo (2026-09-23)
 
-## Not a source of truth
-
-`PROJECT-CONTEXT.md` — a generated snapshot of the project for external LLMs.
-Do not read it when working on code: it goes stale after the very first
-commit. The current state is always in the code and `docs/`.
+Routes, DTOs, the DB schema and the auth flow are documented in
+`auto-lincoln-contracts/docs/architecture.md`.

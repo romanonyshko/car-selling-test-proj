@@ -27,7 +27,7 @@ Checked against the code on 2026-09-22. Order of the remaining work:
 ## Sections
 
 The list is taken from the navigation in
-`apps/web/src/components/layout/Sidebar.tsx`.
+`src/components/layout/Sidebar.tsx`.
 
 | Section | Purpose |
 | --- | --- |
@@ -46,10 +46,10 @@ sidebar; only Home has a route.
 ## User roles
 
 Three roles are declared in the Prisma schema and in the shared types
-(`UserRole` in `packages/shared/src/models.ts`): `admin`, `manager`,
-`client`. The seeded user is an `admin`; a new user defaults to `manager`
-(Prisma schema). The only user comes from the seed — there is no
-registration.
+(`UserRole` in `auto-lincoln-contracts/src/shared/models.ts`): `admin`, `manager`,
+`client`. The seed creates an `admin` and a test `manager`
+(`test@autolincoln.local`); a new user defaults to `manager` (Prisma
+schema). Users only come from the seed — there is no registration.
 
 Permission separation is not implemented yet — right now any authenticated
 user sees the whole panel. The real access rules will have to be enforced

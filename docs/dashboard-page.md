@@ -1,7 +1,7 @@
 # Dashboard page (Home)
 
 Specification for the admin panel's home page. Read before any work on `/`
-(`apps/web/src/pages/dashboard/`) and the `features/dashboard/` feature.
+(`src/pages/dashboard/`) and the `features/dashboard/` feature.
 
 ## Current implementation status
 
@@ -74,7 +74,7 @@ The mock values come from the design mockup:
   queryFn: fetchDashboard })`.
 
 The types live in `mock-data.ts` for now and are not to be moved into
-`packages/shared` — they will become contract types when the dashboard gets
+`auto-lincoln-contracts` (`src/shared`) — they will become contract types when the dashboard gets
 real API endpoints.
 
 ## 3. Feature UI (`features/dashboard/ui/`)

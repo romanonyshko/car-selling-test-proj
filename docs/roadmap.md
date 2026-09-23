@@ -8,15 +8,22 @@ Order of work. Details of how things are built live in
 
 - [x] Monorepo on npm workspaces: `apps/{web,api-express,api-nest}`,
       `packages/{shared,auth,db}`
+- [x] Split into four folders (2026-09-23, see [`migration/`](migration/)):
+      `auto-lincoln-web` (web), `auto-lincoln-contracts` (one package
+      `@auto-lincoln/contracts` with `.`/`./auth`/`./db` + DB),
+      `auto-lincoln-api-express`, `auto-lincoln-api-nest`; linked with
+      `file:../auto-lincoln-contracts`
 - [x] Firebase removed (Auth, Firestore, Storage); that direction is postponed
 - [x] PostgreSQL 17 in Docker, Prisma schema, first migration (users +
       catalogue tables), seed of the admin user
-- [x] `packages/shared`: REST contract (health + auth) and domain types
-- [x] `packages/auth`: scrypt password hashing, JWT sessions
+- [x] Contract (`auto-lincoln-contracts/src/shared`): REST contract (health + auth) and domain types
+- [x] Auth helpers (`auto-lincoln-contracts/src/auth`): scrypt password hashing, JWT sessions
 - [x] Express API and NestJS API with the same contract: `GET /api/health`,
       `POST /api/auth/login`, `GET /api/auth/me`, `POST /api/auth/logout`;
       shared `JWT_SECRET`, one session valid on both
 - [x] Web: `apiClient`, `BackendSwitcher`, Vite dev proxy
+- [x] Direct calls instead of the Vite proxy (2026-09-23): the browser calls
+      :3001 / :3002 with `credentials: 'include'`, CORS in both APIs
 - [x] Web: Vite + React + TS, Tailwind v4 tokens from the Figma mockup,
       `@/` alias, oxlint
 - [x] Web: login page, `ProtectedRoute`, `AppLayout` / `Sidebar` / `Topbar`
@@ -29,14 +36,17 @@ Order of work. Details of how things are built live in
 
 - **Catalogue page** — partially prepared: the route `/parts/catalogue`
   and a text placeholder exist, 12 category images are in
-  `apps/web/public/categories/` (not wired up). Everything else is under
+  `public/categories/` (not wired up). Everything else is under
   Next.
 
 ## Next, in order
 
+Where each step happens: contract and seed → `auto-lincoln-contracts`
+(then `npm run build` there); endpoints → both API folders; UI → `auto-lincoln-web`.
+
 1. **Catalogue contract** — endpoints for categories, carmakers, models
    (by carmaker), engines (by model) and parts (with filters) in
-   `packages/shared`; demo data in the seed.
+   `auto-lincoln-contracts` (`src/shared`); demo data in the seed.
 2. **Catalogue endpoints in both APIs.**
 3. **Grid of 12 categories** on `CataloguePage` instead of the placeholder,
    plus the grid/list toggle.
@@ -64,6 +74,8 @@ No code and no position in the order above:
 - Tests and contract-parity checks — open question #1
 - CI
 - Deployment and production routing to the two APIs — open question #3
+- GitHub repos for the four folders; `file:` → git dependency on the
+  contracts (needs a `prepare` script — open question #10)
 
 ## Not a priority right now
 
