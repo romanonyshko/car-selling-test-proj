@@ -122,7 +122,7 @@ What exists in `src/components/`:
 | `ui/ErrorState` | optional `message`, optional `onRetry` (renders a secondary `Button`) | `DashboardPage` |
 | `ui/PageHeader` | `crumbs: string[]` (last = current), `title`, optional `actions` slot | `DashboardPage`, `CataloguePage` |
 | `layout/AppLayout` | Sidebar + Topbar + `<Outlet/>` | router |
-| `layout/Sidebar` | nav from a static array, local collapse state | `AppLayout` |
+| `layout/Sidebar` | nav from the static array in `layout/navigation.ts`, local collapse state | `AppLayout` |
 | `layout/Topbar` | `BackendSwitcher`, cart icon (decorative), user menu with logout | `AppLayout` |
 | `layout/BackendSwitcher` | `role="radiogroup"` of the two backends | `Topbar`, `LoginPage` |
 
@@ -142,8 +142,10 @@ markup following the convention below.
 - Classes are joined with `cn()` from `src/lib/cn.ts`.
 - Component variants are an object map `Record<Variant, string>`
   (see `components/ui/Button.tsx`), not chained ternaries.
-- Icons are inline SVG components inside the file that uses them; there is
-  no shared icon set (`public/icons.svg` exists but is not referenced).
+- Icons are SVG components in `src/components/icons/`, one component per
+  file, imported directly (no barrel `index.ts`). Some older components
+  (`Topbar`, `PageHeader`, `Select`) still keep inline SVGs.
+  `public/icons.svg` exists but is not referenced.
 - Nav item states: default / active (accent background at 10% + accent label
   + 5px indicator bar at the item's right edge). Hover is the code's own
   addition — the mockup draws no hover, focus, disabled or loading state.
@@ -172,6 +174,12 @@ Not implemented, because the data and the logic for it do not exist yet:
   hidden, labels stay as `sr-only` + `title`. The state is local
   (`useState`) and is not persisted. The filter panel collapse is not
   implemented yet.
+  Narrow screens (our own decision, viewport `width < 805px`, checked in JS
+  via `lib/useMediaQuery`): the collapsed rail keeps its 80px width; an
+  expanded sidebar collapses automatically when the screen becomes narrow;
+  expanding it there opens it as a full-screen overlay (`fixed inset-0`),
+  a placeholder keeps the rail's place, nav rows stretch to the full width
+  instead of `w-nav-group`, and following a nav link closes it.
 - **Logo** — in Figma it is a raster image 98x48 reading "Auto Detail"
   (node `2:111`). The code renders an "Auto Lincoln" wordmark in the same
   98x48 slot. Needs a decision: export the asset, or keep a wordmark.

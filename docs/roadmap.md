@@ -64,7 +64,8 @@ Where each step happens: contract and seed → `auto-lincoln-contracts`
 11. **In stock, Price list, Documents, Warranty claims** — the sidebar
     sections.
 12. **Dashboard with real metrics** — replacing the mocks.
-13. **Responsive** — sidebar as a drawer on mobile.
+13. **Responsive** — sidebar as a drawer on mobile. Partly done: below
+    805px an expanded sidebar becomes a full-screen overlay.
 14. **Bundle optimisation** — route-level code splitting via `React.lazy`.
 
 ## Not scheduled yet

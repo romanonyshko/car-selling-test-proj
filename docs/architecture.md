@@ -137,9 +137,10 @@ src/
 │   ├── auth/{api,hooks,ui}
 │   └── dashboard/{api,hooks,ui}    # mock data, see dashboard-page.md
 ├── components/
-│   ├── layout/                     # AppLayout, Sidebar, Topbar, BackendSwitcher
+│   ├── icons/                      # SVG icon components, one per file
+│   ├── layout/                     # AppLayout, Sidebar, navigation, Topbar, BackendSwitcher
 │   └── ui/                         # Button, Input, Select, Spinner, ErrorState, PageHeader
-└── lib/                            # apiClient, backend, queryClient, cn
+└── lib/                            # apiClient, backend, queryClient, cn, useMediaQuery
 ```
 
 Static files live in `public/` (`favicon.svg`, `icons.svg`,
