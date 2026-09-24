@@ -1,32 +1,32 @@
 {
-  "name": "auto-lincoln",
+  "name": "@auto-lincoln/web",
   "private": true,
+  "version": "0.0.0",
   "type": "module",
-  "workspaces": [
-    "packages/shared",
-    "packages/auth",
-    "packages/db",
-    "apps/api-express",
-    "apps/api-nest",
-    "apps/web"
-  ],
   "scripts": {
-    "build:packages": "npm run build -w @auto-lincoln/shared -w @auto-lincoln/auth -w @auto-lincoln/db",
-    "predev": "npm run db:up && npm run build:packages && npm run db:deploy && npm run db:seed",
-    "dev": "concurrently -n web,express,nest -c blue,green,red \"npm run dev -w @auto-lincoln/web\" \"npm run dev -w @auto-lincoln/api-express\" \"npm run dev -w @auto-lincoln/api-nest\"",
-    "build": "npm run build --workspaces --if-present",
-    "lint": "oxlint",
-    "db:up": "docker compose up -d --wait",
-    "db:down": "docker compose down",
-    "db:generate": "npm run generate -w @auto-lincoln/db",
-    "db:migrate": "npm run migrate -w @auto-lincoln/db",
-    "db:deploy": "npm run migrate:deploy -w @auto-lincoln/db",
-    "db:seed": "npm run seed -w @auto-lincoln/db"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "oxlint"
+  },
+  "dependencies": {
+    "@auto-lincoln/contracts": "file:../auto-lincoln-contracts",
+    "@tanstack/react-query": "^5.102.8",
+    "@tanstack/react-query-devtools": "^5.102.8",
+    "@tanstack/react-router": "^1.170.39",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "recharts": "^3.10.1"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.3",
-    "concurrently": "^10.0.5",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
     "oxlint": "^1.81.0",
-    "typescript": "~6.0.2"
+    "tailwindcss": "^4.3.3",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
   }
 }

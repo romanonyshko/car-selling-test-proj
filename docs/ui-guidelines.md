@@ -1,10 +1,10 @@
 # UI
 
-The mockup is now **implemented in the code**: `@theme` holds the mockup's
-tokens, and the shell, the base components and the dashboard are built from
-them. This file therefore describes one set of values again — what
-`apps/web/src` renders — and keeps a short list of what is still only in
-Figma.
+Tailwind CSS v4 (`@tailwindcss/vite`), configured CSS-first: all tokens are
+in the `@theme` block of `src/index.css`, there is no
+`tailwind.config.*`. The shell, the base components and the dashboard are
+built from the mockup's tokens. This file describes what `src`
+renders and keeps a short list of what is still only in Figma.
 
 Source of the mockup: Figma file `qVzu3KVGXpgPrWF254NRSo`
 ("Auto Lincoln analysis copy"), node `2:24` — two 1920x1206 screens,
@@ -25,7 +25,7 @@ may change when the design is tokenised in Figma.
 | `black / 50` | `#1F1F1F` | `--color-black-50` |
 | `card 1` | drop shadow, `#1F1F1F0A`, offset `0 4`, blur `40`, spread `-4` | `--shadow-card-1` |
 
-### Colours — `@theme` in `apps/web/src/index.css`
+### Colours — `@theme` in `src/index.css`
 
 | Token | Value | Used for |
 | --- | --- | --- |
@@ -39,17 +39,13 @@ may change when the design is tokenised in Figma.
 | `--color-canvas` | `#f8fbfd` | content area background (`body`) |
 | `--color-field` | `#f8f8f8` | input / select background |
 | `--color-line` | `rgba(31,31,31,0.1)` | all borders and dividers |
-| `--color-black-50` | `#1f1f1f` | the declared Figma colour |
+| `--color-black-50` | `#1f1f1f` | the declared Figma colour — **declared, not used yet** |
 | `--color-danger` | `#d14343` | **not in the mockup** — error text, negative delta |
-
-The previous `--color-brand-*` scale and the `text-slate-*` secondary text
-are gone; nothing in `src/` references them any more.
 
 ### Typography
 
-Two families, loaded from Google Fonts in `apps/web/index.html`:
+Two families, loaded from Google Fonts in `index.html`:
 `--font-sans` = Karla (400/500/700), `--font-display` = DM Sans (400/500).
-`Inter` is no longer declared.
 
 Each role from the mockup is a `--text-*` token with its line height, so the
 sizes are not typed into JSX:
@@ -79,6 +75,7 @@ utilities:
 | Token | Value | Used for |
 | --- | --- | --- |
 | `--spacing-sidebar` | 316px | sidebar width |
+| `--spacing-sidebar-collapsed` | 80px | collapsed sidebar width (not in the mockup) |
 | `--spacing-header` | 80px | header height |
 | `--spacing-nav-item` | 72px | nav item height (raw 71.925) |
 | `--spacing-nav-sub` | 62px | sub-item height (raw 62.493) |
@@ -112,18 +109,43 @@ that owns them — see Q1.
   1520px container (527 + 68 + three 295px stat cards + gaps), otherwise
   stacked; stat cards 3-up from 925px, 2-up from 610px, else 1-up.
 
+## Components
+
+What exists in `src/components/`:
+
+| Component | API | Used by |
+| --- | --- | --- |
+| `ui/Button` | `variant`: `primary` (accent fill) / `secondary` (surface + border) / `ghost` (text only); `isLoading` shows an inline spinner and disables the button | `LoginForm`, `ErrorState` |
+| `ui/Input` | native `<input>` props + optional `label` | `LoginForm` |
+| `ui/Select` | native `<select>` props + `label`, `placeholder` (default "Select…"), `options: { value, label }[]` | **not used yet** (built for the catalogue filters) |
+| `ui/Spinner` | optional `label` (default "Завантаження…") | router `defaultPendingComponent`, `DashboardPage` |
+| `ui/ErrorState` | optional `message`, optional `onRetry` (renders a secondary `Button`) | `DashboardPage` |
+| `ui/PageHeader` | `crumbs: string[]` (last = current), `title`, optional `actions` slot | `DashboardPage`, `CataloguePage` |
+| `layout/AppLayout` | Sidebar + Topbar + `<Outlet/>` | router |
+| `layout/Sidebar` | nav from the static array in `layout/navigation.ts`, local collapse state | `AppLayout` |
+| `layout/Topbar` | `BackendSwitcher`, cart icon (decorative), user menu with logout | `AppLayout` |
+| `layout/BackendSwitcher` | `role="radiogroup"` of the two backends | `Topbar`, `LoginPage` |
+
+There is no `Card`, `Modal`, `Table` or `Badge` component; cards are plain
+markup following the convention below.
+
 ## Component conventions
 
 - **Card** — `bg-surface shadow-card-1`, **no border, no radius**, padding 20.
-- **Control** (button, input, select) — `h-field` (60), no radius,
-  background `--color-field`, 1px `--color-line` border.
+- **Field** (input, select) — `h-field` (60), no radius, background
+  `--color-field`, 1px `--color-line` border. `Button` shares the `h-field`
+  height and has no radius; its colours come from its variant.
 - **Field label** — DM Sans Medium 16 in the accent colour, 12px above the
   field.
 - **Focus** — `focus:border-accent` (the mockup draws no focus state; this is
   the code's own decision).
-- Classes are joined with `cn()` from `apps/web/src/lib/cn.ts`.
+- Classes are joined with `cn()` from `src/lib/cn.ts`.
 - Component variants are an object map `Record<Variant, string>`
   (see `components/ui/Button.tsx`), not chained ternaries.
+- Icons are SVG components in `src/components/icons/`, one component per
+  file, imported directly (no barrel `index.ts`). Some older components
+  (`Topbar`, `PageHeader`, `Select`) still keep inline SVGs.
+  `public/icons.svg` exists but is not referenced.
 - Nav item states: default / active (accent background at 10% + accent label
   + 5px indicator bar at the item's right edge). Hover is the code's own
   addition — the mockup draws no hover, focus, disabled or loading state.
@@ -152,6 +174,12 @@ Not implemented, because the data and the logic for it do not exist yet:
   hidden, labels stay as `sr-only` + `title`. The state is local
   (`useState`) and is not persisted. The filter panel collapse is not
   implemented yet.
+  Narrow screens (our own decision, viewport `width < 805px`, checked in JS
+  via `lib/useMediaQuery`): the collapsed rail keeps its 80px width; an
+  expanded sidebar collapses automatically when the screen becomes narrow;
+  expanding it there opens it as a full-screen overlay (`fixed inset-0`),
+  a placeholder keeps the rail's place, nav rows stretch to the full width
+  instead of `w-nav-group`, and following a nav link closes it.
 - **Logo** — in Figma it is a raster image 98x48 reading "Auto Detail"
   (node `2:111`). The code renders an "Auto Lincoln" wordmark in the same
   98x48 slot. Needs a decision: export the asset, or keep a wordmark.
@@ -190,30 +218,3 @@ tokens change: `--text-nav`, `--spacing-nav-item`, `--spacing-nav-sub`,
 
 Both answers are written into the code by the implementer, not by the
 project owner. Related: `docs/open-questions.md`.
-
-## Changed in this revision
-
-Revision date 2026-09-20 (second pass). The mockup was implemented.
-
-- **[changed]** The file no longer carries parallel CODE and MOCKUP columns —
-  the code *is* the mockup now, except for the list under "Still only in the
-  mockup".
-- **[new]** `@theme` rewritten: 12 colours, 2 font families, 12 `--text-*`
-  roles, 8 `--spacing-*` shell metrics, `--shadow-card-1`.
-- **[removed]** `--color-brand-50/100/500/600/700`, `--color-line` `#e6e8ec`,
-  `--color-canvas` `#f5f6f8`, body colour `#1f2430`, the `Inter` stack, and
-  every `text-slate-*` in `src/`.
-- **[new]** Karla and DM Sans are actually loaded (Google Fonts,
-  `apps/web/index.html`).
-- **[new]** `components/ui/PageHeader.tsx` — breadcrumb + title + `actions`
-  slot, shared by the dashboard and the catalogue.
-- **[changed]** Sidebar, Topbar, AppLayout, Button, Input, Select, Spinner,
-  ErrorState, BackendSwitcher, the four dashboard components and all four
-  pages are rebuilt on the new tokens.
-- **[new]** 9px accent scrollbar, as drawn in the mockup.
-- **[new]** Findings that the previous revision of this file missed: the
-  grid/list toggle (`2:128`), the content scrollbar (`2:124`), the logo being
-  a raster "Auto Detail" image, the `material-symbols` nav icons, and the
-  dashboard's "At a glance" / "Updates" cards and "Updates 3" badge.
-- **[changed]** Q1 and Q2 are now answered *in the code* and still flagged
-  for the owner.

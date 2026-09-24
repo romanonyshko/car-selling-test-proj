@@ -1,59 +1,79 @@
-# Auto Lincoln — auto parts catalogue admin panel
+# Auto Lincoln — auto parts catalogue admin panel (web)
 
-npm-workspaces monorepo:
+React 19 + Vite SPA with a switcher between two interchangeable APIs.
+The project is split into four folders next to each other:
 
-| Workspace | What it is |
-| --- | --- |
-| `apps/web` | React 19 + Vite SPA with a switcher between the two APIs |
-| `apps/api-express` | Express 5 API (port 3001) |
-| `apps/api-nest` | NestJS 12 API (port 3002) |
-| `packages/shared` | REST contract and domain types used by all apps |
-| `packages/auth` | password hashing and JWT sessions (used by both APIs) |
-| `packages/db` | Prisma schema, migrations, seed and client (PostgreSQL) |
+| Folder | What it is | Port |
+| --- | --- | --- |
+| `auto-lincoln-web` (this repo) | web app | 5173 |
+| `auto-lincoln-contracts` | `@auto-lincoln/contracts`: REST contract, auth helpers, Prisma schema/migrations/seed, docker-compose (PostgreSQL 17) | 5432 |
+| `auto-lincoln-api-express` | Express 5 API | 3001 |
+| `auto-lincoln-api-nest` | NestJS 12 API | 3002 |
 
-Both APIs implement the same contract from `packages/shared`, so the web app
-can talk to either of them.
+Both APIs implement the same contract (today: health and auth), so the web
+app can talk to either of them. What is built and what is next:
+[`docs/roadmap.md`](docs/roadmap.md).
 
 ## Getting started
 
-Requires Node 24+ and Docker.
+Requires Node (the dev dependencies target Node 24) and Docker with the
+daemon running. All four folders must sit side by side — the contracts
+package is linked as `file:../auto-lincoln-contracts`.
 
 ```bash
+# 1. database + contracts (see auto-lincoln-contracts/README.md)
+cd ../auto-lincoln-contracts
+cp .env.example .env && npm install
+npm run db:up && npm run build && npm run migrate:deploy && npm run seed
+
+# 2. each API in its own terminal (see their README.md)
+cd ../auto-lincoln-api-express && cp .env.example .env && npm install && npm run dev
+cd ../auto-lincoln-api-nest    && cp .env.example .env && npm install && npm run dev
+
+# 3. this app
+cd ../auto-lincoln-web
 npm install
-
-# env files (defaults work for local development)
-cp packages/db/.env.example packages/db/.env
-cp apps/api-express/.env.example apps/api-express/.env
-cp apps/api-nest/.env.example apps/api-nest/.env
-
-npm run db:up        # Postgres in Docker
-npm run db:migrate   # apply the Prisma schema
-npm run db:seed      # create the admin user (SEED_ADMIN_* in packages/db/.env)
-npm run dev          # web http://localhost:5173 + both APIs
+# optional, only to change the API URLs (defaults: :3001 / :3002):
+# cp .env.example .env.local
+npm run dev
 ```
 
-Health checks: `http://localhost:5173/api/express/health` and
-`http://localhost:5173/api/nest/health` (through the Vite proxy).
+Open `http://localhost:5173` and sign in with a seeded account
+(`auto-lincoln-contracts/.env`): `admin@autolincoln.local` / `admin12345`
+(admin) or `test@autolincoln.local` / `test12345` (manager). Roles are not
+enforced yet (open question #5), so both see the same panel.
+
+The browser calls the APIs directly — in DevTools → Network requests go to
+`http://localhost:3001/api/...` (Express) or `http://localhost:3002/api/...`
+(Nest), depending on the switcher. Health checks:
+`http://localhost:3001/api/health`, `http://localhost:3002/api/health`.
+
+The APIs accept requests from `http://localhost:5173` only (`CORS_ORIGIN`
+in their `.env`). If Vite starts on another port (5173 busy), requests are
+blocked by CORS. Production setup: `docs/open-questions.md` #3.
+
+After changing anything in `auto-lincoln-contracts`, run `npm run build`
+there — this app uses its `dist/`.
 
 ## Scripts
 
 | Command | What it does |
 | --- | --- |
-| `npm run dev` | build packages, run web + both APIs |
-| `npm run build` | build every workspace |
+| `npm run dev` | Vite dev server |
+| `npm run build` | type-check + production build |
+| `npm run preview` | serve the production build |
 | `npm run lint` | oxlint |
-| `npm run db:up` / `npm run db:down` | start / stop Postgres |
-| `npm run db:migrate` | `prisma migrate dev` |
-| `npm run db:generate` | regenerate the Prisma client |
-| `npm run db:seed` | create the admin user |
+
+There is no `test` script — the project has no tests yet.
 
 ## Documentation
 
-- [`docs/product.md`](docs/product.md) — what the product is and its sections
-- [`docs/architecture.md`](docs/architecture.md) — structure, layers, auth flow
+- [`docs/product.md`](docs/product.md) — what the product is, its sections and their status
+- [`docs/architecture.md`](docs/architecture.md) — web app structure, layers, backend switching, auth in the UI
 - [`docs/catalogue-page.md`](docs/catalogue-page.md) — catalogue page spec
 - [`docs/dashboard-page.md`](docs/dashboard-page.md) — dashboard page spec
-- [`docs/open-questions.md`](docs/open-questions.md) — open questions and technical debt
-- [`docs/roadmap.md`](docs/roadmap.md) — order of work and technical debt
-- [`docs/ui-guidelines.md`](docs/ui-guidelines.md) — tokens and UI conventions
+- [`docs/ui-guidelines.md`](docs/ui-guidelines.md) — tokens, components and UI conventions
+- [`docs/roadmap.md`](docs/roadmap.md) — order of work (whole project)
+- [`docs/open-questions.md`](docs/open-questions.md) — open questions and technical debt (whole project)
+- [`docs/migration/`](docs/migration/) — how the monorepo was split
 - [`CLAUDE.md`](CLAUDE.md) — rules for working with Claude Code

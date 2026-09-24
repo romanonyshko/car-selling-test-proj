@@ -1,11 +1,24 @@
 # Dashboard page (Home)
 
-Specification for the admin panel's home page. Read before any work on `/`
-(`apps/web/src/pages/dashboard/`) and the `features/dashboard/` feature.
+Specification for the admin panel's home page. Read before any work on `/dashboard`
+(`src/pages/dashboard/`) and the `features/dashboard/` feature.
 
-The implementation runs on mock data. Moving to real API endpoints is not
-part of this specification: only `api/dashboardApi.ts` changes, the rest of
-the code does not.
+## Current implementation status
+
+Checked against the code on 2026-09-22.
+
+| Part | Status | Notes |
+| --- | --- | --- |
+| Page, 4 UI components, hook, query key | Implemented | as specified below |
+| Data | Partially implemented — mock only | `fetchDashboard()` resolves `dashboardMock` after a `setTimeout` of 300 ms; no HTTP request, no API route |
+| Loading / error states | Implemented | `Spinner` / `ErrorState` with retry |
+| Activity chart scale | Hardcoded | Y axis fixed to 0–50k (`Y_TICKS` in `ActivityChart.tsx`); real values above 50k would be clipped |
+| "Updates" links | Placeholder | `href="#"` — there are no post pages |
+| Dashboard API endpoint + contract types | Planned | `roadmap.md` → Next, step 12 |
+| Updates / Posts / Media sub-pages | Planned | sidebar links lead to a 404 |
+
+Moving to real API endpoints is not part of this specification: only
+`api/dashboardApi.ts` changes, the rest of the code does not.
 
 ## 1. Dependency
 
@@ -52,58 +65,60 @@ The mock values come from the design mockup:
 ### The rest of the layer
 
 - `api/dashboardApi.ts` — `fetchDashboard(): Promise<DashboardData>`,
-  returns the mock with a ~300 ms delay (so the loading states work).
-  Components never import `mock-data` directly.
+  returns the mock with a 300 ms delay (so the loading states work).
+  Components never import the mock *values*; the UI components do import
+  the *types* from `mock-data.ts`.
 - `api/dashboardKeys.ts` — the key factory:
   `dashboardKeys.root()` → `['dashboard']`.
 - `hooks/useDashboard.ts` — `useQuery({ queryKey: dashboardKeys.root(),
   queryFn: fetchDashboard })`.
 
 The types live in `mock-data.ts` for now and are not to be moved into
-`packages/shared` — they will become contract types when the dashboard gets
+`auto-lincoln-contracts` (`src/shared`) — they will become contract types when the dashboard gets
 real API endpoints.
 
 ## 3. Feature UI (`features/dashboard/ui/`)
 
-All cards follow the conventions in `docs/ui-guidelines.md`
-(`rounded-2xl border border-line bg-white`, spacing a multiple of 4,
-`brand-*` tokens from `@theme`, no hardcoded colours).
+All cards follow the card convention in
+[`ui-guidelines.md`](ui-guidelines.md) (`bg-surface shadow-card-1`, padding
+20, `@theme` tokens only).
 
-- **`GlanceCard.tsx`** — the heading "At a glance" (`text-brand-600`),
-  three rows of label + value ("2 posts", "16 reviews", "3 pages").
+- **`GlanceCard.tsx`** — the heading "At a glance" (`text-accent`), three
+  rows of label + value ("2 posts", "16 reviews", "3 pages").
 - **`UpdatesCard.tsx`** — the heading "Updates"; sub-blocks:
-  "Recently published news" (the date "Mar 5th, 17:00" + the title as a
-  `brand-600` link), "Recent reviews" (`From {author} on {postTitle}`, below
-  it `Text:` and the review body), "Requests" (the row "All (1) |
-  Pending (0) | …" with separators). The links are `href="#"` for now —
-  there are no post pages.
-- **`StatCardItem.tsx`** — label (`text-slate-500`, small), value (large,
-  semibold), delta to the right of the value: "↑ N%" in green
-  (`text-green-600`) when `deltaPercent > 0`, "↓ N%" in red when `< 0`,
-  nothing when `undefined`.
+  "Recently published news" (the date "Mar 5th, 17:00" + the title as an
+  accent link), "Recent reviews" (`From {author} on {postTitle}`, below it
+  `Text:` and the review body), "Requests" (the row "All (1) |
+  Pending (0) | …" with separators).
+- **`StatCardItem.tsx`** — label (`text-stat-label`, `text-ink-subtle`),
+  value (`text-stat-value`, bold), delta to the right of the value: "↑ N%"
+  in `text-positive` when `deltaPercent > 0`, "↓ N%" in `text-danger` when
+  `< 0`, nothing when `undefined` or `0`.
 - **`ActivityChart.tsx`** — a recharts `LineChart`: a single visitors line,
-  `type="monotone"`, colour `var(--color-brand-500)`, width 2, no dots;
-  horizontal grid lines only (the `line` colour); axes without frames,
-  labels `text-slate-400`; the Y axis formatted as "10k"; the legend
-  "• New visitors" at the top right. Wrapped in a `ResponsiveContainer`.
+  `type="monotone"`, colour `var(--color-accent)`, width 3, no dots;
+  horizontal grid lines only (`var(--color-line)`); axes without frames;
+  the Y axis formatted as "10k"; the legend "• New visitors" at the top
+  right. Wrapped in a `ResponsiveContainer`.
 
 ## 4. The page (`pages/dashboard/DashboardPage.tsx`)
 
 Composition only:
 
-- breadcrumbs "Dashboard → Home" (`text-slate-400`, small) above the `h1`
-  heading "Dashboard"
-- the grid: left column (`GlanceCard`, `UpdatesCard` below it) ~1/3 of the
-  width, right column ~2/3 (`ActivityChart` on top, 6 `StatCardItem` in a
-  3×2 grid below it); a single column on narrow screens
+- `PageHeader` with breadcrumbs "Dashboard → Home" and the title
+  "Dashboard"
+- the grid: left column (`GlanceCard`, `UpdatesCard` below it), right
+  column (`ActivityChart` on top, 6 `StatCardItem` below it); exact widths
+  and container-query breakpoints are in
+  [`ui-guidelines.md`](ui-guidelines.md) → Layout
 - `isLoading` → `<Spinner>`, `isError` → `<ErrorState onRetry={refetch}>`
 - data from `useDashboard()`, no computation logic in the page
 
 ## 5. Sidebar and routes
 
-- `Sidebar.tsx`: add `children` to the Dashboard item: Home (`/`),
+- `Sidebar.tsx`: the Dashboard item has `children` Home (`/dashboard`),
   Updates (`/dashboard/updates`), Posts (`/dashboard/posts`),
-  Media (`/dashboard/media`) — using the same pattern as Parts online.
-- `routes.tsx`: a route for Home only (`index`, already exists). Updates /
-  Posts / Media have no routes and lead to a 404 — deliberately, like
-  In stock / Orders.
+  Media (`/dashboard/media`), using the same pattern as Parts online.
+- `routes.tsx`: `/dashboard` is a group route; Home is its index
+  (`DashboardPage`), Updates / Posts / Media render `PlaceholderPage`.
+  `/` redirects to `/dashboard`, so the Dashboard item stays highlighted on
+  its sub-pages (same as Parts online). Home is matched exactly.
