@@ -1,14 +1,7 @@
 import { BackendSwitcher } from '@/components/layout/BackendSwitcher'
-import { useAuth } from '@/features/auth/hooks/useAuth'
 import { LoginForm } from '@/features/auth/ui/LoginForm'
-import { Navigate } from 'react-router-dom'
 
 export function LoginPage() {
-  const { user, isLoading } = useAuth()
-
-  if (isLoading) return null
-  if (user) return <Navigate to="/" replace />
-
   return (
     <div className="grid h-full place-items-center p-6">
       <div className="w-full max-w-[419px] bg-surface p-10 shadow-card-1">

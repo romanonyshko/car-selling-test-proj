@@ -25,7 +25,7 @@ GitHub repos exist, the contracts package is linked as
 
 ## Stack
 
-React 19 · TypeScript 6 · Vite 8 · TanStack Query v5 · react-router-dom v7 ·
+React 19 · TypeScript 6 · Vite 8 · TanStack Query v5 · TanStack Router v1 (code-based routes) ·
 Tailwind v4 · Recharts · oxlint. Everything is ESM.
 
 ## Commands
@@ -74,8 +74,9 @@ To run the whole system: `npm run db:up` in `auto-lincoln-contracts`, then
   `features/*/api/`, not strings scattered across files — otherwise
   invalidation misses.
 - **Pages in `pages/` — composition only.** They contain no logic.
-- **Protected routes** — via `ProtectedRoute`, not via checks inside
-  components.
+- **Protected routes** — via `beforeLoad` in `app/router/routes.tsx`
+  (`protected` route → `/login`, `/login` → `/` when logged in), not via
+  checks inside components or wrapper components.
 - **Alias `@/` = `src/`.** We do not write relative `../../`.
 - The session is an httpOnly cookie (`al_session`) — the web has no token
   handling and no secrets. `VITE_*` variables end up in the bundle: only

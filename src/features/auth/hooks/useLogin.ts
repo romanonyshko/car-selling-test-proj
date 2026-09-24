@@ -1,6 +1,6 @@
 import { queryClient } from '@/lib/queryClient'
 import { useMutation } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '@tanstack/react-router'
 import { login, logout } from '../api/authApi'
 import { authKeys } from '../api/authKeys'
 
@@ -11,7 +11,7 @@ export function useLogin() {
     mutationFn: login,
     onSuccess: (user) => {
       queryClient.setQueryData(authKeys.me(), user)
-      navigate('/', { replace: true })
+      navigate({ to: '/dashboard', replace: true })
     },
   })
 }
@@ -24,7 +24,7 @@ export function useLogout() {
     onSuccess: () => {
       queryClient.clear()
       queryClient.setQueryData(authKeys.me(), null)
-      navigate('/login', { replace: true })
+      navigate({ to: '/login', replace: true })
     },
   })
 }
