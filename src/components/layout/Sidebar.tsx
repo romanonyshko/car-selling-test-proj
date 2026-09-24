@@ -77,7 +77,6 @@ export function Sidebar() {
               <div key={item.to}>
                 <Link
                   to={item.to}
-                  activeOptions={{ exact: item.to === '/' }}
                   title={item.label}
                   onClick={closeOverlay}
                 >
@@ -118,7 +117,7 @@ export function Sidebar() {
                     <Link
                       key={child.to}
                       to={child.to}
-                      activeOptions={{ exact: child.to === '/' }}
+                      activeOptions={{ exact: child.to === item.to }}
                       onClick={closeOverlay}
                       className={cn(itemClass, rowWidth, 'h-nav-sub rounded-l-[14px] pl-[80px]')}
                       activeProps={{ className: 'font-bold text-ink' }}

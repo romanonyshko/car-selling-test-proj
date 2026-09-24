@@ -1,6 +1,6 @@
 # Dashboard page (Home)
 
-Specification for the admin panel's home page. Read before any work on `/`
+Specification for the admin panel's home page. Read before any work on `/dashboard`
 (`src/pages/dashboard/`) and the `features/dashboard/` feature.
 
 ## Current implementation status
@@ -115,8 +115,10 @@ Composition only:
 
 ## 5. Sidebar and routes
 
-- `Sidebar.tsx`: the Dashboard item has `children` Home (`/`),
+- `Sidebar.tsx`: the Dashboard item has `children` Home (`/dashboard`),
   Updates (`/dashboard/updates`), Posts (`/dashboard/posts`),
   Media (`/dashboard/media`), using the same pattern as Parts online.
-- `routes.tsx`: a route for Home only (`index`). Updates / Posts / Media
-  have no routes and lead to a 404 — deliberately, like In stock / Orders.
+- `routes.tsx`: `/dashboard` is a group route; Home is its index
+  (`DashboardPage`), Updates / Posts / Media render `PlaceholderPage`.
+  `/` redirects to `/dashboard`, so the Dashboard item stays highlighted on
+  its sub-pages (same as Parts online). Home is matched exactly.

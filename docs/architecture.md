@@ -110,12 +110,12 @@ so a session created through one backend is valid on the other.
   `{ user, isLoading }`. There is no auth context — the current user is
   server state.
 - `hooks/useLogin.ts` — `useLogin` puts the user into the `me` cache and
-  navigates to `/`; `useLogout` clears the whole cache and navigates to
+  navigates to `/dashboard`; `useLogout` clears the whole cache and navigates to
   `/login`.
 - Route guards are `beforeLoad` in `app/router/routes.tsx`: they read the
   user with `queryClient.ensureQueryData(meQueryOptions)` (same cache as
   `useAuth`). The pathless `protected` route redirects to `/login` without a
-  user; `/login` redirects to `/` with one. A failed `/auth/me` (API down,
+  user; `/login` redirects to `/dashboard` with one. A failed `/auth/me` (API down,
   5xx) counts as "no session", so `/login` still opens and the backend can be
   switched. While the check is pending the router shows
   `defaultPendingComponent` (a `Spinner`).
@@ -139,6 +139,7 @@ src/
 │   ├── dashboard/DashboardPage.tsx
 │   ├── catalogue/CataloguePage.tsx # placeholder
 │   ├── support/SupportPage.tsx     # placeholder
+│   ├── PlaceholderPage.tsx         # generic "in progress" page
 │   └── NotFoundPage.tsx
 ├── features/
 │   ├── auth/{api,hooks,ui}
@@ -176,24 +177,32 @@ CataloguePage → useCategories() → categoriesApi.fetchCategories() → apiReq
 
 ```
 /login                  LoginPage                       public
-/                       protected (beforeLoad guard) → AppLayout
-├── index               DashboardPage
+(pathless)              protected (beforeLoad guard) → AppLayout
+├── /                   → redirects to /dashboard
+├── /dashboard          DashboardPage
+├── /dashboard/updates  PlaceholderPage
+├── /dashboard/posts    PlaceholderPage
+├── /dashboard/media    PlaceholderPage
 ├── /parts              → redirects to /parts/catalogue
 ├── /parts/catalogue    CataloguePage
+├── /parts/in-stock     PlaceholderPage
+├── /parts/orders       PlaceholderPage
+├── /parts/price-list   PlaceholderPage
+├── /documents          PlaceholderPage
+├── /warranty-claims    PlaceholderPage
 └── /support            SupportPage (placeholder)
 *                       NotFoundPage (root notFoundComponent)
 ```
 
-The remaining sidebar sections (`in-stock`, `orders`, `price-list`,
-`documents`, `warranty-claims`, dashboard sub-pages) have no routes yet —
-those links lead to a 404.
+Every sidebar link has a route; sections without real content render
+`PlaceholderPage`.
 
 Known deviations from the layer rules in the current code:
 
 - `components/layout/Topbar.tsx` imports `features/auth` hooks — see
   `open-questions.md` #6.
 - The `protected` guard redirects to `/login` without remembering the
-  original location, and `useLogin` always navigates to `/`.
+  original location, and `useLogin` always navigates to `/dashboard`.
 
 ### Application state
 

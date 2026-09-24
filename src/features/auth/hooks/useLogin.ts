@@ -11,7 +11,7 @@ export function useLogin() {
     mutationFn: login,
     onSuccess: (user) => {
       queryClient.setQueryData(authKeys.me(), user)
-      navigate({ to: '/', replace: true })
+      navigate({ to: '/dashboard', replace: true })
     },
   })
 }

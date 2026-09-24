@@ -2,23 +2,24 @@ import { DashboardIcon } from '@/components/icons/DashboardIcon'
 import { DocumentsIcon } from '@/components/icons/DocumentsIcon'
 import { PartsIcon } from '@/components/icons/PartsIcon'
 import { WarrantyIcon } from '@/components/icons/WarrantyIcon'
+import type { LinkProps } from '@tanstack/react-router'
 import type { ComponentType } from 'react'
 
 export interface NavItem {
-  to: string
+  to: LinkProps['to']
   label: string
   icon: ComponentType
-  children?: { to: string; label: string }[]
+  children?: { to: LinkProps['to']; label: string }[]
 }
 
 export const navigation: NavItem[] = [
   {
-    to: '/',
+    to: '/dashboard',
     label: 'Dashboard',
     icon: DashboardIcon,
     //need check this 
     children: [
-      { to: '/', label: 'Home' },
+      { to: '/dashboard', label: 'Home' },
       { to: '/dashboard/updates', label: 'Updates' },
       { to: '/dashboard/posts', label: 'Posts' },
       { to: '/dashboard/media', label: 'Media' },
