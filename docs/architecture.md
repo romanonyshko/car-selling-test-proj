@@ -126,7 +126,7 @@ src/
 │   ├── App.tsx                     # AppProviders + RouterProvider
 │   ├── providers/AppProviders.tsx  # QueryClientProvider + Devtools
 │   └── router/
-│       ├── routes.tsx              # createBrowserRouter, route tree
+│       ├── routes.tsx              # TanStack Router: createRouter, route tree
 │       └── ProtectedRoute.tsx
 ├── pages/                          # composition only
 │   ├── login/LoginPage.tsx
@@ -173,7 +173,7 @@ CataloguePage → useCategories() → categoriesApi.fetchCategories() → apiReq
 ├── index               DashboardPage
 ├── /parts              → redirects to /parts/catalogue
 └── /parts/catalogue    CataloguePage
-*                       NotFoundPage
+*                       NotFoundPage (root notFoundComponent)
 ```
 
 The remaining sidebar sections (`in-stock`, `orders`, `price-list`,
@@ -186,8 +186,8 @@ Known deviations from the layer rules in the current code:
   `open-questions.md` #6.
 - `pages/login/LoginPage.tsx` calls `useAuth()` and redirects a logged-in
   user, i.e. the page is not pure composition.
-- `ProtectedRoute` passes `state.from` to `/login`, but `useLogin` always
-  navigates to `/` — the original location is not restored.
+- `ProtectedRoute` redirects to `/login` without remembering the original
+  location, and `useLogin` always navigates to `/`.
 
 ### Application state
 

@@ -25,7 +25,7 @@ GitHub repos exist, the contracts package is linked as
 
 ## Stack
 
-React 19 · TypeScript 6 · Vite 8 · TanStack Query v5 · react-router-dom v7 ·
+React 19 · TypeScript 6 · Vite 8 · TanStack Query v5 · TanStack Router v1 (code-based routes) ·
 Tailwind v4 · Recharts · oxlint. Everything is ESM.
 
 ## Commands
