@@ -132,6 +132,7 @@ src/
 │   ├── login/LoginPage.tsx
 │   ├── dashboard/DashboardPage.tsx
 │   ├── catalogue/CataloguePage.tsx # placeholder
+│   ├── support/SupportPage.tsx     # empty
 │   └── NotFoundPage.tsx
 ├── features/
 │   ├── auth/{api,hooks,ui}
@@ -172,7 +173,8 @@ CataloguePage → useCategories() → categoriesApi.fetchCategories() → apiReq
 /                       ProtectedRoute → AppLayout
 ├── index               DashboardPage
 ├── /parts              → redirects to /parts/catalogue
-└── /parts/catalogue    CataloguePage
+├── /parts/catalogue    CataloguePage
+└── /support            SupportPage (empty for now)
 *                       NotFoundPage (root notFoundComponent)
 ```
 

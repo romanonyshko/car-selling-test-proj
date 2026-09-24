@@ -1,7 +1,7 @@
 import { BackendSwitcher } from '@/components/layout/BackendSwitcher'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { LoginForm } from '@/features/auth/ui/LoginForm'
-import { Navigate } from 'react-router-dom'
+import { Navigate } from '@tanstack/react-router'
 
 export function LoginPage() {
   const { user, isLoading } = useAuth()

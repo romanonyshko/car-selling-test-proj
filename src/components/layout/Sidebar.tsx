@@ -3,8 +3,8 @@ import { ChevronLeftIcon } from '@/components/icons/ChevronLeftIcon'
 import { SupportIcon } from '@/components/icons/SupportIcon'
 import { cn } from '@/lib/cn'
 import { useMediaQuery } from '@/lib/useMediaQuery'
+import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
 import { navigation } from './navigation'
 
 const itemClass = 'relative flex items-center text-nav transition-colors'
@@ -75,9 +75,9 @@ export function Sidebar() {
 
             return (
               <div key={item.to}>
-                <NavLink
+                <Link
                   to={item.to}
-                  end={item.to === '/'}
+                  activeOptions={{ exact: item.to === '/' }}
                   title={item.label}
                   onClick={closeOverlay}
                 >
@@ -111,53 +111,45 @@ export function Sidebar() {
                       )}
                     </span>
                   )}
-                </NavLink>
+                </Link>
 
                 {!collapsed &&
                   item.children?.map((child) => (
-                    <NavLink
+                    <Link
                       key={child.to}
                       to={child.to}
-                      end={child.to === '/'}
+                      activeOptions={{ exact: child.to === '/' }}
                       onClick={closeOverlay}
-                      className={({ isActive }) =>
-                        cn(
-                          itemClass,
-                          rowWidth,
-                          'h-nav-sub rounded-l-[14px] pl-[80px]',
-                          isActive
-                            ? 'font-bold text-ink'
-                            : 'font-medium text-ink-muted hover:text-ink',
-                        )
-                      }
+                      className={cn(itemClass, rowWidth, 'h-nav-sub rounded-l-[14px] pl-[80px]')}
+                      activeProps={{ className: 'font-bold text-ink' }}
+                      inactiveProps={{ className: 'font-medium text-ink-muted hover:text-ink' }}
                     >
                       {child.label}
-                    </NavLink>
+                    </Link>
                   ))}
               </div>
             )
           })}
         </nav>
 
-        <NavLink
+        <Link
           to="/support"
           title="Support"
           onClick={closeOverlay}
-          className={({ isActive }) =>
-            cn(
-              itemClass,
-              collapsed ? 'pl-[21px]' : 'pl-[28px]',
-              !collapsed && rowWidth,
-              'mt-auto mb-[30px] ml-[9px] h-nav-item font-bold',
-              isActive ? 'text-accent' : 'text-ink hover:text-accent',
-            )
-          }
+          className={cn(
+            itemClass,
+            collapsed ? 'pl-[21px]' : 'pl-[28px]',
+            !collapsed && rowWidth,
+            'mt-auto mb-[30px] ml-[9px] h-nav-item font-bold',
+          )}
+          activeProps={{ className: 'text-accent' }}
+          inactiveProps={{ className: 'text-ink hover:text-accent' }}
         >
           <span className="size-[21px] shrink-0">
             <SupportIcon />
           </span>
           <span className={collapsed ? 'sr-only' : 'ml-[24px] whitespace-nowrap'}>Support</span>
-        </NavLink>
+        </Link>
       </aside>
     </>
   )
