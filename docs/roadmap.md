@@ -26,7 +26,7 @@ Order of work. Details of how things are built live in
       :3001 / :3002 with `credentials: 'include'`, CORS in both APIs
 - [x] Web: Vite + React + TS, Tailwind v4 tokens from the Figma mockup,
       `@/` alias, oxlint
-- [x] Web: login page, `ProtectedRoute`, `AppLayout` / `Sidebar` / `Topbar`
+- [x] Web: login page, route guards (`beforeLoad`), `AppLayout` / `Sidebar` / `Topbar`
       (user menu + logout)
 - [x] Web: base UI components — see [`ui-guidelines.md`](ui-guidelines.md)
 - [x] Web: dashboard UI on mock data — see

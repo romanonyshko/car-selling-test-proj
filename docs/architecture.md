@@ -104,14 +104,21 @@ so a session created through one backend is valid on the other.
 
 - `features/auth/api/authApi.ts` — `login`, `logout`, `fetchCurrentUser`
   (401 → `null`, not an error).
-- `hooks/useAuth.ts` — `useQuery(authKeys.me())`, returns
+- `api/authQueries.ts` — `meQueryOptions` (`authKeys.me()` +
+  `fetchCurrentUser`), shared by `useAuth` and the route guards.
+- `hooks/useAuth.ts` — `useQuery(meQueryOptions)`, returns
   `{ user, isLoading }`. There is no auth context — the current user is
   server state.
 - `hooks/useLogin.ts` — `useLogin` puts the user into the `me` cache and
   navigates to `/`; `useLogout` clears the whole cache and navigates to
   `/login`.
-- `ProtectedRoute` shows a `Spinner` while `isLoading` (does not redirect),
-  then redirects to `/login` if there is no user.
+- Route guards are `beforeLoad` in `app/router/routes.tsx`: they read the
+  user with `queryClient.ensureQueryData(meQueryOptions)` (same cache as
+  `useAuth`). The pathless `protected` route redirects to `/login` without a
+  user; `/login` redirects to `/` with one. A failed `/auth/me` (API down,
+  5xx) counts as "no session", so `/login` still opens and the backend can be
+  switched. While the check is pending the router shows
+  `defaultPendingComponent` (a `Spinner`).
 
 The token is not readable from JavaScript (`document.cookie`); the browser
 attaches it to requests made with `credentials: 'include'`, so `apiClient`
@@ -126,13 +133,12 @@ src/
 │   ├── App.tsx                     # AppProviders + RouterProvider
 │   ├── providers/AppProviders.tsx  # QueryClientProvider + Devtools
 │   └── router/
-│       ├── routes.tsx              # TanStack Router: createRouter, route tree
-│       └── ProtectedRoute.tsx
+│       └── routes.tsx              # TanStack Router: route tree, beforeLoad guards, createRouter
 ├── pages/                          # composition only
 │   ├── login/LoginPage.tsx
 │   ├── dashboard/DashboardPage.tsx
 │   ├── catalogue/CataloguePage.tsx # placeholder
-│   ├── support/SupportPage.tsx     # empty
+│   ├── support/SupportPage.tsx     # placeholder
 │   └── NotFoundPage.tsx
 ├── features/
 │   ├── auth/{api,hooks,ui}
@@ -170,11 +176,11 @@ CataloguePage → useCategories() → categoriesApi.fetchCategories() → apiReq
 
 ```
 /login                  LoginPage                       public
-/                       ProtectedRoute → AppLayout
+/                       protected (beforeLoad guard) → AppLayout
 ├── index               DashboardPage
 ├── /parts              → redirects to /parts/catalogue
 ├── /parts/catalogue    CataloguePage
-└── /support            SupportPage (empty for now)
+└── /support            SupportPage (placeholder)
 *                       NotFoundPage (root notFoundComponent)
 ```
 
@@ -186,10 +192,8 @@ Known deviations from the layer rules in the current code:
 
 - `components/layout/Topbar.tsx` imports `features/auth` hooks — see
   `open-questions.md` #6.
-- `pages/login/LoginPage.tsx` calls `useAuth()` and redirects a logged-in
-  user, i.e. the page is not pure composition.
-- `ProtectedRoute` redirects to `/login` without remembering the original
-  location, and `useLogin` always navigates to `/`.
+- The `protected` guard redirects to `/login` without remembering the
+  original location, and `useLogin` always navigates to `/`.
 
 ### Application state
 

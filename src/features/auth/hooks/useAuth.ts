@@ -1,13 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchCurrentUser } from '../api/authApi'
-import { authKeys } from '../api/authKeys'
+import { meQueryOptions } from '../api/authQueries'
 
 export function useAuth() {
-  const { data, isLoading } = useQuery({
-    queryKey: authKeys.me(),
-    queryFn: fetchCurrentUser,
-    retry: false,
-  })
+  const { data, isLoading } = useQuery(meQueryOptions)
 
   return { user: data ?? null, isLoading }
 }
