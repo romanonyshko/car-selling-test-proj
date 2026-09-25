@@ -1,4 +1,3 @@
-import { BackendSwitcher } from '@/components/layout/BackendSwitcher'
 import { LoginForm } from '@/features/auth/ui/LoginForm'
 
 export function LoginPage() {
@@ -9,10 +8,6 @@ export function LoginPage() {
         <p className="mt-2 mb-8 text-section text-ink-muted">
           Увійдіть у панель керування
         </p>
-
-        <div className="mb-8">
-          <BackendSwitcher />
-        </div>
 
         <LoginForm />
       </div>

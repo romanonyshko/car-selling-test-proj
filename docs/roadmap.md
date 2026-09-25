@@ -4,6 +4,13 @@ Order of work. Details of how things are built live in
 [`architecture.md`](architecture.md); unfinished decisions and debt in
 [`open-questions.md`](open-questions.md).
 
+> **Change of course (2026-09-25): one backend.** Only the NestJS API (:3002)
+> is developed now; `auto-lincoln-api-express` is archived. The database
+> (Prisma schema, migrations, seed) lives in `auto-lincoln-api-nest`;
+> `auto-lincoln-contracts` holds only the HTTP contract (zod schemas).
+> Read "both APIs" below as "the Nest API". The web drops `BackendSwitcher`
+> when it moves to the new contracts. Decision: `context/05-decisions.md` §21.
+
 ## Done
 
 - [x] Monorepo on npm workspaces: `apps/{web,api-express,api-nest}`,
