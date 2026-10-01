@@ -2,7 +2,6 @@ import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useLogout } from '@/features/auth/hooks/useLogin'
 import { cn } from '@/lib/cn'
 import { useEffect, useRef, useState } from 'react'
-import { BackendSwitcher } from './BackendSwitcher'
 
 function CartIcon() {
   return (
@@ -69,11 +68,10 @@ export function Topbar() {
     }
   }, [isMenuOpen])
 
-  const greetingName = user?.displayName ?? user?.email ?? 'guest'
+  const greetingName = user?.name ?? user?.email ?? 'guest'
 
   return (
     <header className="flex h-header shrink-0 items-center justify-end gap-[15px] border-b border-line bg-surface pr-[40px]">
-      <BackendSwitcher />
       <CartIcon />
 
       <div ref={menuRef} className="relative">

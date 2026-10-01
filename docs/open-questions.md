@@ -209,12 +209,13 @@ the four lockfiles evolve independently; shared tools (`typescript`,
 - **Fonts come from the Google Fonts CDN** (`index.html`, Karla +
   DM Sans). Works, but it is an external request on every load; self-hosting
   (`@fontsource`) is the next step if that matters.
-- Bundle 684 kB in one JS chunk (largest contributor not measured), no route-level
-  code splitting; Vite warns about the > 500 kB chunk.
-- The dashboard runs on mock data
-  (`src/features/dashboard/api/mock-data.ts`), there are no real
-  metrics. `ActivityChart` has a fixed 0–50k Y scale, so larger real values
-  would be clipped.
+- Bundle 665 kB in one JS chunk (2026-10-01, largest contributor not
+  measured), no route-level code splitting; Vite warns about the > 500 kB
+  chunk. zod is kept out of it by `"sideEffects": false` in the contracts'
+  `package.json` — removing that field brings zod back (+~85 kB).
+- The dashboard reads `GET /api/dashboard`, but the values are seed data,
+  not real metrics. `ActivityChart` has a fixed 0–50k Y scale, so larger
+  real values would be clipped.
 - **Duplicated code in the two APIs:** `config/env.ts` (differs only in the
   default port; `required()` also repeats in `auto-lincoln-contracts/prisma/seed.ts`),
   the session-cookie options, `toAuthUser`, and the `Session` type (also

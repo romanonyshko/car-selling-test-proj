@@ -143,7 +143,7 @@ src/
 │   └── NotFoundPage.tsx
 ├── features/
 │   ├── auth/{api,hooks,ui}
-│   └── dashboard/{api,hooks,ui}    # mock data, see dashboard-page.md
+│   └── dashboard/{api,hooks,ui}    # GET /api/dashboard, see dashboard-page.md
 ├── components/
 │   ├── icons/                      # SVG icon components, one per file
 │   ├── layout/                     # AppLayout, Sidebar, navigation, Topbar, BackendSwitcher
@@ -164,7 +164,7 @@ pages  →  features  →  components/ui  →  lib
 ```
 
 A component never calls `apiClient` directly. The implemented chain is
-`DashboardPage → useDashboard() → fetchDashboard()` (mock, no `apiRequest`)
+`DashboardPage → useDashboard() → fetchDashboard() → apiRequest()`
 and `LoginForm → useLogin() → login() → apiRequest()`. The catalogue will
 follow the same shape (planned, none of these names exist yet):
 

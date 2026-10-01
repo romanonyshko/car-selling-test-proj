@@ -60,12 +60,10 @@ To run the whole system: `npm run db:up` in `auto-lincoln-contracts`, then
 - **Dependency direction:** `pages → features → components/ui → lib`.
 - **Data access layer.** Only files in `features/*/api/` call
   `lib/apiClient`. A component calls a hook, the hook calls `api/`.
-  Components know nothing about HTTP or which backend is selected.
-- **Backend selection** — `lib/backend.ts` (store) +
-  `components/layout/BackendSwitcher.tsx`. The browser calls the selected
-  API **directly**: `BACKEND_URLS` in `lib/apiClient.ts`
-  (`VITE_EXPRESS_API_URL` → :3001, `VITE_NEST_API_URL` → :3002), always with
-  `credentials: 'include'`. There is no Vite proxy. The APIs allow the web
+  Components know nothing about HTTP.
+- **API URL** — the browser calls the Nest API **directly**: `API_URL` in
+  `lib/apiClient.ts` (`VITE_API_URL`, default :3002), always with
+  `credentials: 'include'`. There is no Vite proxy. The API allows the web
   origin through CORS (`CORS_ORIGIN`, default `http://localhost:5173`).
 - **Server state — TanStack Query only** (including the current user,
   `authKeys.me()`). No `useState` + `useEffect` for fetching data. Local UI

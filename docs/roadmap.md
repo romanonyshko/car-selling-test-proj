@@ -4,6 +4,13 @@ Order of work. Details of how things are built live in
 [`architecture.md`](architecture.md); unfinished decisions and debt in
 [`open-questions.md`](open-questions.md).
 
+> **Change of course (2026-09-25): one backend.** Only the NestJS API (:3002)
+> is developed now; `auto-lincoln-api-express` is archived. The database
+> (Prisma schema, migrations, seed) lives in `auto-lincoln-api-nest`;
+> `auto-lincoln-contracts` holds only the HTTP contract (zod schemas).
+> Read "both APIs" below as "the Nest API". The web drops `BackendSwitcher`
+> when it moves to the new contracts. Decision: `context/05-decisions.md` §21.
+
 ## Done
 
 - [x] Monorepo on npm workspaces: `apps/{web,api-express,api-nest}`,
@@ -31,6 +38,11 @@ Order of work. Details of how things are built live in
 - [x] Web: base UI components — see [`ui-guidelines.md`](ui-guidelines.md)
 - [x] Web: dashboard UI on mock data — see
       [`dashboard-page.md`](dashboard-page.md)
+- [x] Dashboard on the API (2026-10-01): `GET /api/dashboard` in Nest
+      (DB tables + seed), `DashboardResponse` in the contracts, the web
+      reads it via `apiRequest` instead of the mock
+- [x] Contracts: `"sideEffects": false` — zod no longer ends up in the web
+      bundle (749 → 665 kB)
 
 ## In progress
 
@@ -63,7 +75,8 @@ Where each step happens: contract and seed → `auto-lincoln-contracts`
 10. **Orders** — list and statuses.
 11. **In stock, Price list, Documents, Warranty claims** — the sidebar
     sections.
-12. **Dashboard with real metrics** — replacing the mocks.
+12. **Dashboard with real metrics** — the endpoint and the data flow are
+    done; the values are still seed data, not computed from site activity.
 13. **Responsive** — sidebar as a drawer on mobile. Partly done: below
     805px an expanded sidebar becomes a full-screen overlay.
 14. **Bundle optimisation** — route-level code splitting via `React.lazy`.

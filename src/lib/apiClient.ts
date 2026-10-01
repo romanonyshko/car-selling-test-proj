@@ -1,15 +1,11 @@
-import { API_PREFIX, type ApiErrorBody, type Backend } from '@auto-lincoln/contracts'
-import { getBackend } from './backend'
+import { API_PREFIX, type ApiError as ApiErrorBody } from '@auto-lincoln/contracts'
 
 /**
- * Where each backend lives. The browser calls the selected API directly
- * (express → :3001, nest → :3002) — there is no dev proxy in between.
- * The APIs allow this origin via CORS (`CORS_ORIGIN` in their `.env`).
+ * Where the API lives. The browser calls it directly — there is no dev
+ * proxy in between. The API allows this origin via CORS (`CORS_ORIGIN`
+ * in its `.env`).
  */
-export const BACKEND_URLS: Record<Backend, string> = {
-  express: import.meta.env.VITE_EXPRESS_API_URL ?? 'http://localhost:3001',
-  nest: import.meta.env.VITE_NEST_API_URL ?? 'http://localhost:3002',
-}
+export const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3002'
 
 export class ApiError extends Error {
   readonly status: number
@@ -26,12 +22,12 @@ interface RequestOptions {
   body?: unknown
 }
 
-/** Calls the currently selected backend: <backend URL>/api<path>. */
+/** Calls the API: <API URL>/api<path>. */
 export async function apiRequest<T>(
   path: string,
   { method = 'GET', body }: RequestOptions = {},
 ): Promise<T> {
-  const url = `${BACKEND_URLS[getBackend()]}${API_PREFIX}${path}`
+  const url = `${API_URL}${API_PREFIX}${path}`
 
   const response = await fetch(url, {
     method,

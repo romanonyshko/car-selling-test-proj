@@ -5,20 +5,18 @@ Specification for the admin panel's home page. Read before any work on `/dashboa
 
 ## Current implementation status
 
-Checked against the code on 2026-09-22.
+Checked against the code on 2026-10-01.
 
 | Part | Status | Notes |
 | --- | --- | --- |
 | Page, 4 UI components, hook, query key | Implemented | as specified below |
-| Data | Partially implemented — mock only | `fetchDashboard()` resolves `dashboardMock` after a `setTimeout` of 300 ms; no HTTP request, no API route |
+| Data | Implemented | `GET /api/dashboard` (Nest, behind `AuthGuard`), values from the DB seed in `auto-lincoln-api-nest` |
+| Contract types | Implemented | `DashboardResponse` and the item types from `@auto-lincoln/contracts` |
 | Loading / error states | Implemented | `Spinner` / `ErrorState` with retry |
+| Empty states | Implemented | `UpdatesCard`: "No news yet" / "No reviews yet" when the API returns `null` |
 | Activity chart scale | Hardcoded | Y axis fixed to 0–50k (`Y_TICKS` in `ActivityChart.tsx`); real values above 50k would be clipped |
 | "Updates" links | Placeholder | `href="#"` — there are no post pages |
-| Dashboard API endpoint + contract types | Planned | `roadmap.md` → Next, step 12 |
 | Updates / Posts / Media sub-pages | Planned | sidebar links lead to a 404 |
-
-Moving to real API endpoints is not part of this specification: only
-`api/dashboardApi.ts` changes, the rest of the code does not.
 
 ## 1. Dependency
 
@@ -28,54 +26,42 @@ Moving to real API endpoints is not part of this specification: only
 
 Feature structure: `features/dashboard/{api,hooks,ui}`.
 
-### `api/mock-data.ts` — types and data
+### Contract types (`@auto-lincoln/contracts`, `dashboard/get-dashboard.ts`)
+
+zod schemas in the contracts package; the web imports only the inferred
+types (`import type`).
 
 ```ts
-interface GlanceStats   { posts: number; reviews: number; pages: number }
-interface NewsItem      { id: string; title: string; publishedAt: string } // ISO
-interface ReviewItem    { id: string; author: string; postTitle: string; text: string }
-interface RequestCounts { all: number; pending: number; approved: number; spam: number; trash: number }
-interface StatCard      { id: string; label: string; value: string; deltaPercent?: number }
-interface ActivityPoint { month: string; visitors: number }
-interface DashboardData {
+type GlanceStats   = { posts: number; reviews: number; pages: number }
+type NewsItem      = { id: string; title: string; publishedAt: string } // ISO, UTC
+type ReviewItem    = { id: string; author: string; postTitle: string; text: string }
+type RequestCounts = { all: number; pending: number; approved: number; spam: number; trash: number }
+type StatCard      = { id: string; label: string; value: string; deltaPercent?: number }
+type ActivityPoint = { month: string; visitors: number } // month: 'Jan', 'Feb', …
+type DashboardResponse = {
   glance: GlanceStats
-  latestNews: NewsItem
-  latestReview: ReviewItem
+  latestNews: NewsItem | null     // null when there is no news
+  latestReview: ReviewItem | null // null when there are no reviews
   requests: RequestCounts
   stats: StatCard[]
   activity: ActivityPoint[]
 }
 ```
 
-The mock values come from the design mockup:
-
-- **glance:** posts 2, reviews 16, pages 3
-- **latestNews:** "Season sale beginning!", `2026-03-05T17:00`
-- **latestReview:** author Ketty Richardson, on the post "Season sale
-  beginning!", text: "Rev up your savings with our season sale on car parts!
-  Upgrade your ride without breaking the bank. Don't miss out on these hot
-  deals to keep your vehicle running smoothly and stylishly all year round!"
-- **requests:** all 1, pending 0, approved 1, spam 0, trash 0
-- **stats** (6 cards): Time on website "14.7" +2, Visitors "620" +10,
-  Categories "400" with no delta, Comments "12.1" +8, Covers "340" +20,
-  Articles "120" with no delta
-- **activity:** 9 points Jan–Sep, values 5000–35000 shaped as "decline,
-  a small plateau, a peak, levelling off" (like the curve in the mockup)
+The data comes from the DB seed in `auto-lincoln-api-nest` (values taken
+from the design mockup). `glance` counts real rows, so it differs from the
+mockup (e.g. 2 reviews instead of 16). `publishedAt` is UTC and
+`UpdatesCard` shows it in the viewer's local time.
 
 ### The rest of the layer
 
-- `api/dashboardApi.ts` — `fetchDashboard(): Promise<DashboardData>`,
-  returns the mock with a 300 ms delay (so the loading states work).
-  Components never import the mock *values*; the UI components do import
-  the *types* from `mock-data.ts`.
+- `api/dashboardApi.ts` — `fetchDashboard(): Promise<DashboardResponse>`,
+  `apiRequest(API_ROUTES.dashboard)`. Errors are not caught — they reach
+  `useQuery` as `isError`.
 - `api/dashboardKeys.ts` — the key factory:
   `dashboardKeys.root()` → `['dashboard']`.
 - `hooks/useDashboard.ts` — `useQuery({ queryKey: dashboardKeys.root(),
   queryFn: fetchDashboard })`.
-
-The types live in `mock-data.ts` for now and are not to be moved into
-`auto-lincoln-contracts` (`src/shared`) — they will become contract types when the dashboard gets
-real API endpoints.
 
 ## 3. Feature UI (`features/dashboard/ui/`)
 
@@ -89,7 +75,9 @@ All cards follow the card convention in
   "Recently published news" (the date "Mar 5th, 17:00" + the title as an
   accent link), "Recent reviews" (`From {author} on {postTitle}`, below it
   `Text:` and the review body), "Requests" (the row "All (1) |
-  Pending (0) | …" with separators).
+  Pending (0) | …" with separators). When `latestNews` / `latestReview`
+  is `null`, the block shows "No news yet" / "No reviews yet"
+  (`text-ink-subtle`).
 - **`StatCardItem.tsx`** — label (`text-stat-label`, `text-ink-subtle`),
   value (`text-stat-value`, bold), delta to the right of the value: "↑ N%"
   in `text-positive` when `deltaPercent > 0`, "↓ N%" in `text-danger` when
