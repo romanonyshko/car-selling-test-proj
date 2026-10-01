@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import { cn } from '@/lib/cn'
-import type { NewsItem, RequestCounts, ReviewItem } from '../api/mock-data'
+import type { NewsItem, RequestCounts, ReviewItem } from '@auto-lincoln/contracts'
 
 const MONTHS = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -8,7 +8,6 @@ const MONTHS = [
 ]
 
 function withOrdinal(day: number) {
-  // 11–13 — виняток: 11th, 12th, 13th, а не 11st/12nd/13rd.
   if (day % 100 >= 11 && day % 100 <= 13) return `${day}th`
 
   switch (day % 10) {
@@ -33,8 +32,8 @@ function formatPublishedAt(iso: string) {
 }
 
 interface UpdatesCardProps {
-  latestNews: NewsItem
-  latestReview: ReviewItem
+  latestNews: NewsItem | null
+  latestReview: ReviewItem | null
   requests: RequestCounts
   className?: string
 }
@@ -64,28 +63,38 @@ export function UpdatesCard({
 
       <div className="border-b border-line pb-4">
         <h3 className="mb-3 font-bold text-ink">Recently published news</h3>
-        <p className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
-          <span className="text-ink">{formatPublishedAt(latestNews.publishedAt)}</span>
-          <a href="#" className="text-accent hover:underline">
-            {latestNews.title}
-          </a>
-        </p>
+        {latestNews ? (
+          <p className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
+            <span className="text-ink">{formatPublishedAt(latestNews.publishedAt)}</span>
+            <a href="#" className="text-accent hover:underline">
+              {latestNews.title}
+            </a>
+          </p>
+        ) : (
+          <p className="text-ink-subtle">No news yet</p>
+        )}
       </div>
 
       <div className="border-b border-line py-4">
         <h3 className="mb-3 font-bold text-ink">Recent reviews</h3>
-        <p className="text-ink">
-          From{' '}
-          <a href="#" className="text-accent hover:underline">
-            {latestReview.author}
-          </a>{' '}
-          on{' '}
-          <a href="#" className="text-accent hover:underline">
-            {latestReview.postTitle}
-          </a>
-        </p>
-        <p className="mt-4 text-ink">Text:</p>
-        <p className="mt-1 leading-relaxed text-ink">{latestReview.text}</p>
+        {latestReview ? (
+          <>
+            <p className="text-ink">
+              From{' '}
+              <a href="#" className="text-accent hover:underline">
+                {latestReview.author}
+              </a>{' '}
+              on{' '}
+              <a href="#" className="text-accent hover:underline">
+                {latestReview.postTitle}
+              </a>
+            </p>
+            <p className="mt-4 text-ink">Text:</p>
+            <p className="mt-1 leading-relaxed text-ink">{latestReview.text}</p>
+          </>
+        ) : (
+          <p className="text-ink-subtle">No reviews yet</p>
+        )}
       </div>
 
       <div className="mt-auto pt-4">

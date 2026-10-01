@@ -1,4 +1,4 @@
-import type { GlanceStats } from '../api/mock-data'
+import type { GlanceStats } from "@auto-lincoln/contracts"
 
 export function GlanceCard({ glance }: { glance: GlanceStats }) {
   const rows = [

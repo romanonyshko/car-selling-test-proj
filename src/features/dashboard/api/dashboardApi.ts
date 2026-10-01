@@ -1,9 +1,7 @@
-import { dashboardMock, type DashboardData } from './mock-data'
+import { apiRequest } from '@/lib/apiClient'
+import { API_ROUTES, type DashboardResponse } from '@auto-lincoln/contracts'
 
-const MOCK_DELAY_MS = 300
 
-export function fetchDashboard(): Promise<DashboardData> {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(dashboardMock), MOCK_DELAY_MS)
-  })
+export async function fetchDashboard(): Promise<DashboardResponse> {
+  return await apiRequest<DashboardResponse>(API_ROUTES.dashboard)
 }

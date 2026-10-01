@@ -1,3 +1,4 @@
+import type { ActivityPoint } from '@auto-lincoln/contracts'
 import {
   CartesianGrid,
   Line,
@@ -6,14 +7,13 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import type { ActivityPoint } from '../api/mock-data'
+
 
 /** 10000 → '10k' */
 function formatThousands(value: number) {
   return value >= 1000 ? `${value / 1000}k` : String(value)
 }
 
-/** The mockup draws a fixed 0…50k scale, one gridline every 10k. */
 const Y_TICKS = [0, 10000, 20000, 30000, 40000, 50000]
 
 const tickStyle = { className: 'fill-ink text-crumb' }

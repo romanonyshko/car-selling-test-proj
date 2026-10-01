@@ -9,7 +9,6 @@ export function logout(): Promise<void> {
   return apiRequest<void>(API_ROUTES.auth.logout, { method: 'POST' })
 }
 
-/** `null` means "no session" (401) — that is not an error. */
 export async function fetchCurrentUser(): Promise<AuthUser | null> {
   try {
     return await apiRequest<AuthUser>(API_ROUTES.auth.me)
