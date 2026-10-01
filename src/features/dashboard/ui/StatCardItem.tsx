@@ -1,5 +1,5 @@
 import { cn } from '@/lib/cn'
-import type { StatCard } from '../api/mock-data'
+import type { StatCard } from '@auto-lincoln/contracts'
 
 export function StatCardItem({ stat }: { stat: StatCard }) {
   const { label, value, deltaPercent } = stat
