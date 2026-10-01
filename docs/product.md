@@ -18,7 +18,7 @@ Checked against the code on 2026-09-22. Order of the remaining work:
 | --- | --- | --- |
 | Login / logout | Implemented | `/login`, JWT in an httpOnly cookie, works against either API |
 | Two APIs + backend switcher | Implemented | health + auth routes only |
-| Dashboard | Partially implemented | full UI on mock data, no API — [`dashboard-page.md`](dashboard-page.md) |
+| Dashboard | Implemented | full UI on `GET /api/dashboard`, values from the DB seed — [`dashboard-page.md`](dashboard-page.md) |
 | Parts online → Catalogue | Partially implemented | route + text placeholder — [`catalogue-page.md`](catalogue-page.md) |
 | In stock, Orders, Price list | Planned | sidebar links only, lead to a 404 |
 | Documents, Warranty claims, Support | Planned | sidebar links only, lead to a 404 |
