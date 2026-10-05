@@ -3,8 +3,7 @@
 A list of what is deliberately unfinished or not yet decided — for the
 whole project (all four folders: `auto-lincoln-web`, `auto-lincoln-contracts`,
 `auto-lincoln-api-express`, `auto-lincoln-api-nest`). This file is the
-single list; the other folders link here. None of this should be resolved
-silently while working on another task — ask first.
+single list; the other folders link here.
 
 Question numbers are stable — other docs link to them. Last checked against
 the code on 2026-09-22 (`dev`, `d8039ac`); #3, #7, #9–#11 and the `.env`
@@ -24,6 +23,9 @@ committed).
 | 9 | Keeping the contracts version in sync | Decided 2026-09-23 — git tags `vX.Y.Z`, all consumers on one tag |
 | 10 | Git dependency on the contracts needs a build step | Decided 2026-09-23 — `prepare` script (fallback: committed `dist/`) |
 | 11 | Dependency versions drift without a shared lockfile | Open (new, after the split) |
+| 12 | Chat: the echo reply doubles as the confirmation | Open — worked around in the web reducer |
+| 13 | Chat: WebSocket close codes are not in the contract | Open |
+| 14 | Chat: no reconnect, no history, stuck `pending` messages | Open |
 
 ## Open questions
 
@@ -177,6 +179,42 @@ monorepo versions, and each folder now has its own lockfile. From now on
 the four lockfiles evolve independently; shared tools (`typescript`,
 `@types/node`, `oxlint`) can diverge between folders.
 
+### 12. Chat: the echo reply doubles as the confirmation
+
+Added 2026-10-05. For `message:send` the Nest API answers with **one**
+`message:new`: `author: 'support'`, the user's text, and the user's
+`clientId` (`ChatService.reply`). The web reducer treats a matching
+`clientId` as "your message was saved", so on its own the reply was
+swallowed and never shown.
+
+**Workaround in the web:** `chatReducer` handles `support` + a known
+`clientId` as both — the user's message → `sent`, and the reply appended
+without `clientId` (`support-chat.md` → "State").
+
+Cleaner option: the API sends two events — a confirmation (`author: 'user'`,
+with `clientId`) and the reply (`author: 'support'`, no `clientId`) — and the
+contracts README says that `clientId` on `message:new` means
+"confirmation". The reducer already handles that shape; the workaround
+branch can then go. Worth doing before replies come from a real operator.
+
+### 13. Chat: WebSocket close codes are not in the contract
+
+Added 2026-10-05. `4401` (no session) and `4403` (wrong `Origin`) are
+literals in `auto-lincoln-api-nest/src/modules/chat/chat.gateway.ts`; the
+web repeats them as literals in `features/support/ui/ConnectionNotice.tsx`.
+Nothing keeps them in sync. Option: a `WS_CLOSE_CODES` constant in
+`@auto-lincoln/contracts` used on both sides.
+
+### 14. Chat: no reconnect, no history, stuck `pending` messages
+
+Added 2026-10-05. A closed socket stays closed until the page is reloaded,
+and after a reload the list is empty — there is no history endpoint. A
+message that is `pending` when the socket closes stays `pending` forever
+(`connection/closed` does not touch messages). Options: a
+history route in the contract, reconnect with backoff in `chatSocket` /
+`useSupportChat`, and `pending` → `failed` on close (or a resend on
+reconnect).
+
 ## Technical debt
 
 - No tests — no runner is set up. No CI (`.github/` does not exist), no
@@ -185,7 +223,7 @@ the four lockfiles evolve independently; shared tools (`typescript`,
   seed (an admin and a test manager).
 - **No rate limiting on `/auth/login`** — password guessing is unthrottled.
 - **Sidebar sections without routes** — the links lead to a 404:
-  In stock, Orders, Price list, Documents, Warranty claims, Support,
+  In stock, Orders, Price list, Documents, Warranty claims,
   and also Updates, Posts, Media under Dashboard. This is deliberate: the
   menu items match the mockup, the pages will come later.
 - **`.env` duplication — now across three separate projects.**
@@ -225,7 +263,5 @@ the four lockfiles evolve independently; shared tools (`typescript`,
 - **Placeholders in the UI:** `href="#"` links in `UpdatesCard`, a decorative
   cart icon in `Topbar`, `Select` is not used anywhere yet,
   `public/icons.svg` and `src/assets/vite.svg` are not referenced.
-- `Sidebar.tsx` has a bare `//need check this` comment above the Dashboard
-  sub-items — what it refers to is unclear.
 - UI language is mixed: Ukrainian (login, errors) and English (mockup
   labels).

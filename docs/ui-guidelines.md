@@ -123,8 +123,7 @@ What exists in `src/components/`:
 | `ui/PageHeader` | `crumbs: string[]` (last = current), `title`, optional `actions` slot | `DashboardPage`, `CataloguePage` |
 | `layout/AppLayout` | Sidebar + Topbar + `<Outlet/>` | router |
 | `layout/Sidebar` | nav from the static array in `layout/navigation.ts`, local collapse state | `AppLayout` |
-| `layout/Topbar` | `BackendSwitcher`, cart icon (decorative), user menu with logout | `AppLayout` |
-| `layout/BackendSwitcher` | `role="radiogroup"` of the two backends | `Topbar`, `LoginPage` |
+| `layout/Topbar` | cart icon (decorative), user menu with logout | `AppLayout` |
 
 There is no `Card`, `Modal`, `Table` or `Badge` component; cards are plain
 markup following the convention below.
@@ -205,16 +204,15 @@ Tailwind utilities only, no arbitrary values" is incompatible with the mockup
 (py-21, py-18, row gap 30, item height 71.925). **What was done:** the rule
 was dropped. Repeated values became `--spacing-*` / `--text-*` tokens;
 genuinely one-off numbers are arbitrary values in the component that owns
-them. Needs the owner's confirmation.
+them. Still to be confirmed against the design.
 
 **Q2 — the ~1.1791 sidebar scale.** Every sidebar dimension divides by
 ~1.1791 into a round number (18.866→16, 71.925→61, 305.388→259; 8 of 8),
 which suggests the group was scaled up in Figma. **What was done:** the
 mockup is reproduced as it renders — the raw values rounded to whole pixels
 (19 / 72 / 62 / 305 / 21 / 5), not the divided ones, so the result matches
-the Figma screenshot. If the owner confirms the scaling was accidental, four
+the Figma screenshot. If the scaling turns out to be accidental, four
 tokens change: `--text-nav`, `--spacing-nav-item`, `--spacing-nav-sub`,
 `--spacing-nav-group`.
 
-Both answers are written into the code by the implementer, not by the
-project owner. Related: `docs/open-questions.md`.
+Related: `docs/open-questions.md`.
