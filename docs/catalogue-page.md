@@ -56,8 +56,6 @@ In PostgreSQL (`auto-lincoln-contracts/prisma/schema.prisma`) these are the tabl
 `compatibleEngineIds` is a many-to-many relation between `parts` and
 `engines`; the APIs flatten it into an id array in the response.
 
-Component logic must not depend on which backend serves the data.
-
 ## Cascading filter logic
 
 1. Child options come from the selected parent:

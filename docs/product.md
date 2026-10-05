@@ -5,23 +5,24 @@ catalogue (categories and items), sees stock levels, and handles orders and
 warranty claims. A customer finds the right part for their vehicle through
 the **Carmaker → Model → Engine** filters.
 
-The project is a learning one (internship), built from a mockup provided by
-the mentor. As a learning goal, the same REST API is implemented twice —
-in Express and in NestJS — and the web app can switch between them.
+The UI follows a Figma mockup. The backend is a NestJS API
+(`auto-lincoln-api-nest`); the web app and the API share one contract
+package, `@auto-lincoln/contracts`.
 
 ## Current implementation status
 
-Checked against the code on 2026-09-22. Order of the remaining work:
+Checked against the code on 2026-10-05. Order of the remaining work:
 [`roadmap.md`](roadmap.md).
 
 | Area | Status | What exists |
 | --- | --- | --- |
-| Login / logout | Implemented | `/login`, JWT in an httpOnly cookie, works against either API |
-| Two APIs + backend switcher | Implemented | health + auth routes only |
+| Login / logout | Implemented | `/login`, JWT in an httpOnly cookie |
+| API | Implemented | NestJS: health, auth, dashboard, support chat (WebSocket) |
 | Dashboard | Implemented | full UI on `GET /api/dashboard`, values from the DB seed — [`dashboard-page.md`](dashboard-page.md) |
 | Parts online → Catalogue | Partially implemented | route + text placeholder — [`catalogue-page.md`](catalogue-page.md) |
 | In stock, Orders, Price list | Planned | sidebar links only, lead to a 404 |
-| Documents, Warranty claims, Support | Planned | sidebar links only, lead to a 404 |
+| Support | Implemented (echo) | `/support`, WebSocket chat; the Nest API echoes the user's text — [`support-chat.md`](support-chat.md) |
+| Documents, Warranty claims | Planned | sidebar links only, lead to a 404 |
 | Roles | Planned | declared in schema and types, not enforced (open question #5) |
 
 ## Sections
@@ -38,22 +39,21 @@ The list is taken from the navigation in
 | **Parts online → Price list** | price list, export |
 | **Documents** | documents attached to orders |
 | **Warranty claims** | warranty requests |
-| **Support** | link at the bottom of the sidebar |
+| **Support** | chat with support over a WebSocket; link at the bottom of the sidebar |
 
 The Dashboard item also has Home, Updates, Posts and Media sub-items in the
 sidebar; only Home has a route.
 
 ## User roles
 
-Three roles are declared in the Prisma schema and in the shared types
-(`UserRole` in `auto-lincoln-contracts/src/shared/models.ts`): `admin`, `manager`,
-`client`. The seed creates an `admin` and a test `manager`
-(`test@autolincoln.local`); a new user defaults to `manager` (Prisma
-schema). Users only come from the seed — there is no registration.
+Three roles are declared in the Prisma schema of `auto-lincoln-api-nest`
+(`UserRole`): `admin`, `manager`, `client`; a new user defaults to
+`manager`. There is no registration — the test accounts are listed in
+`auto-lincoln-api-nest/README.md`.
 
 Permission separation is not implemented yet — right now any authenticated
 user sees the whole panel. The real access rules will have to be enforced
-in both APIs, not only in the UI.
+in the API, not only in the UI.
 
 ## Deliberately out of MVP scope
 
