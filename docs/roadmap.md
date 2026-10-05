@@ -4,18 +4,18 @@ Order of work. Details of how things are built live in
 [`architecture.md`](architecture.md); unfinished decisions and debt in
 [`open-questions.md`](open-questions.md).
 
-> **Change of course (2026-09-25): one backend.** Only the NestJS API (:3002)
-> is developed now; `auto-lincoln-api-express` is archived. The database
-> (Prisma schema, migrations, seed) lives in `auto-lincoln-api-nest`;
-> `auto-lincoln-contracts` holds only the HTTP contract (zod schemas).
-> Read "both APIs" below as "the Nest API". The web drops `BackendSwitcher`
-> when it moves to the new contracts. Decision: `context/05-decisions.md` §21.
+> **One backend since 2026-09-25.** Only the NestJS API (:3002) is
+> developed; the Express API is archived. The database (Prisma schema,
+> migrations, seed) lives in `auto-lincoln-api-nest`;
+> `auto-lincoln-contracts` holds only the HTTP and WebSocket contract (zod
+> schemas). Older items below that say "both APIs" refer to the time when
+> there were two.
 
 ## Done
 
 - [x] Monorepo on npm workspaces: `apps/{web,api-express,api-nest}`,
       `packages/{shared,auth,db}`
-- [x] Split into four folders (2026-09-23, see [`migration/`](migration/)):
+- [x] Split into four folders (2026-09-23):
       `auto-lincoln-web` (web), `auto-lincoln-contracts` (one package
       `@auto-lincoln/contracts` with `.`/`./auth`/`./db` + DB),
       `auto-lincoln-api-express`, `auto-lincoln-api-nest`; linked with
@@ -38,9 +38,13 @@ Order of work. Details of how things are built live in
 - [x] Web: base UI components — see [`ui-guidelines.md`](ui-guidelines.md)
 - [x] Web: dashboard UI on mock data — see
       [`dashboard-page.md`](dashboard-page.md)
+- [x] Web: backend switcher removed — one API, `VITE_API_URL`
 - [x] Dashboard on the API (2026-10-01): `GET /api/dashboard` in Nest
       (DB tables + seed), `DashboardResponse` in the contracts, the web
       reads it via `apiRequest` instead of the mock
+- [x] Support chat (2026-10-05): WebSocket `WS_ROUTES.chat` in Nest (echo),
+      chat events in the contracts, `/support` on the web with optimistic
+      messages and connection status — see [`support-chat.md`](support-chat.md)
 - [x] Contracts: `"sideEffects": false` — zod no longer ends up in the web
       bundle (749 → 665 kB)
 

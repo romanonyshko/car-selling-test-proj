@@ -17,7 +17,6 @@ export const navigation: NavItem[] = [
     to: '/dashboard',
     label: 'Dashboard',
     icon: DashboardIcon,
-    //need check this 
     children: [
       { to: '/dashboard', label: 'Home' },
       { to: '/dashboard/updates', label: 'Updates' },
