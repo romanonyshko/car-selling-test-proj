@@ -6,6 +6,7 @@ import { API_PREFIX, type ApiError as ApiErrorBody } from '@auto-lincoln/contrac
  * in its `.env`).
  */
 export const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3002'
+export const WS_URL = API_URL.replace(/^http/, 'ws')
 
 export class ApiError extends Error {
   readonly status: number
