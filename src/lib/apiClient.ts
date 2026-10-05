@@ -23,7 +23,6 @@ interface RequestOptions {
   body?: unknown
 }
 
-/** Calls the API: <API URL>/api<path>. */
 export async function apiRequest<T>(
   path: string,
   { method = 'GET', body }: RequestOptions = {},
