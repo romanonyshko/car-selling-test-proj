@@ -25,14 +25,14 @@ export function MessageForm({ onSend, disabled }: MessageFormProps) {
         <Input
           value={text}
           onChange={handleChangeText}
-          aria-label="Повідомлення"
-          placeholder="Напишіть повідомлення…"
+          aria-label="Message"
+          placeholder="Write a message…"
           maxLength={1000}
           autoComplete="off"
         />
       </div>
 
-      <Button disabled={disabled || !text.trim()} type="submit">Надіслати</Button>
+      <Button disabled={disabled || !text.trim()} type="submit">Send</Button>
     </form>
   )
 }

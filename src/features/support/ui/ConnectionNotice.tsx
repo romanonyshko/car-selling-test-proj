@@ -3,12 +3,12 @@ interface ConnectionNoticeProps {
 }
 
 const closeMessages: Record<number, string> = {
-  4401: 'Сесія закінчилась. Увійдіть знову.',
-  4403: 'Доступ заборонено.',
-  1006: 'Немає звʼязку з сервером. Оновіть сторінку.',
+  4401: 'Your session has expired. Please sign in again.',
+  4403: 'Access denied.',
+  1006: 'No connection to the server. Please refresh the page.',
 }
 
-const fallbackMessage = 'Зʼєднання закрито. Оновіть сторінку.'
+const fallbackMessage = 'The connection was closed. Please refresh the page.'
 
 export function ConnectionNotice({ closeCode }: ConnectionNoticeProps) {
   if (closeCode === null) return null

@@ -5,22 +5,26 @@ Catalogue page specification. Read before any work on
 
 ## Current implementation status
 
-Checked against the code on 2026-09-22. The rest of this file is the
+Checked against the code on 2026-10-06. The rest of this file is the
 target spec, not a description of the code.
 
 | Part | Status | Where |
 | --- | --- | --- |
 | Route `/parts/catalogue` (+ `/parts` redirect) | Implemented | `src/app/router/routes.tsx` |
 | Page header (breadcrumbs "Parts online → Catalogue") | Implemented | `pages/catalogue/CataloguePage.tsx` |
-| Category grid | Planned — a text placeholder is shown instead | same file |
-| Category images | Partially: 12 files in `public/categories/*.jpg`, not referenced by any code | — |
+| Category grid | Implemented — 3 columns of 352x209 cards, loading / error / empty states | `features/catalogue/ui/CategoryGrid.tsx`, `CategoryCard.tsx` |
+| Category images | Implemented — the API returns `/categories/<slug>.jpg`, served from `public/categories/` | — |
+| Clicking a category | Implemented — each card is a link to `/parts/catalogue/$categoryId` (hover: accent shadow, image zoom, arrow) | `features/catalogue/ui/CategoryCard.tsx` |
+| Category page `/parts/catalogue/$categoryId` | Implemented — breadcrumbs with a link back to the catalogue, part count, list of parts; loading / error / empty / "Category not found" states | `pages/catalogue/CategoryPartsPage.tsx`, `features/catalogue/ui/PartRow.tsx` |
 | Grid / list toggle | Planned (`PageHeader` has an `actions` slot for it) | — |
 | Carmaker → Model → Engine filters | Planned | — |
-| Contract types (`Category`, `Carmaker`, `CarModel`, `Engine`, `Part`, `PartsFilters`) | Implemented, unused | `auto-lincoln-contracts/src/shared/models.ts` |
-| Catalogue routes in `API_ROUTES` | Planned | `auto-lincoln-contracts/src/shared/api.ts` |
-| DB tables | Implemented, empty (the seed only creates the admin user) | `auto-lincoln-contracts/prisma/schema.prisma` |
-| Catalogue endpoints in the APIs | Planned | — |
-| `features/catalogue/` in the web app | Planned (folder does not exist) | — |
+| Contract schemas (`Category`, `Carmaker`, `CarModel`, `Engine`, `Part`, `PartsQuery`) | Implemented | `auto-lincoln-contracts/catalogue/`, `parts/` |
+| Catalogue routes in `API_ROUTES` | Implemented | `auto-lincoln-contracts/common/api.ts` |
+| DB tables + demo data | Implemented — the seed fills categories, carmakers, models, engines, parts | `auto-lincoln-api-nest/prisma/` |
+| `GET /api/categories` | Implemented (auth required) | `auto-lincoln-api-nest/src/modules/catalogue/` |
+| `GET /api/parts?category=<id>` | Implemented (auth required) — filters by category only, `nextCursor` is always `null` | `auto-lincoln-api-nest/src/modules/catalogue/` |
+| Carmakers / models / engines endpoints, parts filters by make / model / engine / search, pagination | Planned | — |
+| `features/catalogue/` in the web app | Implemented for categories and parts: `catalogueKeys` (`parts(filters)` keeps the whole `PartsQuery` in the key), `fetchCategories`, `fetchParts`, `useCategories`, `useParts` (`keepPreviousData`, disabled without a category) | `src/features/catalogue/` |
 
 ## Layout
 
@@ -35,7 +39,7 @@ target spec, not a description of the code.
 ## Data model
 
 Normalized: flat lists linked by parent ids, no nesting. These are the
-contract types in `auto-lincoln-contracts/src/shared/models.ts`:
+contract schemas in `auto-lincoln-contracts/catalogue/` and `parts/`:
 
 ```ts
 interface Category { id: string; title: string; image: string; order: number }
@@ -51,7 +55,7 @@ interface Part {
 }
 ```
 
-In PostgreSQL (`auto-lincoln-contracts/prisma/schema.prisma`) these are the tables
+In PostgreSQL (`auto-lincoln-api-nest/prisma/schema.prisma`) these are the tables
 `categories`, `carmakers`, `car_models`, `engines`, `parts`.
 `compatibleEngineIds` is a many-to-many relation between `parts` and
 `engines`; the APIs flatten it into an id array in the response.

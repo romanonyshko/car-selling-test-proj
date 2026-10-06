@@ -6,7 +6,7 @@ export function LoginPage() {
       <div className="w-full max-w-[419px] bg-surface p-10 shadow-card-1">
         <h1 className="text-title font-medium text-ink">Auto Lincoln</h1>
         <p className="mt-2 mb-8 text-section text-ink-muted">
-          Увійдіть у панель керування
+          Sign in to the admin panel
         </p>
 
         <LoginForm />

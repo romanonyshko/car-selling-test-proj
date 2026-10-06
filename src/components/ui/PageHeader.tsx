@@ -1,8 +1,11 @@
+import { Link, type LinkProps } from '@tanstack/react-router'
 import { Fragment, type ReactNode } from 'react'
+
+export type Crumb = string | { label: string; to: LinkProps['to'] }
 
 interface PageHeaderProps {
   /** Breadcrumb trail: the last item is the current page. */
-  crumbs: string[]
+  crumbs: Crumb[]
   title: string
   /** Controls aligned with the title on the right (grid / list toggle, …). */
   actions?: ReactNode
@@ -14,9 +17,10 @@ export function PageHeader({ crumbs, title, actions }: PageHeaderProps) {
       <p className="flex items-center gap-2 text-crumb">
         {crumbs.map((crumb, index) => {
           const isCurrent = index === crumbs.length - 1
+          const label = typeof crumb === 'string' ? crumb : crumb.label
 
           return (
-            <Fragment key={crumb}>
+            <Fragment key={label}>
               {index > 0 && (
                 <svg
                   aria-hidden
@@ -31,9 +35,13 @@ export function PageHeader({ crumbs, title, actions }: PageHeaderProps) {
                   <path d="m2.5 1 3 3-3 3" />
                 </svg>
               )}
-              <span className={isCurrent ? 'text-ink' : 'text-ink-muted'}>
-                {crumb}
-              </span>
+              {typeof crumb === 'string' ? (
+                <span className={isCurrent ? 'text-ink' : 'text-ink-muted'}>{crumb}</span>
+              ) : (
+                <Link to={crumb.to} className="text-ink-muted hover:text-accent">
+                  {crumb.label}
+                </Link>
+              )}
             </Fragment>
           )
         })}

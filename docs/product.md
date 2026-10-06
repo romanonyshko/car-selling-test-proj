@@ -11,15 +11,15 @@ package, `@auto-lincoln/contracts`.
 
 ## Current implementation status
 
-Checked against the code on 2026-10-05. Order of the remaining work:
+Checked against the code on 2026-10-06. Order of the remaining work:
 [`roadmap.md`](roadmap.md).
 
 | Area | Status | What exists |
 | --- | --- | --- |
 | Login / logout | Implemented | `/login`, JWT in an httpOnly cookie |
-| API | Implemented | NestJS: health, auth, dashboard, support chat (WebSocket) |
+| API | Implemented | NestJS: health, auth, dashboard, catalogue categories, support chat (WebSocket) |
 | Dashboard | Implemented | full UI on `GET /api/dashboard`, values from the DB seed — [`dashboard-page.md`](dashboard-page.md) |
-| Parts online → Catalogue | Partially implemented | route + text placeholder — [`catalogue-page.md`](catalogue-page.md) |
+| Parts online → Catalogue | Partially implemented | category grid on `GET /api/categories`; filters planned — [`catalogue-page.md`](catalogue-page.md) |
 | In stock, Orders, Price list | Planned | sidebar links only, lead to a 404 |
 | Support | Implemented (echo) | `/support`, WebSocket chat; the Nest API echoes the user's text — [`support-chat.md`](support-chat.md) |
 | Documents, Warranty claims | Planned | sidebar links only, lead to a 404 |

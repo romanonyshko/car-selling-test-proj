@@ -129,12 +129,13 @@ src/
 ├── pages/                          # composition only
 │   ├── login/LoginPage.tsx
 │   ├── dashboard/DashboardPage.tsx
-│   ├── catalogue/CataloguePage.tsx # placeholder
+│   ├── catalogue/CataloguePage.tsx # category grid
 │   ├── support/SupportPage.tsx     # PageHeader + SupportChat
 │   ├── PlaceholderPage.tsx         # generic "in progress" page
 │   └── NotFoundPage.tsx
 ├── features/
 │   ├── auth/{api,hooks,ui}
+│   ├── catalogue/{api,hooks,ui}    # GET /api/categories, see catalogue-page.md
 │   ├── dashboard/{api,hooks,ui}    # GET /api/dashboard, see dashboard-page.md
 │   └── support/{api,hooks,model,ui} # WebSocket chat, see support-chat.md
 ├── components/
@@ -145,10 +146,7 @@ src/
 ```
 
 Static files live in `public/` (`favicon.svg`, `icons.svg`,
-`categories/*.jpg` — 12 category images, not referenced by the code yet).
-
-`features/catalogue/` does not exist yet — it is created with the first
-catalogue step.
+`categories/*.jpg` — 12 category images; the API returns their paths).
 
 ### Layers
 
@@ -160,12 +158,12 @@ A component never calls `apiClient` directly. The implemented chain is
 `DashboardPage → useDashboard() → fetchDashboard() → apiRequest()`
 and `LoginForm → useLogin() → login() → apiRequest()`. The support chat has
 the same shape over a WebSocket instead of `apiRequest`:
-`SupportChat → useSupportChat() → connectChat() → WebSocket(WS_URL)`. The catalogue will
-follow the same shape (planned, none of these names exist yet):
+`SupportChat → useSupportChat() → connectChat() → WebSocket(WS_URL)`. The catalogue
+has the same shape:
 
 ```
-CataloguePage → useCategories() → categoriesApi.fetchCategories() → apiRequest()
-   (pages)        (features/hooks)        (features/api)                (lib)
+CataloguePage → useCategories() → fetchCategories() → apiRequest()
+   (pages)        (features/hooks)   (features/api)      (lib)
 ```
 
 ### Route tree

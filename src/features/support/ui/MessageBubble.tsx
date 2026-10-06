@@ -14,9 +14,9 @@ const bubbleColors: Record<ChatItem['author'], string> = {
 }
 
 const statusLabels: Record<MessageStatus, string> = {
-  pending: 'Надсилається…',
-  sent: 'Надіслано',
-  failed: 'Не надіслано',
+  pending: 'Sending…',
+  sent: 'Sent',
+  failed: 'Not sent',
 }
 
 const statusColors: Record<MessageStatus, string> = {
