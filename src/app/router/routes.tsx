@@ -1,6 +1,7 @@
 import { AppLayout } from '@/components/layout/AppLayout'
 import { Spinner } from '@/components/ui/Spinner'
 import { meQueryOptions } from '@/features/auth/api/authQueries'
+import { parseCarFilters } from '@/features/catalogue/model/carFilters'
 import { queryClient } from '@/lib/queryClient'
 import { CataloguePage } from '@/pages/catalogue/CataloguePage'
 import { CategoryPartsPage } from '@/pages/catalogue/CategoryPartsPage'
@@ -99,12 +100,14 @@ const catalogueRoute = createRoute({
   getParentRoute: () => partsRoute,
   path: 'catalogue',
   component: CataloguePage,
+  validateSearch: parseCarFilters
 })
 
 const categoryRoute = createRoute({
   getParentRoute: () => partsRoute,
   path: 'catalogue/$categoryId',
-  component: CategoryPartsPage
+  component: CategoryPartsPage,
+  validateSearch: parseCarFilters
 })
 
 const inStockRoute = createRoute({

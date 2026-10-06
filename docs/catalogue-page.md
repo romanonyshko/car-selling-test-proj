@@ -12,19 +12,22 @@ target spec, not a description of the code.
 | --- | --- | --- |
 | Route `/parts/catalogue` (+ `/parts` redirect) | Implemented | `src/app/router/routes.tsx` |
 | Page header (breadcrumbs "Parts online → Catalogue") | Implemented | `pages/catalogue/CataloguePage.tsx` |
-| Category grid | Implemented — 3 columns of 352x209 cards, loading / error / empty states | `features/catalogue/ui/CategoryGrid.tsx`, `CategoryCard.tsx` |
+| Category grid | Implemented — 3 fluid columns (`grid-cols-3`), card image keeps the mockup ratio 352:147, 62px caption; ≈352x209 with the filter panel open on the mockup width, wider when it is collapsed; loading / error / empty states | `features/catalogue/ui/CategoryGrid.tsx`, `CategoryCard.tsx` |
 | Category images | Implemented — the API returns `/categories/<slug>.jpg`, served from `public/categories/` | — |
 | Clicking a category | Implemented — each card is a link to `/parts/catalogue/$categoryId` (hover: accent shadow, image zoom, arrow) | `features/catalogue/ui/CategoryCard.tsx` |
 | Category page `/parts/catalogue/$categoryId` | Implemented — breadcrumbs with a link back to the catalogue, part count, list of parts; loading / error / empty / "Category not found" states | `pages/catalogue/CategoryPartsPage.tsx`, `features/catalogue/ui/PartRow.tsx` |
 | Grid / list toggle | Planned (`PageHeader` has an `actions` slot for it) | — |
-| Carmaker → Model → Engine filters | Planned | — |
+| Filter panel "Find your car parts" | Implemented — on both the grid and the category page, inside `PanelLayout` (full-height right panel, collapsible to a 76px strip by the arrow button); Carmaker → Model → Engine selects, a child is disabled until its parent is chosen | `components/layout/PanelLayout.tsx`, `features/catalogue/ui/PartsFilterPanel.tsx` |
+| Filter state in the URL | Implemented — `?make&model&engine` validated by `parseCarFilters` (`validateSearch` on both catalogue routes); `useCarFilters` reads them and writes with `navigate({ to: '.', replace: true })`, resetting the children of a changed parent; category cards keep the filters (`search={true}`) | `features/catalogue/model/carFilters.ts`, `hooks/useCarFilters.ts` |
+| Filtering parts on the category page | Implemented — filters go into `useParts`; "No parts match these filters" + "Reset filters" when filters are set and nothing matches | `pages/catalogue/CategoryPartsPage.tsx` |
 | Contract schemas (`Category`, `Carmaker`, `CarModel`, `Engine`, `Part`, `PartsQuery`) | Implemented | `auto-lincoln-contracts/catalogue/`, `parts/` |
 | Catalogue routes in `API_ROUTES` | Implemented | `auto-lincoln-contracts/common/api.ts` |
 | DB tables + demo data | Implemented — the seed fills categories, carmakers, models, engines, parts | `auto-lincoln-api-nest/prisma/` |
 | `GET /api/categories` | Implemented (auth required) | `auto-lincoln-api-nest/src/modules/catalogue/` |
-| `GET /api/parts?category=<id>` | Implemented (auth required) — filters by category only, `nextCursor` is always `null` | `auto-lincoln-api-nest/src/modules/catalogue/` |
-| Carmakers / models / engines endpoints, parts filters by make / model / engine / search, pagination | Planned | — |
-| `features/catalogue/` in the web app | Implemented for categories and parts: `catalogueKeys` (`parts(filters)` keeps the whole `PartsQuery` in the key), `fetchCategories`, `fetchParts`, `useCategories`, `useParts` (`keepPreviousData`, disabled without a category) | `src/features/catalogue/` |
+| `GET /api/carmakers`, `/carmakers/:id/models`, `/models/:id/engines` | Implemented (auth required) — ordered by name, unknown id → `[]` | `auto-lincoln-api-nest/src/modules/catalogue/` |
+| `GET /api/parts` filters | Implemented — `category` (required), `make` / `model` / `engine` (most precise one applied), `limit` | `auto-lincoln-api-nest/src/modules/catalogue/` |
+| Parts pagination (`cursor`) | Planned — `nextCursor` is always `null` | — |
+| `features/catalogue/` in the web app | `catalogueKeys` (`carmakers()`, `models(carmakerId)`, `engines(modelId)`, `categories()`, `parts(filters)` — the parent id / whole `PartsQuery` is in the key), fetchers in `api/`, hooks `useCategories`, `useParts` (`keepPreviousData`, disabled without a category), `useCarmakers`, `useModels`, `useEngines` (`skipToken` until the parent is chosen), `useCarFilters` | `src/features/catalogue/` |
 
 ## Layout
 
@@ -89,13 +92,13 @@ In PostgreSQL (`auto-lincoln-api-nest/prisma/schema.prisma`) these are the table
 
 ## Data source
 
-- Both APIs serve the data from PostgreSQL through endpoints described in
-  `auto-lincoln-contracts` (`src/shared`) (to be added — `roadmap.md` → Next, steps 1–2). Demo
-  data will come from the seed.
+- The Nest API serves the data from PostgreSQL through the endpoints
+  described in `auto-lincoln-contracts`; demo data comes from the seed.
 - The web app fetches it with TanStack Query. Query keys must include the
   parent id, e.g. `catalogueKeys.models(selectedMake)`, so each branch is
   cached separately.
-- Selected filters are planned in the URL (`useSearchParams`).
+- Selected filters live in the URL search params (`make`, `model`, `engine`),
+  so a filtered page can be reloaded or shared.
 
 ## Naming note
 
