@@ -14,15 +14,17 @@ target spec, not a description of the code.
 | Page header (breadcrumbs "Parts online → Catalogue") | Implemented | `pages/catalogue/CataloguePage.tsx` |
 | Category grid | Implemented — 3 columns of 352x209 cards, loading / error / empty states | `features/catalogue/ui/CategoryGrid.tsx`, `CategoryCard.tsx` |
 | Category images | Implemented — the API returns `/categories/<slug>.jpg`, served from `public/categories/` | — |
-| Clicking a category | Planned — the cards are not links yet | — |
+| Clicking a category | Implemented — each card is a link to `/parts/catalogue/$categoryId` (hover: accent shadow, image zoom, arrow) | `features/catalogue/ui/CategoryCard.tsx` |
+| Category page `/parts/catalogue/$categoryId` | Implemented — breadcrumbs with a link back to the catalogue, part count, list of parts; loading / error / empty / "Category not found" states | `pages/catalogue/CategoryPartsPage.tsx`, `features/catalogue/ui/PartRow.tsx` |
 | Grid / list toggle | Planned (`PageHeader` has an `actions` slot for it) | — |
 | Carmaker → Model → Engine filters | Planned | — |
 | Contract schemas (`Category`, `Carmaker`, `CarModel`, `Engine`, `Part`, `PartsQuery`) | Implemented | `auto-lincoln-contracts/catalogue/`, `parts/` |
 | Catalogue routes in `API_ROUTES` | Implemented | `auto-lincoln-contracts/common/api.ts` |
 | DB tables + demo data | Implemented — the seed fills categories, carmakers, models, engines, parts | `auto-lincoln-api-nest/prisma/` |
 | `GET /api/categories` | Implemented (auth required) | `auto-lincoln-api-nest/src/modules/catalogue/` |
-| Carmakers / models / engines / parts endpoints | Planned | — |
-| `features/catalogue/` in the web app | Implemented for categories: `catalogueKeys`, `fetchCategories`, `useCategories` | `src/features/catalogue/` |
+| `GET /api/parts?category=<id>` | Implemented (auth required) — filters by category only, `nextCursor` is always `null` | `auto-lincoln-api-nest/src/modules/catalogue/` |
+| Carmakers / models / engines endpoints, parts filters by make / model / engine / search, pagination | Planned | — |
+| `features/catalogue/` in the web app | Implemented for categories and parts: `catalogueKeys` (`parts(filters)` keeps the whole `PartsQuery` in the key), `fetchCategories`, `fetchParts`, `useCategories`, `useParts` (`keepPreviousData`, disabled without a category) | `src/features/catalogue/` |
 
 ## Layout
 

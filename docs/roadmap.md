@@ -49,14 +49,18 @@ Order of work. Details of how things are built live in
       `API_ROUTES`, demo data in the seed, `GET /api/categories` in Nest,
       grid of 12 category cards on `/parts/catalogue` with loading / error /
       empty states — see [`catalogue-page.md`](catalogue-page.md)
+- [x] Catalogue category page (2026-10-06): `GET /api/parts?category=` in
+      Nest, category cards link to `/parts/catalogue/$categoryId`, which
+      lists the category's parts with loading / error / empty / not found
+      states — see [`catalogue-page.md`](catalogue-page.md)
 - [x] Contracts: `"sideEffects": false` — zod no longer ends up in the web
       bundle (749 → 665 kB)
 
 ## In progress
 
-- **Catalogue page** — the category grid works on the API data. Next:
-  carmakers / models / engines endpoints and the cascading filters
-  (steps 4–5 below), then the grid/list toggle.
+- **Catalogue page** — the category grid and the category page work on the
+  API data. Next: carmakers / models / engines endpoints and the cascading
+  filters on the category page (steps 4–5 below), then the grid/list toggle.
 
 ## Next, in order
 
