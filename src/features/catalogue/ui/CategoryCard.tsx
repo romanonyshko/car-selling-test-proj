@@ -8,9 +8,10 @@ export function CategoryCard({ category }: { category: Category }) {
     <Link
       to="/parts/catalogue/$categoryId"
       params={{ categoryId: id }}
-      className="group flex h-[209px] w-[352px] flex-col bg-surface shadow-card-1 outline-none transition-shadow hover:shadow-card-hover focus-visible:ring-2 focus-visible:ring-accent"
+      search={true}
+      className="group flex w-full flex-col bg-surface shadow-card-1 outline-none transition-shadow hover:shadow-card-hover focus-visible:ring-2 focus-visible:ring-accent"
     >
-      <span className="h-[147px] w-full overflow-hidden">
+      <span className="aspect-[352/147] w-full overflow-hidden">
         <img
           src={image}
           alt=""
@@ -19,7 +20,7 @@ export function CategoryCard({ category }: { category: Category }) {
         />
       </span>
 
-      <h3 className="flex flex-1 items-center justify-between border-t border-line px-5 font-display text-card-title font-medium text-ink transition-colors group-hover:text-accent">
+      <h3 className="flex h-[62px] items-center justify-between border-t border-line px-5 font-display text-card-title font-medium text-ink transition-colors group-hover:text-accent">
         {title}
         <svg
           aria-hidden
