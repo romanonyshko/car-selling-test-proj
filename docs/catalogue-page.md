@@ -22,8 +22,9 @@ target spec, not a description of the code.
 | Catalogue routes in `API_ROUTES` | Implemented | `auto-lincoln-contracts/common/api.ts` |
 | DB tables + demo data | Implemented — the seed fills categories, carmakers, models, engines, parts | `auto-lincoln-api-nest/prisma/` |
 | `GET /api/categories` | Implemented (auth required) | `auto-lincoln-api-nest/src/modules/catalogue/` |
-| `GET /api/parts?category=<id>` | Implemented (auth required) — filters by category only, `nextCursor` is always `null` | `auto-lincoln-api-nest/src/modules/catalogue/` |
-| Carmakers / models / engines endpoints, parts filters by make / model / engine / search, pagination | Planned | — |
+| `GET /api/carmakers`, `/carmakers/:id/models`, `/models/:id/engines` | Implemented (auth required) — ordered by name, unknown id → `[]` | `auto-lincoln-api-nest/src/modules/catalogue/` |
+| `GET /api/parts` filters | Implemented — `category` (required), `make` / `model` / `engine` (most precise one applied), `search` (title or article number, case-insensitive), `limit` | `auto-lincoln-api-nest/src/modules/catalogue/` |
+| Parts pagination (`cursor`) | Planned — `nextCursor` is always `null` | — |
 | `features/catalogue/` in the web app | Implemented for categories and parts: `catalogueKeys` (`parts(filters)` keeps the whole `PartsQuery` in the key), `fetchCategories`, `fetchParts`, `useCategories`, `useParts` (`keepPreviousData`, disabled without a category) | `src/features/catalogue/` |
 
 ## Layout

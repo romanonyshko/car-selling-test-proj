@@ -59,8 +59,9 @@ Order of work. Details of how things are built live in
 ## In progress
 
 - **Catalogue page** — the category grid and the category page work on the
-  API data. Next: carmakers / models / engines endpoints and the cascading
-  filters on the category page (steps 4–5 below), then the grid/list toggle.
+  API data; the Nest API serves carmakers / models / engines and filters parts
+  by make / model / engine / search. Next: the cascading filters panel on the
+  category page (steps 4–5 below), then the grid/list toggle.
 
 ## Next, in order
 
