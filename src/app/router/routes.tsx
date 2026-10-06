@@ -3,6 +3,7 @@ import { Spinner } from '@/components/ui/Spinner'
 import { meQueryOptions } from '@/features/auth/api/authQueries'
 import { queryClient } from '@/lib/queryClient'
 import { CataloguePage } from '@/pages/catalogue/CataloguePage'
+import { CategoryPartsPage } from '@/pages/catalogue/CategoryPartsPage'
 import { DashboardPage } from '@/pages/dashboard/DashboardPage'
 import { LoginPage } from '@/pages/login/LoginPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
@@ -100,6 +101,12 @@ const catalogueRoute = createRoute({
   component: CataloguePage,
 })
 
+const categoryRoute = createRoute({
+  getParentRoute: () => partsRoute,
+  path: 'catalogue/$categoryId',
+  component: CategoryPartsPage
+})
+
 const inStockRoute = createRoute({
   getParentRoute: () => partsRoute,
   path: 'in-stock',
@@ -148,6 +155,7 @@ const routeTree = rootRoute.addChildren([
         inStockRoute,
         ordersRoute,
         priceListRoute,
+        categoryRoute
       ]),
       documentsRoute,
       warrantyRoute,

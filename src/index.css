@@ -63,6 +63,7 @@
   --spacing-stat-card: 295px;
 
   --shadow-card-1: 0 4px 40px -4px rgba(31, 31, 31, 0.04);
+  --shadow-card-hover: 0 8px 40px -4px rgba(23, 124, 202, 0.18);
 }
 
 html,
