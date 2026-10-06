@@ -63,7 +63,7 @@ sizes are not typed into JSX:
 | `text-stat-value` | 40 / 46 | Karla Bold | stat-card value |
 | `text-stat-delta` | 22 / 26 | Karla Bold | stat-card delta |
 | `text-panel-title` | 22 / 28 | Karla Medium | filter panel title — **declared, not used yet** |
-| `text-card-title` | 18 / 20 | DM Sans Medium | catalogue card title — **declared, not used yet** |
+| `text-card-title` | 18 / 20 | DM Sans Medium | catalogue card title |
 
 `text-nav` is the mockup's 18.866px rounded to 19 — see Q2.
 
@@ -103,6 +103,11 @@ that owns them — see Q1.
 - Dashboard: two columns `527px` + rest, gap 68; stat cards 3-up with gap 20;
   chart panel padding 20, body 477 tall, fixed 0…50k scale.
 - Scrollbars are 9px with an accent thumb (`index.css`), as in the mockup.
+- Catalogue grid (`features/catalogue/ui/CategoryGrid`): always 3 columns of
+  352px, column gap 32, row gap 30 (1120px wide, no breakpoints yet). Card
+  (`CategoryCard`) is fixed 352x209: image 147 (`object-cover`) → 1px
+  `border-line` divider → title in `text-card-title`, padding 20, centred
+  vertically in the remaining 62px.
 - Breakpoints: the mockup has a single desktop width. The dashboard grids use
   container queries (`@container` + `@min-[…]:`), not viewport breakpoints,
   because the content width also depends on the sidebar: two columns from a
@@ -153,9 +158,6 @@ markup following the convention below.
 
 Not implemented, because the data and the logic for it do not exist yet:
 
-- **Catalogue grid** — 3 columns, card 352x209, column gap 32, row gap 30;
-  card = image band 147 → 1px divider → body padding 20/21 → title
-  (`text-card-title`).
 - **Right filter panel** (node `2:172`) — 391 wide, 1px left divider, title
   at (80,40), collapse toggle 32x32 at (32,39), dropdown blocks at y=111 /
   244 / 377, each 327 wide.
