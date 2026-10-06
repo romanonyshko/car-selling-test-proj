@@ -123,8 +123,8 @@ What exists in `src/components/`:
 | `ui/Button` | `variant`: `primary` (accent fill) / `secondary` (surface + border) / `ghost` (text only); `isLoading` shows an inline spinner and disables the button | `LoginForm`, `ErrorState` |
 | `ui/Input` | native `<input>` props + optional `label` | `LoginForm` |
 | `ui/Select` | native `<select>` props + `label`, `placeholder` (default "Select…"), `options: { value, label }[]` | **not used yet** (built for the catalogue filters) |
-| `ui/Spinner` | optional `label` (default "Завантаження…") | router `defaultPendingComponent`, `DashboardPage` |
-| `ui/ErrorState` | optional `message`, optional `onRetry` (renders a secondary `Button`) | `DashboardPage` |
+| `ui/Spinner` | optional `label` (default "Loading…") | router `defaultPendingComponent`, `DashboardPage`, `CataloguePage` |
+| `ui/ErrorState` | optional `message`, optional `onRetry` (renders a secondary `Button`) | `DashboardPage`, `CataloguePage` |
 | `ui/PageHeader` | `crumbs: string[]` (last = current), `title`, optional `actions` slot | `DashboardPage`, `CataloguePage` |
 | `layout/AppLayout` | Sidebar + Topbar + `<Outlet/>` | router |
 | `layout/Sidebar` | nav from the static array in `layout/navigation.ts`, local collapse state | `AppLayout` |

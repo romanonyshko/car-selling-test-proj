@@ -12,9 +12,9 @@ const dotColors: Record<ConnectionStatus, string> = {
 }
 
 const labels: Record<ConnectionStatus, string> = {
-  connecting: 'Підключення…',
-  open: 'Онлайн',
-  closed: 'Відключено',
+  connecting: 'Connecting…',
+  open: 'Online',
+  closed: 'Disconnected',
 }
 
 export function ConnectionBadge({ status }: ConnectionBadgeProps) {

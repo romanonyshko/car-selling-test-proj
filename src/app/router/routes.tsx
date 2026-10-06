@@ -158,7 +158,7 @@ const routeTree = rootRoute.addChildren([
 
 export const router = createRouter({
   routeTree,
-  defaultPendingComponent: () => <Spinner label="Перевіряємо сесію…" />,
+  defaultPendingComponent: () => <Spinner label="Checking your session…" />,
 })
 
 declare module '@tanstack/react-router' {

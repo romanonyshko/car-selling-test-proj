@@ -25,7 +25,7 @@ export function LoginForm() {
         placeholder="martin@autolincoln.com"
       />
       <Input
-        label="Пароль"
+        label="Password"
         type="password"
         autoComplete="current-password"
         required
@@ -36,12 +36,12 @@ export function LoginForm() {
 
       {loginMutation.isError && (
         <p className="text-crumb text-danger">
-          Не вдалося увійти. Перевірте email і пароль.
+          Could not sign in. Check your email and password.
         </p>
       )}
 
       <Button type="submit" className="w-full" isLoading={loginMutation.isPending}>
-        Увійти
+        Sign in
       </Button>
     </form>
   )
