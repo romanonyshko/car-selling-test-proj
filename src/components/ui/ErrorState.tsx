@@ -9,11 +9,11 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
     <div className="flex flex-col items-center gap-4 py-12 text-center">
       <p className="text-crumb text-danger">
-        {message ?? 'Не вдалося завантажити дані.'}
+        {message ?? 'Could not load the data.'}
       </p>
       {onRetry && (
         <Button variant="secondary" onClick={onRetry}>
-          Спробувати ще раз
+          Try again
         </Button>
       )}
     </div>

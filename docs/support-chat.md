@@ -49,7 +49,7 @@ features/support/
 ├── hooks/useSupportChat.ts  useReducer + socket in a ref → { messages, connectionStatus, closeCode, sendMessage }
 └── ui/
     ├── SupportChat.tsx       calls the hook, passes data down
-    ├── ConnectionBadge.tsx   dot + "Підключення… / Онлайн / Відключено"
+    ├── ConnectionBadge.tsx   dot + "Connecting… / Online / Disconnected"
     ├── ConnectionNotice.tsx  close reason by closeCode, nothing while null
     ├── MessageList.tsx       scrollable list, auto-scroll on new messages
     ├── MessageBubble.tsx     one message: author side/colour, status or error
@@ -124,8 +124,8 @@ case.
 Card `bg-surface shadow-card-1`, 600px tall: header (title + badge) → close
 notice → message list (`flex-1`, own scroll) → form (`Input` + `Button`).
 User messages are on the right in `bg-accent`, support messages on the left
-in `bg-field`; under each bubble the status (`Надсилається…`, `Надіслано`,
-`Не надіслано`) or the server error in `text-danger`. No new tokens.
+in `bg-field`; under each bubble the status (`Sending…`, `Sent`,
+`Not sent`) or the server error in `text-danger`. No new tokens.
 
 ## 6. Known limitations
 

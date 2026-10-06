@@ -45,15 +45,18 @@ Order of work. Details of how things are built live in
 - [x] Support chat (2026-10-05): WebSocket `WS_ROUTES.chat` in Nest (echo),
       chat events in the contracts, `/support` on the web with optimistic
       messages and connection status — see [`support-chat.md`](support-chat.md)
+- [x] Catalogue categories (2026-10-06): catalogue contracts and
+      `API_ROUTES`, demo data in the seed, `GET /api/categories` in Nest,
+      grid of 12 category cards on `/parts/catalogue` with loading / error /
+      empty states — see [`catalogue-page.md`](catalogue-page.md)
 - [x] Contracts: `"sideEffects": false` — zod no longer ends up in the web
       bundle (749 → 665 kB)
 
 ## In progress
 
-- **Catalogue page** — partially prepared: the route `/parts/catalogue`
-  and a text placeholder exist, 12 category images are in
-  `public/categories/` (not wired up). Everything else is under
-  Next.
+- **Catalogue page** — the category grid works on the API data. Next:
+  carmakers / models / engines endpoints and the cascading filters
+  (steps 4–5 below), then the grid/list toggle.
 
 ## Next, in order
 

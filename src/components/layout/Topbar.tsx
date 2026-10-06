@@ -105,7 +105,7 @@ export function Topbar() {
               {logout.isPending && (
                 <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
               )}
-              Вийти
+              Sign out
             </button>
           </div>
         )}
