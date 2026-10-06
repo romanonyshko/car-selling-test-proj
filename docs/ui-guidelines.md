@@ -122,13 +122,14 @@ What exists in `src/components/`:
 | --- | --- | --- |
 | `ui/Button` | `variant`: `primary` (accent fill) / `secondary` (surface + border) / `ghost` (text only); `isLoading` shows an inline spinner and disables the button | `LoginForm`, `ErrorState` |
 | `ui/Input` | native `<input>` props + optional `label` | `LoginForm` |
-| `ui/Select` | native `<select>` props + `label`, `placeholder` (default "Select…"), `options: { value, label }[]` | **not used yet** (built for the catalogue filters) |
+| `ui/Select` | native `<select>` props + `label`, `placeholder` (default "Select…"), `options: { value, label }[]` | `PartsFilterPanel` |
 | `ui/Spinner` | optional `label` (default "Loading…") | router `defaultPendingComponent`, `DashboardPage`, `CataloguePage` |
 | `ui/ErrorState` | optional `message`, optional `onRetry` (renders a secondary `Button`) | `DashboardPage`, `CataloguePage` |
-| `ui/PageHeader` | `crumbs: string[]` (last = current), `title`, optional `actions` slot | `DashboardPage`, `CataloguePage` |
+| `ui/PageHeader` | `crumbs: (string \| { label, to })[]` (last = current; an object renders a link), `title`, optional `actions` slot | `DashboardPage`, `CataloguePage`, `CategoryPartsPage` |
 | `layout/AppLayout` | Sidebar + Topbar + `<Outlet/>` | router |
 | `layout/Sidebar` | nav from the static array in `layout/navigation.ts`, local collapse state | `AppLayout` |
 | `layout/Topbar` | cart icon (decorative), user menu with logout | `AppLayout` |
+| `layout/PanelLayout` | `title`, `panel`, `children`: page content + full-height right panel (`w-panel`, white, left border) flush with the topbar; the arrow button collapses it to a 76px strip (local state) | `CataloguePage`, `CategoryPartsPage` |
 
 There is no `Card`, `Modal`, `Table` or `Badge` component; cards are plain
 markup following the convention below.

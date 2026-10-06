@@ -240,10 +240,6 @@ reconnect).
   dependencies of the Prisma CLI (`deepmerge-ts`, `mysql2`, via
   `@prisma/config`); `npm audit fix --force` would install `prisma@6.19.3`,
   a breaking downgrade.
-- **Search is `ILIKE '%…%'`** over `title` / `articleNumber` / `brand`
-  (decision 2026-09-23) — fine for a few hundred parts, but a sequential
-  scan; PostgreSQL full-text search (`tsvector` + GIN index) when the data
-  grows.
 - **Fonts come from the Google Fonts CDN** (`index.html`, Karla +
   DM Sans). Works, but it is an external request on every load; self-hosting
   (`@fontsource`) is the next step if that matters.

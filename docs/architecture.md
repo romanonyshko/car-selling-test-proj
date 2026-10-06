@@ -140,7 +140,7 @@ src/
 │   └── support/{api,hooks,model,ui} # WebSocket chat, see support-chat.md
 ├── components/
 │   ├── icons/                      # SVG icon components, one per file
-│   ├── layout/                     # AppLayout, Sidebar, navigation, Topbar
+│   ├── layout/                     # AppLayout, Sidebar, navigation, Topbar, PanelLayout
 │   └── ui/                         # Button, Input, Select, Spinner, ErrorState, PageHeader
 └── lib/                            # apiClient, queryClient, cn, useMediaQuery
 ```
@@ -206,7 +206,7 @@ Known deviations from the layer rules in the current code:
 | support chat (WebSocket stream) | `useReducer(chatReducer)` in `useSupportChat` — a deliberate exception to TanStack Query, see `support-chat.md` |
 | local UI (forms, modals) | `useState` inside the component |
 | sidebar collapsed / user menu open | `useState` in `Sidebar` / `Topbar`, not persisted |
-| catalogue filters | planned in the URL (`useSearchParams`) so links are shareable |
+| catalogue filters | URL search params (`validateSearch` + `useCarFilters`) so links are shareable |
 
 No Redux, Zustand or app-level React Context is used for state. `queryClient` is a
 module singleton (`lib/queryClient.ts`); `useLogin.ts` and the route guards

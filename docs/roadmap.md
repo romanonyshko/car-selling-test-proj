@@ -53,15 +53,18 @@ Order of work. Details of how things are built live in
       Nest, category cards link to `/parts/catalogue/$categoryId`, which
       lists the category's parts with loading / error / empty / not found
       states — see [`catalogue-page.md`](catalogue-page.md)
+- [x] Catalogue filters (2026-10-06): carmakers / models / engines endpoints
+      and parts filtering by make / model / engine in Nest; collapsible
+      "Find your car parts" panel on the grid and the category page, cascading
+      selects, filters in the URL, "No parts match these filters" state —
+      see [`catalogue-page.md`](catalogue-page.md)
 - [x] Contracts: `"sideEffects": false` — zod no longer ends up in the web
       bundle (749 → 665 kB)
 
 ## In progress
 
-- **Catalogue page** — the category grid and the category page work on the
-  API data; the Nest API serves carmakers / models / engines and filters parts
-  by make / model / engine / search. Next: the cascading filters panel on the
-  category page (steps 4–5 below), then the grid/list toggle.
+- **Catalogue page** — grid, category page and cascading filters work on the
+  API data. Next: the grid/list toggle, then pagination (step 7).
 
 ## Next, in order
 
