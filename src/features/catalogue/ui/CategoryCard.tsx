@@ -1,17 +1,28 @@
 import type { Category } from '@auto-lincoln/contracts'
 import { Link } from '@tanstack/react-router'
+import { cn } from '@/lib/cn'
+import type { CatalogueView } from '../model/catalogueView'
 
-export function CategoryCard({ category }: { category: Category }) {
+interface CategoryCardProps {
+  category: Category
+  view?: CatalogueView
+}
+
+export function CategoryCard({ category, view = 'grid' }: CategoryCardProps) {
   const { id, title, image } = category
+  const isList = view === 'list'
 
   return (
     <Link
       to="/parts/catalogue/$categoryId"
       params={{ categoryId: id }}
       search={true}
-      className="group flex w-full flex-col bg-surface shadow-card-1 outline-none transition-shadow hover:shadow-card-hover focus-visible:ring-2 focus-visible:ring-accent"
+      className={cn(
+        'group flex w-full bg-surface shadow-card-1 outline-none transition-shadow hover:shadow-card-hover focus-visible:ring-2 focus-visible:ring-accent',
+        isList ? 'flex-row' : 'flex-col',
+      )}
     >
-      <span className="aspect-[352/147] w-full overflow-hidden">
+      <span className={cn('aspect-[352/147] overflow-hidden', isList ? 'w-[200px] shrink-0' : 'w-full')}>
         <img
           src={image}
           alt=""
@@ -20,7 +31,12 @@ export function CategoryCard({ category }: { category: Category }) {
         />
       </span>
 
-      <h3 className="flex h-[62px] items-center justify-between border-t border-line px-5 font-display text-card-title font-medium text-ink transition-colors group-hover:text-accent">
+      <h3
+        className={cn(
+          'flex items-center justify-between border-line px-5 font-display text-card-title font-medium text-ink transition-colors group-hover:text-accent',
+          isList ? 'flex-1 border-l' : 'h-[62px] border-t',
+        )}
+      >
         {title}
         <svg
           aria-hidden

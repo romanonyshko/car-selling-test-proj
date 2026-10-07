@@ -13,11 +13,13 @@
   --color-ink: #353535;
   --color-ink-muted: rgba(53, 53, 53, 0.5);
   --color-ink-subtle: #979797;
+  --color-ink-soft: #7e7e7f;
   --color-positive: #45b73b;
   --color-surface: #ffffff;
   --color-canvas: #f8fbfd;
   --color-field: #f8f8f8;
   --color-line: rgba(31, 31, 31, 0.1);
+  --color-divider: #d9d9d9;
   --color-black-50: #1f1f1f;
   /* Not in the mockup — the error state is ours. */
   --color-danger: #d14343;
@@ -44,6 +46,12 @@
   --text-card-title--line-height: 20px;
   --text-section: 18px;
   --text-section--line-height: 24px;
+  --text-card-heading: 24px;
+  --text-card-heading--line-height: 28px;
+  --text-card-body: 20px;
+  --text-card-body--line-height: 23px;
+  --text-chart-tick: 16px;
+  --text-chart-tick--line-height: 19px;
   --text-stat-label: 20px;
   --text-stat-label--line-height: 24px;
   --text-stat-value: 40px;

@@ -55,63 +55,55 @@ export function UpdatesCard({
   return (
     <section
       className={cn(
-        'flex flex-col bg-surface p-5 text-section shadow-card-1',
+        'bg-surface px-[22px] pt-[34px] pb-[44px] text-card-body text-ink shadow-card-1',
         className,
       )}
     >
-      <h2 className="mb-8 text-section font-medium text-accent">Updates</h2>
+      <h2 className="mb-[39px] text-card-heading font-bold text-accent">Updates</h2>
 
-      <div className="border-b border-line pb-4">
-        <h3 className="mb-3 font-bold text-ink">Recently published news</h3>
-        {latestNews ? (
-          <p className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
-            <span className="text-ink">{formatPublishedAt(latestNews.publishedAt)}</span>
+      <h3 className="font-bold">Recently published news</h3>
+      {latestNews ? (
+        <p className="mt-[15px] grid h-[47px] grid-cols-[163px_1fr] items-center border-b-2 border-divider">
+          <span>{formatPublishedAt(latestNews.publishedAt)}</span>
+          <a href="#" className="text-accent hover:underline">
+            {latestNews.title}
+          </a>
+        </p>
+      ) : (
+        <p className="mt-[15px] text-ink-subtle">No news yet</p>
+      )}
+
+      <h3 className="mt-[13px] font-bold">Recent reviews</h3>
+      {latestReview ? (
+        <div className="mt-[27px] max-w-[440px]">
+          <p>
+            From{' '}
+            <a href="#" className="font-medium text-accent hover:underline">
+              {latestReview.author}
+            </a>{' '}
+            on{' '}
             <a href="#" className="text-accent hover:underline">
-              {latestNews.title}
+              {latestReview.postTitle}
             </a>
           </p>
-        ) : (
-          <p className="text-ink-subtle">No news yet</p>
-        )}
-      </div>
+          <p className="mt-[23px] text-ink-soft">Text:</p>
+          <p className="mt-[23px]">{latestReview.text}</p>
+        </div>
+      ) : (
+        <p className="mt-[27px] text-ink-subtle">No reviews yet</p>
+      )}
 
-      <div className="border-b border-line py-4">
-        <h3 className="mb-3 font-bold text-ink">Recent reviews</h3>
-        {latestReview ? (
-          <>
-            <p className="text-ink">
-              From{' '}
-              <a href="#" className="text-accent hover:underline">
-                {latestReview.author}
-              </a>{' '}
-              on{' '}
-              <a href="#" className="text-accent hover:underline">
-                {latestReview.postTitle}
-              </a>
-            </p>
-            <p className="mt-4 text-ink">Text:</p>
-            <p className="mt-1 leading-relaxed text-ink">{latestReview.text}</p>
-          </>
-        ) : (
-          <p className="text-ink-subtle">No reviews yet</p>
-        )}
-      </div>
-
-      <div className="mt-auto pt-4">
-        <h3 className="mb-3 font-bold text-ink">Requests</h3>
-        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-ink">
-          {requestItems.map((item, index) => (
-            <Fragment key={item.label}>
-              {index > 0 && (
-                <span aria-hidden className="text-line">
-                  |
-                </span>
-              )}
-              <span>{`${item.label} (${item.count})`}</span>
-            </Fragment>
-          ))}
-        </p>
-      </div>
+      <h3 className="mt-[49px] font-bold">Requests</h3>
+      <p className="mt-[21px] flex flex-wrap items-center text-section leading-[21px]">
+        {requestItems.map((item, index) => (
+          <Fragment key={item.label}>
+            {index > 0 && <span aria-hidden className="h-[21px] w-[2px] bg-accent" />}
+            <span className={index > 0 ? 'px-[10px]' : 'pr-[10px]'}>
+              {`${item.label} (${item.count})`}
+            </span>
+          </Fragment>
+        ))}
+      </p>
     </section>
   )
 }

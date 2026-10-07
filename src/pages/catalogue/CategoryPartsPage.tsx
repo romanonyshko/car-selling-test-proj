@@ -37,19 +37,23 @@ export function CategoryPartsPage() {
     const items = parts.data?.items
 
     return (
-        <PanelLayout title="Find your car parts" panel={<PartsFilterPanel />}>
-            <PageHeader
-                crumbs={['Parts online', catalogueCrumb, category.title]}
-                title={category.title}
-                actions={
-                    items && (
-                        <span className="text-crumb text-ink-muted">
-                            {items.length} {items.length === 1 ? 'part' : 'parts'}
-                        </span>
-                    )
-                }
-            />
-
+        <PanelLayout
+            title="Find your car parts"
+            panel={<PartsFilterPanel />}
+            header={
+                <PageHeader
+                    crumbs={['Parts online', catalogueCrumb, category.title]}
+                    title={category.title}
+                    actions={
+                        items && (
+                            <span className="text-crumb text-ink-muted">
+                                {items.length} {items.length === 1 ? 'part' : 'parts'}
+                            </span>
+                        )
+                    }
+                />
+            }
+        >
             {parts.isPending && <Spinner />}
 
             {parts.isError && <ErrorState onRetry={() => parts.refetch()} />}

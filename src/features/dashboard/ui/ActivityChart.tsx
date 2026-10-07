@@ -16,33 +16,31 @@ function formatThousands(value: number) {
 
 const Y_TICKS = [0, 10000, 20000, 30000, 40000, 50000]
 
-const tickStyle = { className: 'fill-ink text-crumb' }
+const tickStyle = { className: 'fill-ink text-chart-tick' }
 
 export function ActivityChart({ activity }: { activity: ActivityPoint[] }) {
   return (
-    <section className="bg-surface p-5 shadow-card-1">
+    <section className="bg-surface pt-[18px] pr-8 pb-[78px] pl-5 shadow-card-1">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-section font-medium text-ink">Activity</h2>
+        <h2 className="text-card-heading font-bold text-ink">Activity</h2>
 
-        <span className="flex items-center gap-[14px] text-crumb text-ink">
+        <span className="mr-[31px] flex items-center gap-2 text-section text-ink">
           <span aria-hidden className="size-2 rounded-full bg-accent" />
           New visitors
         </span>
       </div>
 
-      <div className="mt-[21px] h-[477px]">
+      <div className="mt-[18px] h-[420px]">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={activity} margin={{ top: 4, right: 8, bottom: 0, left: -8 }}>
-            <CartesianGrid vertical={false} stroke="var(--color-line)" />
-            <XAxis
-              dataKey="month"
-              axisLine={false}
-              tickLine={false}
-              tick={tickStyle}
-            />
+          <LineChart data={activity} margin={{ top: 10, right: 0, bottom: 10, left: 0 }}>
+            <CartesianGrid vertical={false} stroke="var(--color-ink-subtle)" />
+            <XAxis dataKey="month" hide />
             <YAxis
               axisLine={false}
               tickLine={false}
+              width={54}
+              tickMargin={20}
+              interval={0}
               domain={[0, 50000]}
               ticks={Y_TICKS}
               tickFormatter={formatThousands}
@@ -52,7 +50,8 @@ export function ActivityChart({ activity }: { activity: ActivityPoint[] }) {
               type="monotone"
               dataKey="visitors"
               stroke="var(--color-accent)"
-              strokeWidth={3}
+              strokeWidth={5}
+              strokeLinecap="round"
               dot={false}
             />
           </LineChart>
