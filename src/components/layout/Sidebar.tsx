@@ -2,6 +2,7 @@ import { CaretDownIcon } from '@/components/icons/CaretDownIcon'
 import { ChevronLeftIcon } from '@/components/icons/ChevronLeftIcon'
 import { SupportIcon } from '@/components/icons/SupportIcon'
 import { cn } from '@/lib/cn'
+import { NARROW_SCREEN, PHONE_SCREEN } from '@/lib/mediaQueries'
 import { useMediaQuery } from '@/lib/useMediaQuery'
 import { Link, useLocation } from '@tanstack/react-router'
 import { useState } from 'react'
@@ -10,11 +11,16 @@ import { navigation } from './navigation'
 
 const itemClass = 'relative flex items-center text-nav transition-colors'
 
-const NARROW_SCREEN = '(width < 805px)'
+interface SidebarProps {
+  isMobileOpen: boolean
+  onMobileClose: () => void
+}
 
-export function Sidebar() {
+export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
   const isNarrow = useMediaQuery(NARROW_SCREEN)
-  const [collapsed, setCollapsed] = useState(isNarrow)
+  const isPhone = useMediaQuery(PHONE_SCREEN)
+  const [userCollapsed, setCollapsed] = useState(isNarrow)
+  const collapsed = isPhone ? false : userCollapsed
 
   const [wasNarrow, setWasNarrow] = useState(isNarrow)
   if (isNarrow !== wasNarrow) {
@@ -25,15 +31,18 @@ export function Sidebar() {
   const pathname = useLocation({ select: (location) => location.pathname })
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})
 
-  const overlay = isNarrow && !collapsed
+  const overlay = isPhone || (isNarrow && !collapsed)
   const rowWidth = !overlay && 'w-nav-group'
   const closeOverlay = () => {
-    if (overlay) setCollapsed(true)
+    if (isPhone) onMobileClose()
+    else if (overlay) setCollapsed(true)
   }
+
+  if (isPhone && !isMobileOpen) return null
 
   return (
     <>
-      {overlay && <div aria-hidden className="w-sidebar-collapsed shrink-0" />}
+      {overlay && !isPhone && <div aria-hidden className="w-sidebar-collapsed shrink-0" />}
 
       <aside
         className={cn(
@@ -56,7 +65,7 @@ export function Sidebar() {
 
           <button
             type="button"
-            onClick={() => setCollapsed((c) => !c)}
+            onClick={() => (isPhone ? onMobileClose() : setCollapsed((c) => !c))}
             aria-label={collapsed ? 'Expand menu' : 'Collapse menu'}
             aria-expanded={!collapsed}
             className={cn(

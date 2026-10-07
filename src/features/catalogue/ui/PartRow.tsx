@@ -1,4 +1,5 @@
 import type { Part } from '@auto-lincoln/contracts'
+import { BoxIcon } from '@/components/icons/BoxIcon'
 import { cn } from '@/lib/cn'
 
 const formatPrice = (price: number, currency: Part['currency']) =>
@@ -9,44 +10,40 @@ export function PartRow({ part }: { part: Part }) {
   const available = inStock > 0
 
   return (
-    <article className="flex items-center gap-5 px-5 py-4">
-      <span className="grid size-16 shrink-0 place-items-center overflow-hidden bg-field text-ink-subtle">
-        {image ? (
-          <img src={image} alt="" loading="lazy" className="size-full object-cover" />
-        ) : (
-          <svg
-            aria-hidden
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.5}
-            strokeLinejoin="round"
-            className="size-7"
+    <article className="@container">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-3 px-4 py-4 @lg:flex-nowrap @lg:gap-x-5 @lg:px-5">
+        <span className="grid size-14 shrink-0 place-items-center overflow-hidden bg-field text-ink-subtle @lg:size-16">
+          {image ? (
+            <img src={image} alt="" loading="lazy" className="size-full object-cover" />
+          ) : (
+            <span className="size-7">
+              <BoxIcon />
+            </span>
+          )}
+        </span>
+
+        <div className="min-w-0 flex-1">
+          <h3 className="line-clamp-2 font-display text-card-title font-medium text-ink @lg:line-clamp-1">{title}</h3>
+          <p className="mt-1 text-crumb text-ink-muted">
+            {brand} · <span className="font-mono">{articleNumber}</span>
+          </p>
+        </div>
+
+        <div className="flex w-full items-center justify-between gap-3 @lg:contents">
+          <span
+            className={cn(
+              'shrink-0 px-3 py-1 text-crumb',
+              available ? 'bg-positive/10 text-positive' : 'bg-field text-ink-muted',
+            )}
           >
-            <path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z M4 7.5l8 4.5 8-4.5 M12 12v9" />
-          </svg>
-        )}
-      </span>
+            {available ? `${inStock} in stock` : 'Out of stock'}
+          </span>
 
-      <div className="min-w-0 flex-1">
-        <h3 className="truncate font-display text-card-title font-medium text-ink">{title}</h3>
-        <p className="mt-1 text-crumb text-ink-muted">
-          {brand} · <span className="font-mono">{articleNumber}</span>
-        </p>
+          <span className="shrink-0 text-right font-display text-section font-medium text-ink @lg:w-28">
+            {formatPrice(price, currency)}
+          </span>
+        </div>
       </div>
-
-      <span
-        className={cn(
-          'shrink-0 px-3 py-1 text-crumb',
-          available ? 'bg-positive/10 text-positive' : 'bg-field text-ink-muted',
-        )}
-      >
-        {available ? `${inStock} in stock` : 'Out of stock'}
-      </span>
-
-      <span className="w-28 shrink-0 text-right font-display text-section font-medium text-ink">
-        {formatPrice(price, currency)}
-      </span>
     </article>
   )
 }

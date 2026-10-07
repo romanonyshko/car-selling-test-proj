@@ -1,45 +1,13 @@
+import { BurgerIcon } from '@/components/icons/BurgerIcon'
+import { CartIcon } from '@/components/icons/CartIcon'
+import { ChevronDownIcon } from '@/components/icons/ChevronDownIcon'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { useLogout } from '@/features/auth/hooks/useLogin'
 import { cn } from '@/lib/cn'
 import { useEffect, useRef, useState } from 'react'
+import logo from '@/assets/logo.png'
 
-function CartIcon() {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="size-6 text-ink-muted"
-    >
-      <path d="M3 4h1.8l2.3 10.2a1.5 1.5 0 0 0 1.5 1.2h7.9a1.5 1.5 0 0 0 1.4-1.1L20 7H5.6" />
-      <circle cx="9.5" cy="19" r="1.4" />
-      <circle cx="16.5" cy="19" r="1.4" />
-    </svg>
-  )
-}
-
-function ChevronDownIcon({ isOpen }: { isOpen: boolean }) {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={cn('size-[25px] transition-transform', isOpen && 'rotate-180')}
-    >
-      <path d="m6 9.5 6 6 6-6" />
-    </svg>
-  )
-}
-
-export function Topbar() {
+export function Topbar({ onMenuOpen }: { onMenuOpen: () => void }) {
   const { user } = useAuth()
   const logout = useLogout()
 
@@ -71,25 +39,44 @@ export function Topbar() {
   const greetingName = user?.name ?? user?.email ?? 'guest'
 
   return (
-    <header className="flex h-header shrink-0 items-center justify-end gap-[15px] border-b border-line bg-surface pr-[40px]">
-      <CartIcon />
+    <header className="flex h-16 shrink-0 items-center justify-end gap-[15px] border-b border-line bg-surface px-4 sm:h-header sm:pr-[40px] sm:pl-0">
+      <button
+        type="button"
+        aria-label="Open menu"
+        onClick={onMenuOpen}
+        className="grid size-9 shrink-0 place-items-center text-ink-muted transition-colors hover:text-ink sm:hidden"
+      >
+        <span className="size-6">
+          <BurgerIcon />
+        </span>
+      </button>
+      <img src={logo} alt="Auto Detail" className="mr-auto h-8 w-auto sm:hidden" />
 
-      <div ref={menuRef} className="relative">
+      <span className="size-6 shrink-0 text-ink-muted">
+        <CartIcon />
+      </span>
+
+      <div ref={menuRef} className="relative min-w-0">
         <button
           type="button"
           aria-haspopup="menu"
           aria-expanded={isMenuOpen}
           onClick={() => setIsMenuOpen((isOpen) => !isOpen)}
-          className="flex items-center gap-[5px] text-greeting font-medium text-accent transition-opacity hover:opacity-80"
+          className="flex max-w-full items-center gap-[5px] text-greeting font-medium text-accent transition-opacity hover:opacity-80"
         >
-          Hello, {greetingName}
-          <ChevronDownIcon isOpen={isMenuOpen} />
+          <span className="truncate">
+            <span className="max-sm:sr-only">Hello, </span>
+            {greetingName}
+          </span>
+          <span className={cn('size-[25px] shrink-0 transition-transform', isMenuOpen && 'rotate-180')}>
+            <ChevronDownIcon />
+          </span>
         </button>
 
         {isMenuOpen && (
           <div
             role="menu"
-            className="absolute top-full right-0 z-10 mt-3 w-[220px] border border-line bg-surface shadow-card-1"
+            className="absolute top-full right-0 z-10 mt-3 w-[220px] max-w-[calc(100vw-32px)] border border-line bg-surface shadow-card-1"
           >
             <p className="border-b border-line px-5 py-3 text-crumb break-words text-ink-muted">
               {user?.email ?? 'guest'}
