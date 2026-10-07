@@ -13,7 +13,7 @@ export function SupportChat() {
   } = useSupportChat()
 
   return (
-    <section className="flex h-[600px] flex-col bg-surface shadow-card-1">
+    <section className="flex h-[74vh] flex-col bg-surface shadow-card-1">
       <header className="flex items-center justify-between gap-4 border-b border-line px-5 py-4">
         <h2 className="text-section font-medium text-accent">Support chat</h2>
         <ConnectionBadge status={connectionStatus} />
