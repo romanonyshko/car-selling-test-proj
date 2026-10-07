@@ -56,7 +56,10 @@ sizes are not typed into JSX:
 | `text-nav` | 19 / 30 | Karla Bold / Medium | sidebar nav and sub-nav labels |
 | `text-greeting` | 18 / 24 | Karla Medium | header greeting |
 | `text-title` | 32 / 37 | Karla Medium | page title |
-| `text-section` | 18 / 24 | Karla | card headings and card body |
+| `text-section` | 18 / 24 | Karla | small card text (chart legend, request counts), support chat, part price |
+| `text-card-heading` | 24 / 28 | Karla Bold | dashboard card headings |
+| `text-card-body` | 20 / 23 | Karla | dashboard card body |
+| `text-chart-tick` | 16 / 19 | Karla | activity chart Y-axis labels |
 | `text-field` | 18 / 24 | Karla | input / select value and placeholder |
 | `text-field-label` | 16 / 21 | DM Sans Medium | input / select label |
 | `text-stat-label` | 20 / 24 | Karla | stat-card label |
@@ -85,8 +88,8 @@ utilities:
 | `--spacing-panel` | 391px | filter panel — **declared, not used yet** |
 
 One-off numbers straight from the mockup (content padding 34, breadcrumb →
-title gap 24, title → content gap 37, dashboard column 527 + gap 68, card
-height 177, chart body 477) are written as arbitrary values in the component
+title gap 24, title → content gap 37, dashboard column 529 + gap 67, stat card
+height 177, chart grid 400) are written as arbitrary values in the component
 that owns them — see Q1.
 
 ## Layout
@@ -100,8 +103,14 @@ that owns them — see Q1.
 - Content: `bg-canvas`, `px-[34px] pt-5 pb-[34px]`, its own vertical scroll.
 - Page header (`components/ui/PageHeader`): breadcrumb → 24 → title → 37 →
   content, matching y=100 / y=148 / y=222 in the mockup.
-- Dashboard: two columns `527px` + rest, gap 68; stat cards 3-up with gap 20;
-  chart panel padding 20, body 477 tall, fixed 0…50k scale.
+- Dashboard (re-measured from the "DEMO for Dima Bukovsky" file,
+  `FXH4IrR8Vho44BpcloBNfc`, node `1:20999`): columns `529px` + up to `925px`,
+  gap 67. Left: "At a glance" and "Updates" cards, gap 34, padding 34/22,
+  rows 48.5 tall with a 2px `--color-divider` (#d9d9d9) line; "Requests"
+  follows the review directly, items split by 2px accent bars. Right:
+  "Activity" card 562 tall (Y labels 16px right-aligned, grid 400 tall in
+  `ink-subtle`, line 5px, no X labels), then 16 gap, stat cards 295x177 3-up,
+  gaps 20 / 17, content centred vertically, label → value 33, value → delta 25.
 - Scrollbars are 9px with an accent thumb (`index.css`), as in the mockup.
 - Catalogue grid (`features/catalogue/ui/CategoryGrid`): always 3 columns of
   352px, column gap 32, row gap 30 (1120px wide, no breakpoints yet). Card
@@ -111,7 +120,7 @@ that owns them — see Q1.
 - Breakpoints: the mockup has a single desktop width. The dashboard grids use
   container queries (`@container` + `@min-[…]:`), not viewport breakpoints,
   because the content width also depends on the sidebar: two columns from a
-  1520px container (527 + 68 + three 295px stat cards + gaps), otherwise
+  1521px container (529 + 67 + three 295px stat cards + gaps), otherwise
   stacked; stat cards 3-up from 925px, 2-up from 610px, else 1-up.
 
 ## Components
