@@ -1,11 +1,5 @@
 @import 'tailwindcss';
 
-/*
- * Design tokens from the mockup: Figma file qVzu3KVGXpgPrWF254NRSo
- * ("Auto Lincoln analysis copy"), node 2:24. See docs/ui-guidelines.md.
- * Declared in Figma: --color-black-50 and --shadow-card-1. The rest is
- * observed off the layers.
- */
 @theme {
   /* Colours */
   --color-accent: #177cca;
@@ -21,7 +15,6 @@
   --color-line: rgba(31, 31, 31, 0.1);
   --color-divider: #d9d9d9;
   --color-black-50: #1f1f1f;
-  /* Not in the mockup — the error state is ours. */
   --color-danger: #d14343;
 
   /* Typography */

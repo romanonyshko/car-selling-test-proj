@@ -27,6 +27,7 @@ dist-ssr
 # local env
 .env
 .env.local
+coverage/
 
 PROJECT-CONTEXT.md
 
