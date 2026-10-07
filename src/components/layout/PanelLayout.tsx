@@ -4,16 +4,21 @@ import { useState, type ReactNode } from 'react'
 interface PanelLayoutProps {
   title: string
   panel: ReactNode
+  /** Stays in place while the content below it scrolls. */
+  header?: ReactNode
   children: ReactNode
 }
 
 /** Page content plus a collapsible full-height side panel, flush with the topbar. */
-export function PanelLayout({ title, panel, children }: PanelLayoutProps) {
+export function PanelLayout({ title, panel, header, children }: PanelLayoutProps) {
   const [isOpen, setIsOpen] = useState(true)
 
   return (
-    <div className="-mt-5 -mr-[34px] -mb-[34px] flex min-h-[calc(100%+54px)]">
-      <div className="min-w-0 flex-1 pt-5 pr-8 pb-[34px]">{children}</div>
+    <div className="-mt-5 -mr-[34px] -mb-[34px] flex h-[calc(100%+54px)]">
+      <div className="flex min-w-0 flex-1 flex-col pt-5 pr-[27px]">
+        {header}
+        <div className="relative -ml-5 min-h-0 flex-1 overflow-y-auto pr-6 pb-[34px] pl-5">{children}</div>
+      </div>
 
       <aside
         className={cn(

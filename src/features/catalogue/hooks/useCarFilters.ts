@@ -12,7 +12,7 @@ export function useCarFilters() {
         }
         navigate({
             to: '.',
-            search: obj,
+            search: (prev) => ({ ...prev, ...obj }),
             replace: true
         })
     }
@@ -25,7 +25,7 @@ export function useCarFilters() {
         }
         navigate({
             to: '.',
-            search: obj,
+            search: (prev) => ({ ...prev, ...obj }),
             replace: true
         })
     }
@@ -38,7 +38,7 @@ export function useCarFilters() {
         }
         navigate({
             to: '.',
-            search: obj,
+            search: (prev) => ({ ...prev, ...obj }),
             replace: true
         })
     }
@@ -52,7 +52,7 @@ export function useCarFilters() {
 
           navigate({
             to: '.',
-            search: obj,
+            search: (prev) => ({ ...prev, ...obj }),
             replace: true
         })
     }

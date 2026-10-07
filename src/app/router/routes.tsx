@@ -2,6 +2,7 @@ import { AppLayout } from '@/components/layout/AppLayout'
 import { Spinner } from '@/components/ui/Spinner'
 import { meQueryOptions } from '@/features/auth/api/authQueries'
 import { parseCarFilters } from '@/features/catalogue/model/carFilters'
+import { parseCatalogueSearch } from '@/features/catalogue/model/catalogueView'
 import { queryClient } from '@/lib/queryClient'
 import { CataloguePage } from '@/pages/catalogue/CataloguePage'
 import { CategoryPartsPage } from '@/pages/catalogue/CategoryPartsPage'
@@ -100,7 +101,10 @@ const catalogueRoute = createRoute({
   getParentRoute: () => partsRoute,
   path: 'catalogue',
   component: CataloguePage,
-  validateSearch: parseCarFilters
+  validateSearch: (search: Record<string, unknown>) => ({
+    ...parseCarFilters(search),
+    ...parseCatalogueSearch(search),
+  }),
 })
 
 const categoryRoute = createRoute({
