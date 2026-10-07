@@ -130,7 +130,7 @@ export function Sidebar() {
                   )}
                 </div>
 
-                {!collapsed && item.children && item.children.length > 0 && (
+                {!collapsed && item.children && (
                   <div
                     className={cn(
                       'grid transition-[grid-template-rows] duration-200',
