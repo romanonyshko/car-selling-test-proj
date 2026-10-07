@@ -25,17 +25,17 @@ export function PartsFilterPanel() {
   const { data: engines } = useEngines(filters.model)
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="grid gap-6 md:grid-cols-3 xl:flex xl:flex-col xl:gap-10">
       <Select
         value={filters.make ?? ''}
-        onChange={(event) => setMake(event.target.value)}
+        onChange={setMake}
         label="Carmaker"
         placeholder="Select make"
         options={toSelectOptions(carmakers)} />
 
       <Select
         value={filters.model ?? ''}
-        onChange={(event) => setModel(event.target.value)}
+        onChange={setModel}
         label="Model"
         placeholder="Select model"
         options={toSelectOptions(models)} disabled={!filters.make}
@@ -43,7 +43,7 @@ export function PartsFilterPanel() {
 
       <Select
         value={filters.engine ?? ''}
-        onChange={(event) => setEngine(event.target.value)}
+        onChange={setEngine}
         label="Engine"
         placeholder="Select engine"
         options={toSelectOptions(engines)} disabled={!filters.model}
