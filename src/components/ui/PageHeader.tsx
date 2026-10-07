@@ -1,3 +1,4 @@
+import { BreadcrumbChevronIcon } from '@/components/icons/BreadcrumbChevronIcon'
 import { Link, type LinkProps } from '@tanstack/react-router'
 import { Fragment, type ReactNode } from 'react'
 
@@ -14,7 +15,7 @@ interface PageHeaderProps {
 export function PageHeader({ crumbs, title, actions }: PageHeaderProps) {
   return (
     <header>
-      <p className="flex items-center gap-2 text-crumb">
+      <p className="flex flex-wrap items-center gap-x-2 text-crumb">
         {crumbs.map((crumb, index) => {
           const isCurrent = index === crumbs.length - 1
           const label = typeof crumb === 'string' ? crumb : crumb.label
@@ -22,18 +23,9 @@ export function PageHeader({ crumbs, title, actions }: PageHeaderProps) {
           return (
             <Fragment key={label}>
               {index > 0 && (
-                <svg
-                  aria-hidden
-                  viewBox="0 0 8 8"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="size-2 text-ink-muted"
-                >
-                  <path d="m2.5 1 3 3-3 3" />
-                </svg>
+                <span className="size-2 text-ink-muted">
+                  <BreadcrumbChevronIcon />
+                </span>
               )}
               {typeof crumb === 'string' ? (
                 <span className={isCurrent ? 'text-ink' : 'text-ink-muted'}>{crumb}</span>
@@ -47,8 +39,8 @@ export function PageHeader({ crumbs, title, actions }: PageHeaderProps) {
         })}
       </p>
 
-      <div className="mt-6 mb-[37px] flex items-center justify-between gap-4">
-        <h1 className="text-title font-medium text-ink">{title}</h1>
+      <div className="mt-4 mb-6 flex items-center justify-between gap-4 sm:mt-6 sm:mb-[37px]">
+        <h1 className="min-w-0 text-[26px]/8 font-medium break-words text-ink sm:text-title">{title}</h1>
         {actions}
       </div>
     </header>
