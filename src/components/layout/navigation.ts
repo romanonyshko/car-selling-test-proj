@@ -35,6 +35,6 @@ export const navigation: NavItem[] = [
       { to: '/parts/price-list', label: 'Price list' },
     ],
   },
-  { to: '/documents', label: 'Documents', icon: DocumentsIcon },
-  { to: '/warranty-claims', label: 'Warranty claims', icon: WarrantyIcon },
+  { to: '/documents', label: 'Documents', icon: DocumentsIcon, children: [] },
+  { to: '/warranty-claims', label: 'Warranty claims', icon: WarrantyIcon, children: [] },
 ]
