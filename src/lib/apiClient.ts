@@ -1,12 +1,15 @@
 import { API_PREFIX, type ApiError as ApiErrorBody } from '@auto-lincoln/contracts'
 
 /**
- * Where the API lives. The browser calls it directly — there is no dev
- * proxy in between. The API allows this origin via CORS (`CORS_ORIGIN`
- * in its `.env`).
+ * Where the API lives. In dev the browser calls it directly (the API allows
+ * this origin via `CORS_ORIGIN` in its `.env`). In a production build it is
+ * the app's own domain: vercel.json forwards /api to the API, so the session
+ * cookie stays first-party.
  */
-export const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3002'
-export const WS_URL = API_URL.replace(/^http/, 'ws')
+export const API_URL = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'http://localhost:3002' : '')
+
+/** Vercel cannot proxy WebSockets, so in production the chat connects to the API domain directly. */
+export const WS_URL = import.meta.env.VITE_WS_URL ?? API_URL.replace(/^http/, 'ws')
 
 export class ApiError extends Error {
   readonly status: number
@@ -31,8 +34,8 @@ export async function apiRequest<T>(
 
   const response = await fetch(url, {
     method,
-    // The API is on another origin: without this the browser neither sends
-    // the al_session cookie nor stores the one from Set-Cookie.
+    // In dev the API is on another origin: without this the browser neither
+    // sends the al_session cookie nor stores the one from Set-Cookie.
     credentials: 'include',
     headers: body === undefined ? undefined : { 'Content-Type': 'application/json' },
     body: body === undefined ? undefined : JSON.stringify(body),
